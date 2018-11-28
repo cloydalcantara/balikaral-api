@@ -23,5 +23,6 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/balikaral', require('./routes/users'));
+app.use('/balikaral', require('./routes/learningStrand'));
 
 module.exports = app;
