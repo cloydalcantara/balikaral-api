@@ -11,7 +11,7 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-    const find = await Model.find({}).exec()
+    const find = await Model.find({}).populate({path:"level"}).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
