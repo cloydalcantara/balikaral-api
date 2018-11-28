@@ -15,4 +15,10 @@ router.route('/learning-strand/all')
 router.route('/learning-strand/:id')
   .get(passportJWT, LearningStrandController.fetchSingle);
 
+router.route('/learning-strand/delete/:id')
+  .delete(passportJWT, LearningStrandController.delete);
+
+router.route('/learning-strand/update/:id')
+  .put(passportJWT, LearningStrandController.update);
+
 module.exports = router;

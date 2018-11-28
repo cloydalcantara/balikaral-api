@@ -24,5 +24,6 @@ app.use(bodyParser.json());
 // Routes
 app.use('/balikaral', require('./routes/users'));
 app.use('/balikaral', require('./routes/learningStrand'));
+app.use('/balikaral', require('./routes/level'));
 
 module.exports = app;
