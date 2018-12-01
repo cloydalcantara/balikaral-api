@@ -25,5 +25,6 @@ app.use(bodyParser.json());
 app.use('/balikaral', require('./routes/users'));
 app.use('/balikaral', require('./routes/learningStrand'));
 app.use('/balikaral', require('./routes/level'));
+app.use('/balikaral', require('./routes/exam-management'));
 
 module.exports = app;

@@ -1,5 +1,5 @@
 const JWT = require('jsonwebtoken');
-const User = require('../models/level');
+const Model = require('../models/level');
 const { JWT_SECRET } = require('../configuration');
 
 module.exports = {
@@ -24,7 +24,7 @@ module.exports = {
   },
   update: async (req, res, next) => {
     const data = req.body
-    const update = await Model.findOneAndUpdate({_id:req.params._id},{$set:data}).exec()
+    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   }
 }

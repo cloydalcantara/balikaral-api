@@ -68,7 +68,11 @@ module.exports = {
     const token = signToken(req.user);
     res.status(200).json({ token });
   },
-
+  update: async (req, res, next) => {
+    const data = req.body
+    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    res.json({data: update})
+  },
   secret: async (req, res, next) => {
     console.log('I managed to get here!');
     res.json({ secret: "resource" });

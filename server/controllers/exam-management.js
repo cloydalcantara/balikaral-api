@@ -1,5 +1,5 @@
 const JWT = require('jsonwebtoken');
-const User = require('../models/exam-management');
+const Model = require('../models/exam-management');
 const { JWT_SECRET } = require('../configuration');
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-    const find = await Model.find({}).exec()
+   const find = await Model.find({}).populate([{path:"level"},{path:"learningStrand"}]).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
@@ -24,7 +24,7 @@ module.exports = {
   },
   update: async (req, res, next) => {
     const data = req.body
-    const update = await Model.findOneAndUpdate({_id:req.params._id},{$set:data}).exec()
+    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   }
 }
