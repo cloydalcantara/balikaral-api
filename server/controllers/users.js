@@ -29,7 +29,8 @@ module.exports = {
       local: {
         email: email, 
         password: password,
-        userType: userType
+        userType: userType,
+        disabled: false
       },
       personalInformation: {
         firstName:firstName,
@@ -53,8 +54,9 @@ module.exports = {
 
   signIn: async (req, res, next) => {
     // Generate token
+    console.log(req.user)
     const token = signToken(req.user);
-    res.status(200).json({ token });
+    res.status(200).json({ token ,data:req.user.local.userType});
   },
 
   googleOAuth: async (req, res, next) => {

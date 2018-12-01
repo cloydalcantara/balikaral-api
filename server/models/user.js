@@ -19,7 +19,8 @@ const userSchema = new Schema({
     },
     userType:{
       type: String
-    }
+    },
+    disabled: Boolean
   },
   google: {
     id: {
