@@ -14,6 +14,12 @@ router.route('/signup')
 router.route('/signin')
   .post(validateBody(schemas.authSchema), passportSignIn, UsersController.signIn);
 
+router.route('/user/all')
+  .get(passportJWT, UsersController.fetchAll);
+
+router.route('/user/:id')
+  .get(passportJWT, UsersController.fetchSingle);
+
 router.route('/oauth/google')
   .post(passport.authenticate('googleToken', { session: false }), UsersController.googleOAuth);
 

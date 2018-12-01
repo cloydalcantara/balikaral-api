@@ -30,7 +30,7 @@ module.exports = {
         email: email, 
         password: password,
         userType: userType,
-        disabled: false
+        disabled: true
       },
       personalInformation: {
         firstName:firstName,
@@ -47,16 +47,18 @@ module.exports = {
     await newUser.save();
 
     // Generate the token
-    const token = signToken(newUser);
+    // const token = signToken(newUser);
     // Respond with token
-    res.status(200).json({ token });
+    // res.status(200).json({ token });
+    res.status(200).json({message:'Account Created'})
+
   },
 
   signIn: async (req, res, next) => {
     // Generate token
-    console.log(req.user)
     const token = signToken(req.user);
-    res.status(200).json({ token ,data:req.user.local.userType});
+    res.status(200).json({ token , data:req.user});
+    
   },
 
   googleOAuth: async (req, res, next) => {
@@ -70,11 +72,16 @@ module.exports = {
     const token = signToken(req.user);
     res.status(200).json({ token });
   },
-  update: async (req, res, next) => {
-    const data = req.body
-    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+
+  fetchAll: async (req, res, next) => {
+    const find = await User.find({}).exec()
+    res.json({data: find})
   },
+  fetchSingle: async (req, res, next) => {
+    const find = await User.findOne({_id:req.params.id}).exec()
+    res.json({data: find})
+  },
+
   secret: async (req, res, next) => {
     console.log('I managed to get here!');
     res.json({ secret: "resource" });
