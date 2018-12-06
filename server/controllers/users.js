@@ -117,5 +117,16 @@ module.exports = {
     
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
-  }
+  },
+
+  disable: async (req, res, next) => {
+    const data = {
+      local:{
+        disabled: req.body.disabled
+      }
+    }
+    
+    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    res.json({data: update})
+  },
 }

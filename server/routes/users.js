@@ -29,4 +29,7 @@ router.route('/user/update-personal-info/:id')
 router.route('/user/password/:id')
   .put( UsersController.updatePassword);
 
+router.route('/user/disable/:id')
+  .put( UsersController.disable);
+
 module.exports = router;

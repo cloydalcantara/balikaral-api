@@ -18,6 +18,7 @@ if (!process.env.NODE_ENV === 'test') {
   app.use(morgan('dev'));
 }
 
+app.use(express.static('uploads'))
 app.use(bodyParser.json());
 // Routes
 app.use('/balikaral', require('./routes/users'));

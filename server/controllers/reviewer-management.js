@@ -37,8 +37,8 @@ module.exports = {
   },
   validate: async (req, res, next) => {
     const data = {
-      validation: req.body.validation,
-      validationCounter: req.body.validation
+      validator: req.body.validator,
+      validation: req.body.validation
     }
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
