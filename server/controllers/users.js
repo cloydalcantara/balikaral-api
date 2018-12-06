@@ -85,5 +85,37 @@ module.exports = {
   secret: async (req, res, next) => {
     console.log('I managed to get here!');
     res.json({ secret: "resource" });
+  },
+
+  updatePersonalInfo: async (req, res, next) => {
+    const data = {
+      personalInformation:{
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        middleName: req.body.middleName,
+        houseNoStreet: req.body.houseNoStreet,
+        barangay: req.body.barangay,
+        city: req.body.city,
+        province: req.body.province
+      }
+    }
+    
+    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    res.json({data: update})
+  },
+
+  updatePassword: async (req, res, next) => {
+    const data = {
+      local:{
+        password: ""
+      }
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(req.body.password, salt);
+    data.local.password = passwordHash;
+    
+    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    res.json({data: update})
   }
 }

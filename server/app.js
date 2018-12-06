@@ -13,18 +13,17 @@ if (process.env.NODE_ENV === 'test') {
 
 const app = express();
 app.use(cors());
-
 // Middlewares moved morgan into if for clear tests
 if (!process.env.NODE_ENV === 'test') {
   app.use(morgan('dev'));
 }
 
 app.use(bodyParser.json());
-
 // Routes
 app.use('/balikaral', require('./routes/users'));
 app.use('/balikaral', require('./routes/learningStrand'));
 app.use('/balikaral', require('./routes/level'));
 app.use('/balikaral', require('./routes/exam-management'));
+app.use('/balikaral', require('./routes/reviewer-management'));
 
 module.exports = app;
