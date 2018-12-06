@@ -26,12 +26,10 @@ const reviewerManagementSchema = new Schema({
   //flow maraming teacher ang makakapagview ng validated na pdf. Ang admin makakapagvalidate ng pdf. 
   //pero pwede rin ang ibang teacher na makapagvalidated ng mga pdf. Dun sa validationCounter mag aadd kapag may isang teacher na nagclick na validated yun. Magiging true lang yung validation kung more than 3 ang nagvalidate.
 
-  validation: {
-      type: Boolean
-  },
-  validationCounter: {
-      type: Number
-  }
+  validate: [{
+      type: Schema.Types.ObjectId,
+      ref: "user"
+  }]
 });
 
 // Create a model
