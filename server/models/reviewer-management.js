@@ -5,17 +5,21 @@ const Schema = mongoose.Schema;
 // Create a schema
 const reviewerManagementSchema = new Schema({
   learningStrand : {
-      type: String,
+      type: Scheme.Types.ObjectId,
       ref: "learningStrand",
-    //   required: true
+      required: true
   },
-  pdf: String,
+  pdf: {
+      type: String,
+      required: true
+  },
   description: {
       type: String
   },
   uploader: {
     type: Schema.Types.ObjectId,
-    ref: "user"
+    ref: "user",
+    required: true
   },
   //if ang uploader ay teacher. false ang default. Yung counter ay 0
   //if ang uploader ay admin true agad
