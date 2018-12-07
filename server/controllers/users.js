@@ -30,7 +30,7 @@ module.exports = {
         email: email, 
         password: password,
         userType: userType,
-        disabled: true
+        disabled: false
       },
       personalInformation: {
         firstName:firstName,

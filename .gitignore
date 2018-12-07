@@ -5,6 +5,7 @@ package-lock.json
 /.vimrc
 /.ackrc
 /coverage
+/uploads
 npm-debug.log
 yarn-error.log
 .idea
