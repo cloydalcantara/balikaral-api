@@ -1,6 +1,7 @@
 const JWT = require('jsonwebtoken');
 const User = require('../models/user');
 const { JWT_SECRET } = require('../configuration');
+const bcrypt = require('bcryptjs');
 
 signToken = user => {
   return JWT.sign({
@@ -30,7 +31,7 @@ module.exports = {
         email: email, 
         password: password,
         userType: userType,
-        disabled: true
+        disabled: false
       },
       personalInformation: {
         firstName:firstName,
@@ -100,14 +101,17 @@ module.exports = {
       }
     }
     
-    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
 
-  updatePassword: async (req, res, next) => {
-    const data = {
+  updateAccountInfo: async (req, res, next) => {
+    let data = {
       local:{
-        password: ""
+        password: "",
+        email: req.body.email,
+        disabled: req.body.disabled,
+        userType: req.body.userType,
       }
     }
 
@@ -115,7 +119,7 @@ module.exports = {
     const passwordHash = await bcrypt.hash(req.body.password, salt);
     data.local.password = passwordHash;
     
-    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
 
@@ -126,7 +130,7 @@ module.exports = {
       }
     }
     
-    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
 }

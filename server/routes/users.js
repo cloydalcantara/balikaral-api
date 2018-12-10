@@ -23,11 +23,17 @@ router.route('/oauth/facebook')
 router.route('/secret')
   .get(passportJWT, UsersController.secret);
 
+router.route('/user/all')
+  .get( UsersController.fetchAll);
+
+router.route('/user/:id')
+  .get( UsersController.fetchSingle);
+
 router.route('/user/update-personal-info/:id')
   .put( UsersController.updatePersonalInfo);
 
-router.route('/user/password/:id')
-  .put( UsersController.updatePassword);
+router.route('/user/update-account-info/:id')
+  .put( UsersController.updateAccountInfo);
 
 router.route('/user/disable/:id')
   .put( UsersController.disable);

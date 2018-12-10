@@ -10,7 +10,6 @@ module.exports = {
       description: req.body.description,
       uploader: req.body.uploader,
       validation: req.body.validation,
-      validationCounter: req.body.validationCounter
     }
 
     const data = new Model(rmData)
@@ -19,11 +18,26 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-    const find = await Model.find({}).exec()
+
+    let findQuery = {}
+    if(req.query){
+      let query = req.query
+      if(query.uploader){
+        findQuery = {...findQuery, uploader: query.uploader}
+      }
+      if(query.disclude){
+        findQuery = {...findQuery, uploader: { $ne: query.disclude } }
+      }
+      if(query.validation){
+        findQuery = {...findQuery, validation: query.validation }
+      }
+    }
+    console.log(findQuery)
+    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"}]).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"uploader"},{path:"learningStrand"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {
