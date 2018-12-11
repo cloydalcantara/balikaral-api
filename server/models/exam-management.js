@@ -5,13 +5,27 @@ const Schema = mongoose.Schema;
 // Create a schema
 const examSchema = new Schema({
   level:{
-    type: String,
-    // ref: "level"
+    type: Schema.Types.ObjectId,
+    ref: "level"
   },
   learningStrand:{
-    type: String,
-    // ref: "learningStrand"
+    type: Schema.Types.ObjectId,
+    ref: "learningStrand"
   },
+  uploader: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
+    // required: true
+  },
+  validator: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: "user"
+      }
+    }
+  ],
+  validation: Boolean,
   question:{
     details:{
       type: String
@@ -56,8 +70,8 @@ const examSchema = new Schema({
     answer:{
       type: String
     },
-    difficulty: String
-  }
+    difficulty: String,
+    }
 });
 
 // Create a model

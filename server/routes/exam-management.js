@@ -36,4 +36,7 @@ router.route('/exam-management/update/:id')
 router.route('/exam-management/csv')
   .post(upload, examManagement.upload);
 
+router.route('/exam-management/validate/:id')
+  .put( passportJWT, examManagement.validate);
+
 module.exports = router;

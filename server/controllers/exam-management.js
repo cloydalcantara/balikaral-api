@@ -12,11 +12,24 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-   const find = await Model.find({}).populate([{path:"level"},{path:"learningStrand"}]).exec()
+    let findQuery = {}
+    if(req.query){
+      let query = req.query
+      if(query.uploader){
+        findQuery = {...findQuery, uploader: query.uploader}
+      }
+      if(query.disclude){
+        findQuery = {...findQuery, uploader: { $ne: query.disclude } }
+      }
+      if(query.validation){
+        findQuery = {...findQuery, validation: query.validation }
+      }
+    }
+   const find = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {
@@ -28,40 +41,48 @@ module.exports = {
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
+  validate: async (req, res, next) => {
+    const data = {
+      validator: req.body.validator,
+      validation: req.body.validation
+    }
+    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    res.json({data: update})
+  },
   upload: async( req, res, next ) => {
-    console.log(req.file)
     await csvtojson()
       .fromFile("csv/"+req.file.filename)
       .then((jsonObj)=>{
         
         jsonObj.forEach(element => {
-          console.log(element)
           let data = {
             level : req.body.level,
             learningStrand : req.body.learningStrand,
+            uploader: req.body.uploader,
+            validation: req.body.validation,
             question:{
-              details : element.details,
-              images : element.images,
+              details : element.Details,
+              images : element.Images,
               choices:{
                 a:{
-                  type : element.atype,
-                  details: element.adetails
+                  type : element['A Type'],
+                  details: element['A Details']
                 },
                 b:{
-                  type : element.btype,
-                  details: element.bdetails
+                  type : element['B Type'],
+                  details: element['B Details']
                 },
                 c:{
-                  type : element.ctype,
-                  details: element.cdetails
+                  type : element['C Type'],
+                  details: element['C Details']
                 },
                 d:{
-                  type : element.dtype,
-                  details: element.ddetails
+                  type : element['D Type'],
+                  details: element['D Details']
                 }
               },
-              answer: element.answer,
-              difficulty: element.difficulty
+              answer: element.Answer,
+              difficulty: element.Difficulty
             }
           }
           const finalData = new Model(data)
