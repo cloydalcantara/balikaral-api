@@ -19,21 +19,21 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single('pdf')
 
 router.route('/reviewer-management')
-  .post( upload, reviewerManagement.add );
+  .post( passportJWT, upload, reviewerManagement.add );
 
 router.route('/reviewer-management/all')
-  .get( reviewerManagement.fetchAll);
+  .get( passportJWT, reviewerManagement.fetchAll);
 
 router.route('/reviewer-management/:id')
-  .get( reviewerManagement.fetchSingle);
+  .get( passportJWT, reviewerManagement.fetchSingle);
 
 router.route('/reviewer-management/delete/:id')
-  .delete( reviewerManagement.delete);
+  .delete( passportJWT, reviewerManagement.delete);
 
 router.route('/reviewer-management/update/:id')
-  .put( reviewerManagement.update);
+  .put( passportJWT, reviewerManagement.update);
 
 router.route('/reviewer-management/validate/:id')
-  .put( reviewerManagement.validate);
+  .put( passportJWT, reviewerManagement.validate);
 
 module.exports = router;

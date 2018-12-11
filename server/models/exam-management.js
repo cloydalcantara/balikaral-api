@@ -5,12 +5,12 @@ const Schema = mongoose.Schema;
 // Create a schema
 const examSchema = new Schema({
   level:{
-    type: Schema.Types.ObjectId,
-    ref: "level"
+    type: String,
+    // ref: "level"
   },
   learningStrand:{
-    type: Schema.Types.ObjectId,
-    ref: "learningStrand"
+    type: String,
+    // ref: "learningStrand"
   },
   question:{
     details:{
@@ -55,7 +55,8 @@ const examSchema = new Schema({
     },
     answer:{
       type: String
-    }
+    },
+    difficulty: String
   }
 });
 
