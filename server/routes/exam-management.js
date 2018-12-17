@@ -19,24 +19,29 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single('csv')
 
 router.route('/exam-management')
-  .post(passportJWT, examManagement.add);
+  .post( examManagement.add);
 
 router.route('/exam-management/all')
-  .get(passportJWT, examManagement.fetchAll);
+  .get( examManagement.fetchAll);
 
-router.route('/exam-management/:id')
-  .get(passportJWT, examManagement.fetchSingle);
+router.route('/exam-management')
+  .get( examManagement.fetchSingle);
+
+router.route('/exam-management/random')
+  .get( examManagement.fetchExam)
 
 router.route('/exam-management/delete/:id')
-  .delete(passportJWT, examManagement.delete);
+  .delete( examManagement.delete);
 
 router.route('/exam-management/update/:id')
-  .put(passportJWT, examManagement.update);
+  .put( examManagement.update);
 
 router.route('/exam-management/csv')
   .post(upload, examManagement.upload);
 
 router.route('/exam-management/validate/:id')
-  .put( passportJWT, examManagement.validate);
+  .put(  examManagement.validate);
+
+
 
 module.exports = router;

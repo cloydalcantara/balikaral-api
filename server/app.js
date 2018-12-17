@@ -25,6 +25,7 @@ app.use('/balikaral', require('./routes/users'));
 app.use('/balikaral', require('./routes/learningStrand'));
 app.use('/balikaral', require('./routes/level'));
 app.use('/balikaral', require('./routes/exam-management'));
+app.use('/balikaral', require('./routes/exam-type-management'));
 app.use('/balikaral', require('./routes/reviewer-management'));
 
 module.exports = app;

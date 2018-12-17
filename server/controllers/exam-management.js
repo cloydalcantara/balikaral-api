@@ -1,8 +1,9 @@
 const JWT = require('jsonwebtoken');
 const Model = require('../models/exam-management');
+const ExamType = require('../models/exam-type-management')
 const { JWT_SECRET } = require('../configuration');
 const csvtojson = require('csvtojson')
-
+const rquery = require('mongoose-query-random')
 module.exports = {
   add: async (req, res, next) => {
     console.log(req.body)
@@ -28,8 +29,26 @@ module.exports = {
    const find = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
+  fetchExam: async( req, res, next ) => {
+
+    const fetchExamType = await ExamType.findOne({_id: req.query.examId}).exec()
+    
+    await Model.find({"difficulty":"easy"}).random(fetchExamType.difficulty.easy, true, function(err, data) {
+      if (err) throw err;
+      const easy = data
+      Model.find({"difficulty":"medium"}).random(fetchExamType.difficulty.medium,true, function(err, data){
+        if (err) throw err;
+        const medium = data
+        Model.find({"difficulty":"hard"}).random(fetchExamType.difficulty.hard,true, function(err, data){
+          if (err) throw err;
+          const hard = data
+          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
+        })
+      })
+    });
+  },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
+    const find = await Model.findOne({_id:req.query.id}).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {

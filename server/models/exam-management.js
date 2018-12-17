@@ -77,5 +77,6 @@ const examSchema = new Schema({
 // Create a model
 const Exam = mongoose.model('exam', examSchema);
 
+
 // Export the model
 module.exports = Exam;
