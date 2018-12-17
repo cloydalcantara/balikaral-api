@@ -10,7 +10,7 @@ const examTypeSchema = new Schema({
   },
   exam_description: String,
   difficulty: {
-    easy: Number, //ex 50%
+    easy: Number, //ex 50
     medium: Number, 
     hard: Number
   },
