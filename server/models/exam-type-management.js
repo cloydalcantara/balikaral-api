@@ -16,6 +16,7 @@ const examTypeSchema = new Schema({
   },
   examTotal: Number,
   passingRate: Number
+  totalHours: String
 });
 
 // Create a model
