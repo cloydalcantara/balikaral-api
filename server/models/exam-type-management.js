@@ -15,7 +15,7 @@ const examTypeSchema = new Schema({
     hard: Number
   },
   examTotal: Number,
-  passingRate: Number
+  passingRate: Number,
   totalHours: String
 });
 

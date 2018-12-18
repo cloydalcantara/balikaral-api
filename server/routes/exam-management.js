@@ -30,9 +30,9 @@ const photostorage = multer.diskStorage({
 const photo = multer({ storage: photostorage })
 
 router.route('/exam-management')
-  .post( photo.fields([{ name: 'images', maxCount: 1 },
-  { name: 'a', maxCount: 1 },{ name: 'b', maxCount: 1 },
-  { name: 'c', maxCount: 1 },{ name: 'd', maxCount: 1 }]), examManagement.add);
+  .post( photo.fields([{ name: 'questionImage', maxCount: 1 },
+  { name: 'aImage', maxCount: 1 },{ name: 'bImage', maxCount: 1 },
+  { name: 'cImage', maxCount: 1 },{ name: 'dImage', maxCount: 1 }]), examManagement.add);
 
 router.route('/exam-management/all')
   .get( examManagement.fetchAll);
@@ -47,9 +47,9 @@ router.route('/exam-management/delete/:id')
   .delete( examManagement.delete);
 
 router.route('/exam-management/update/:id')
-  .put( photo.fields([{ name: 'images', maxCount: 1 },
-  { name: 'a', maxCount: 1 },{ name: 'b', maxCount: 1 },
-  { name: 'c', maxCount: 1 },{ name: 'd', maxCount: 1 }]), examManagement.update);
+  .put( photo.fields([{ name: 'questionImage', maxCount: 1 },
+  { name: 'aImage', maxCount: 1 },{ name: 'bImage', maxCount: 1 },
+  { name: 'cImage', maxCount: 1 },{ name: 'dImage', maxCount: 1 }]), examManagement.update);
 
 router.route('/exam-management/csv')
   .post(upload, examManagement.upload);

@@ -12,7 +12,16 @@ const generatedExamSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'examType'
   },
-  exam: [],
+  exam: [
+    { 
+      question: 
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'exam'
+      },
+      answer: String
+    }
+  ],
   examiner: {
     type: Schema.Types.ObjectId,
     ref: 'user'
