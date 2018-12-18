@@ -47,7 +47,8 @@ const userSchema = new Schema({
     houseNoStreet: String,
     barangay: String,
     city: String,
-    province: String
+    province: String,
+    image: String
   }
 });
 
