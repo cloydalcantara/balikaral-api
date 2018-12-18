@@ -4,18 +4,18 @@ const Schema = mongoose.Schema;
 
 // Create a schema
 const examTypeSchema = new Schema({
-  exam_type: {
+  examType: {
     type: String,
     required: true //pre test, adaptive test, post test
   },
-  exam_description: String,
+  examDescription: String,
   difficulty: {
     easy: Number, //ex 50
     medium: Number, 
     hard: Number
   },
-  exam_total: Number,
-  passing_rate: Number
+  examTotal: Number,
+  passingRate: Number
 });
 
 // Create a model

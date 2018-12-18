@@ -29,26 +29,8 @@ module.exports = {
    const find = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
-  fetchExam: async( req, res, next ) => {
-
-    const fetchExamType = await ExamType.findOne({_id: req.query.examId}).exec()
-    
-    await Model.find({"difficulty":"easy"}).random(fetchExamType.difficulty.easy, true, function(err, data) {
-      if (err) throw err;
-      const easy = data
-      Model.find({"difficulty":"medium"}).random(fetchExamType.difficulty.medium,true, function(err, data){
-        if (err) throw err;
-        const medium = data
-        Model.find({"difficulty":"hard"}).random(fetchExamType.difficulty.hard,true, function(err, data){
-          if (err) throw err;
-          const hard = data
-          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
-        })
-      })
-    });
-  },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.query.id}).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {
@@ -67,6 +49,24 @@ module.exports = {
     }
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
+  },
+  fetchExam: async( req, res, next ) => {
+
+    const fetchExamType = await ExamType.findOne({_id: req.query.examId}).exec()
+    
+    await Model.find({"difficulty":"easy"}).random(fetchExamType.difficulty.easy, true, function(err, data) {
+      if (err) throw err;
+      const easy = data
+      Model.find({"difficulty":"medium"}).random(fetchExamType.difficulty.medium,true, function(err, data){
+        if (err) throw err;
+        const medium = data
+        Model.find({"difficulty":"hard"}).random(fetchExamType.difficulty.hard,true, function(err, data){
+          if (err) throw err;
+          const hard = data
+          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
+        })
+      })
+    });
   },
   upload: async( req, res, next ) => {
     await csvtojson()
