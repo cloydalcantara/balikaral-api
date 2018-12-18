@@ -7,6 +7,17 @@ const { validateBody, schemas } = require('../helpers/routeHelpers');
 const UsersController = require('../controllers/users');
 const passportSignIn = passport.authenticate('local', { session: false });
 const passportJWT = passport.authenticate('jwt', { session: false });
+const multer = require('multer')
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname + '-' + Date.now() + '.png')
+  }
+})
+
+const upload = multer({ storage: storage }).single('image')
 
 router.route('/signup')
   .post(validateBody(schemas.authSchema), UsersController.signUp);
@@ -37,5 +48,8 @@ router.route('/user/update-account-info/:id')
 
 router.route('/user/disable/:id')
   .put( UsersController.disable);
+
+router.route('/user/update-profile-picture/:id')
+  .put( upload, UsersController.updatePicture);
 
 module.exports = router;

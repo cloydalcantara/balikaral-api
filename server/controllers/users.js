@@ -133,4 +133,13 @@ module.exports = {
     const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
+  updatePicture: async (req, res, next) => {
+    const data = {
+      personalInformation: {
+        image: req.file.filename
+      }
+    }
+    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    res.json({data: update})
+  }
 }
