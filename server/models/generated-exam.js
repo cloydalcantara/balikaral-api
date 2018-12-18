@@ -4,6 +4,10 @@ const Schema = mongoose.Schema;
 
 // Create a schema
 const generatedExamSchema = new Schema({
+  learningStrand: {
+    type: Schema.Types.ObjectId,
+    ref: 'learningStrand'
+  },
   examType: {
     type: Schema.Types.ObjectId,
     ref: 'examType'
