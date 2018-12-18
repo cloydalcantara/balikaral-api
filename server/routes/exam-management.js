@@ -18,8 +18,21 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single('csv')
 
+const photostorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname + '-' + Date.now() + '.png')
+  }
+})
+
+const photo = multer({ storage: photostorage })
+
 router.route('/exam-management')
-  .post( examManagement.add);
+  .post( photo.fields([{ name: 'images', maxCount: 1 },
+  { name: 'a', maxCount: 1 },{ name: 'b', maxCount: 1 },
+  { name: 'c', maxCount: 1 },{ name: 'd', maxCount: 1 }]), examManagement.add);
 
 router.route('/exam-management/all')
   .get( examManagement.fetchAll);
@@ -34,7 +47,9 @@ router.route('/exam-management/delete/:id')
   .delete( examManagement.delete);
 
 router.route('/exam-management/update/:id')
-  .put( examManagement.update);
+  .put( photo.fields([{ name: 'images', maxCount: 1 },
+  { name: 'a', maxCount: 1 },{ name: 'b', maxCount: 1 },
+  { name: 'c', maxCount: 1 },{ name: 'd', maxCount: 1 }]), examManagement.update);
 
 router.route('/exam-management/csv')
   .post(upload, examManagement.upload);

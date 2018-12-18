@@ -6,8 +6,38 @@ const csvtojson = require('csvtojson')
 const rquery = require('mongoose-query-random')
 module.exports = {
   add: async (req, res, next) => {
-    console.log(req.body)
-    const data = new Model(req.body)
+    let addData = {
+      level: req.body.level,
+      learningStrand: req.body.learningStrand,
+      uploader: req.body.uploader,
+      validation: req.body.validation,
+      question:{
+        details: req.body.question.details,
+        images: req.files.images[0],
+        choices:{
+          a:{
+            type: req.body.adetails,
+            details: req.files.a ? req.files.a[0].filename : req.body.question.choices.a
+          },
+          b:{
+            type: req.body.bdetails,
+            details: req.files.b ? req.files.b[0].filename : req.body.question.choices.b
+          },
+          c:{
+            type: req.body.cdetails,
+            details: req.files.c ? req.files.c[0].filename : req.body.question.choices.c
+          },
+          d:{
+            type: req.body.ddetails,
+            details: req.files.d ? req.files.d[0].filename : req.body.question.choices.d
+          }
+        },
+        answer: req.body.answer,
+        difficulty: req.body.difficulty
+      }
+    }
+
+    const data = new Model(addData)
     const save = await data.save() 
     
     res.json({ data: save });
@@ -38,7 +68,38 @@ module.exports = {
     res.json({message: "Deleted!"})
   },
   update: async (req, res, next) => {
-    const data = req.body
+    let updateData = {
+      level: req.body.level,
+      learningStrand: req.body.learningStrand,
+      uploader: req.body.uploader,
+      validation: req.body.validation,
+      question:{
+        details: req.body.question.details,
+        images: req.files.images[0],
+        choices:{
+          a:{
+            type: req.body.adetails,
+            details: req.files.a ? req.files.a[0].filename : req.body.question.choices.a
+          },
+          b:{
+            type: req.body.bdetails,
+            details: req.files.b ? req.files.b[0].filename : req.body.question.choices.b
+          },
+          c:{
+            type: req.body.cdetails,
+            details: req.files.c ? req.files.c[0].filename : req.body.question.choices.c
+          },
+          d:{
+            type: req.body.ddetails,
+            details: req.files.d ? req.files.d[0].filename : req.body.question.choices.d
+          }
+        },
+        answer: req.body.answer,
+        difficulty: req.body.difficulty
+      }
+    }
+
+    const data = updateData
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
