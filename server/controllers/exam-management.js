@@ -36,7 +36,8 @@ module.exports = {
         },
         answer: req.body.answer,
         difficulty: req.body.difficulty
-      }
+      },
+      
     }
 
     const data = new Model(addData)
@@ -120,17 +121,46 @@ module.exports = {
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
-  fetchExam: async( req, res, next ) => {
-
-    const fetchExamType = await ExamType.findOne({_id: req.query.examId}).exec()
+  fetchExam: async( req, res, next ) => { 
+    // let easy = []
+    // let medium = []
+    // let hard = []
+    const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"learningStrand"}).exec()
     
-    await Model.find({"difficulty":"easy"}).random(fetchExamType.difficulty.easy, true, function(err, data) {
+    // await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand._id}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   easy = data
+    // });
+    // await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand._id}, "question.difficulty":{$eq:"Medium" } }).random(fetchExamType.difficulty.medium, true, function(err, data) {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   medium = data
+    // });
+    // await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand._id}, "question.difficulty":{$eq:"Hard" } }).random(fetchExamType.difficulty.hard, true, function(err, data) {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   hard = data
+    // });
+
+    // res.json( {
+    //       easy: easy, 
+    //       medium: medium, 
+    //       hard:hard, 
+    //       examType:fetchExamType
+    //     });
+
+
+    await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
       if (err) throw err;
       const easy = data
-      Model.find({"difficulty":"medium"}).random(fetchExamType.difficulty.medium,true, function(err, data){
+      Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.difficulty.medium,true, function(err, data){
         if (err) throw err;
         const medium = data
-        Model.find({"difficulty":"hard"}).random(fetchExamType.difficulty.hard,true, function(err, data){
+        Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.difficulty.hard, true, function(err, data){
           if (err) throw err;
           const hard = data
           res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})

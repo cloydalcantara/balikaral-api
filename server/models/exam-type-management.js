@@ -8,6 +8,10 @@ const examTypeSchema = new Schema({
     type: String,
     required: true //pre test, adaptive test, post test
   },
+  learningStrand: {
+    type: Schema.Types.ObjectId,
+    ref: 'learningStrand'
+  },
   examDescription: String,
   difficulty: {
     easy: Number, //ex 50

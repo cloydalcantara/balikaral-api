@@ -11,11 +11,24 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-    const find = await Model.find({}).exec()
+    let findQuery = {}
+    if(req.query){
+      let query = req.query
+      if(query.examiner){
+        findQuery = {...findQuery, examiner: query.examiner}
+      }
+      if(query.learningStrand){
+        findQuery = {...findQuery, learningStrand: query.learningStrand }
+      }
+      if(query.status){
+        findQuery = {...findQuery, status: query.status }
+      }
+    }
+    const find = await Model.find(findQuery).populate([{path:"learningStrand"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"learningStrand"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {

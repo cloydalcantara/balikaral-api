@@ -37,11 +37,11 @@ router.route('/exam-management')
 router.route('/exam-management/all')
   .get( examManagement.fetchAll);
 
-router.route('/exam-management/:id')
-  .get( examManagement.fetchSingle);
-
 router.route('/exam-management/random')
   .get( examManagement.fetchExam)
+
+router.route('/exam-management/:id')
+  .get( examManagement.fetchSingle);
 
 router.route('/exam-management/delete/:id')
   .delete( examManagement.delete);

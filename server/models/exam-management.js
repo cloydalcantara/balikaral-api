@@ -70,8 +70,10 @@ const examSchema = new Schema({
     answer:{
       type: String
     },
-    difficulty: String,
+    difficulty: { 
+      type:String
     }
+  }
 });
 
 // Create a model
