@@ -6,35 +6,38 @@ const csvtojson = require('csvtojson')
 const rquery = require('mongoose-query-random')
 module.exports = {
   add: async (req, res, next) => {
+    console.log(req.files)
     let addData = {
       level: req.body.level,
       learningStrand: req.body.learningStrand,
       uploader: req.body.uploader,
       validation: req.body.validation,
-      question:{
-        details: req.body.question.details,
-        images: req.files.images[0],
+       question:{
+        details: req.body.questionDetails,
+        images: req.files.questionImage ? req.files.questionImage[0].filename : null,
         choices:{
           a:{
-            type: req.body.adetails,
-            details: req.files.a ? req.files.a[0].filename : req.body.question.choices.a
+            image: req.files.aImage ? req.files.aImage[0].filename : null,
+            details: req.body.aDetails
           },
           b:{
-            type: req.body.bdetails,
-            details: req.files.b ? req.files.b[0].filename : req.body.question.choices.b
+            image: req.files.bImage ? req.files.bImage[0].filename : null,
+            details: req.body.bDetails
           },
           c:{
-            type: req.body.cdetails,
-            details: req.files.c ? req.files.c[0].filename : req.body.question.choices.c
+            image: req.files.cImage ? req.files.cImage[0].filename : null,
+            details: req.body.aDetails
           },
           d:{
-            type: req.body.ddetails,
-            details: req.files.d ? req.files.d[0].filename : req.body.question.choices.d
-          }
+            image: req.files.dImage ? req.files.dImage[0].filename : null,
+            details: req.body.dDetails
+          },
+          
         },
         answer: req.body.answer,
         difficulty: req.body.difficulty
-      }
+      },
+      
     }
 
     const data = new Model(addData)
@@ -55,30 +58,18 @@ module.exports = {
       if(query.validation){
         findQuery = {...findQuery, validation: query.validation }
       }
+      if(query.learningStrand){
+        findQuery = {...findQuery, learningStrand: query.learningStrand }
+      }
+      if(query.level){
+        findQuery = {...findQuery, level: query.level }
+      }
     }
    const find = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
-  fetchExam: async( req, res, next ) => {
-
-    const fetchExamType = await ExamType.findOne({_id: req.query.examId}).exec()
-    
-    await Model.find({"difficulty":"easy"}).random(fetchExamType.difficulty.easy, true, function(err, data) {
-      if (err) throw err;
-      const easy = data
-      Model.find({"difficulty":"medium"}).random(fetchExamType.difficulty.medium,true, function(err, data){
-        if (err) throw err;
-        const medium = data
-        Model.find({"difficulty":"hard"}).random(fetchExamType.difficulty.hard,true, function(err, data){
-          if (err) throw err;
-          const hard = data
-          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
-        })
-      })
-    });
-  },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.query.id}).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {
@@ -91,26 +82,27 @@ module.exports = {
       learningStrand: req.body.learningStrand,
       uploader: req.body.uploader,
       validation: req.body.validation,
-      question:{
-        details: req.body.question.details,
-        images: req.files.images[0],
+       question:{
+        details: req.body.questionDetails,
+        images: req.files.questionImage ? req.files.questionImage[0].filename : req.body.questionImageText,
         choices:{
           a:{
-            type: req.body.adetails,
-            details: req.files.a ? req.files.a[0].filename : req.body.question.choices.a
+            image: req.files.aImage ? req.files.aImage[0].filename : req.body.aImageText,
+            details: req.body.aDetails
           },
           b:{
-            type: req.body.bdetails,
-            details: req.files.b ? req.files.b[0].filename : req.body.question.choices.b
+            image: req.files.bImage ? req.files.bImage[0].filename : req.body.bImageText,
+            details: req.body.bDetails
           },
           c:{
-            type: req.body.cdetails,
-            details: req.files.c ? req.files.c[0].filename : req.body.question.choices.c
+            image: req.files.cImage ? req.files.cImage[0].filename : req.body.cImageText,
+            details: req.body.aDetails
           },
           d:{
-            type: req.body.ddetails,
-            details: req.files.d ? req.files.d[0].filename : req.body.question.choices.d
-          }
+            image: req.files.dImage ? req.files.dImage[0].filename : req.body.dImageText,
+            details: req.body.dDetails
+          },
+          
         },
         answer: req.body.answer,
         difficulty: req.body.difficulty
@@ -129,6 +121,53 @@ module.exports = {
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
+  fetchExam: async( req, res, next ) => { 
+    // let easy = []
+    // let medium = []
+    // let hard = []
+    const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"learningStrand"}).exec()
+    
+    // await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand._id}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   easy = data
+    // });
+    // await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand._id}, "question.difficulty":{$eq:"Medium" } }).random(fetchExamType.difficulty.medium, true, function(err, data) {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   medium = data
+    // });
+    // await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand._id}, "question.difficulty":{$eq:"Hard" } }).random(fetchExamType.difficulty.hard, true, function(err, data) {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   hard = data
+    // });
+
+    // res.json( {
+    //       easy: easy, 
+    //       medium: medium, 
+    //       hard:hard, 
+    //       examType:fetchExamType
+    //     });
+
+
+    await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
+      if (err) throw err;
+      const easy = data
+      Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.difficulty.medium,true, function(err, data){
+        if (err) throw err;
+        const medium = data
+        Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.difficulty.hard, true, function(err, data){
+          if (err) throw err;
+          const hard = data
+          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
+        })
+      })
+    });
+  },
   upload: async( req, res, next ) => {
     await csvtojson()
       .fromFile("csv/"+req.file.filename)
@@ -145,19 +184,19 @@ module.exports = {
               images : element.Images,
               choices:{
                 a:{
-                  type : element['A Type'],
+                  image : element['A Image'],
                   details: element['A Details']
                 },
                 b:{
-                  type : element['B Type'],
+                  image : element['B Image'],
                   details: element['B Details']
                 },
                 c:{
-                  type : element['C Type'],
+                  image : element['C Image'],
                   details: element['C Details']
                 },
                 d:{
-                  type : element['D Type'],
+                  image : element['D Image'],
                   details: element['D Details']
                 }
               },

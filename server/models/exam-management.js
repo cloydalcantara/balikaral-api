@@ -42,7 +42,7 @@ const examSchema = new Schema({
     },
     choices:{
       a:{
-        type:{
+        image:{
           type:String
         },
         details:{
@@ -50,7 +50,7 @@ const examSchema = new Schema({
         }
       },
       b:{
-        type:{
+        image:{
           type:String
         },
         details:{
@@ -58,7 +58,7 @@ const examSchema = new Schema({
         }
       },
       c:{
-        type:{
+        image:{
           type:String
         },
         details:{
@@ -66,7 +66,7 @@ const examSchema = new Schema({
         }
       },
       d:{
-        type:{
+        image:{
           type:String
         },
         details:{
@@ -77,8 +77,10 @@ const examSchema = new Schema({
     answer:{
       type: String
     },
-    difficulty: String,
+    difficulty: { 
+      type:String
     }
+  }
 });
 
 // Create a model

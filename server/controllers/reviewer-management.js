@@ -19,7 +19,7 @@ module.exports = {
   },
   fetchAll: async (req, res, next) => {
 
-    let findQuery = {}
+     let findQuery = {}
     if(req.query){
       let query = req.query
       if(query.uploader){
@@ -31,8 +31,10 @@ module.exports = {
       if(query.validation){
         findQuery = {...findQuery, validation: query.validation }
       }
+      if(query.learningStrand){
+        findQuery = {...findQuery, learningStrand: query.learningStrand }
+      }
     }
-    console.log(findQuery)
     const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"}]).exec()
     res.json({data: find})
   },
