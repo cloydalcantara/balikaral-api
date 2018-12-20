@@ -31,6 +31,10 @@ module.exports = {
     const find = await Model.findOne({_id:req.params.id}).populate([{path:"learningStrand"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
     res.json({data: find})
   },
+  checkStatus: async (req, res, next) => {
+    const find = await Model.find({examiner:req.params.examiner, "status": {$eq: "Pending"}}).populate([{path:"learningStrand"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
+    res.json({data: find})
+  },
   delete: async (req, res, next) => {
     const remove = await Model.remove({_id:req.params.id}).exec()
     res.json({message: "Deleted!"})

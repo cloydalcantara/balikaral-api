@@ -15,10 +15,13 @@ router.route('/generated-exam/all')
 router.route('/generated-exam/:id')
   .get(passportJWT, generatedExam.fetchSingle);
 
+router.route('/generated-exam/update/:id')
+  .put(passportJWT, generatedExam.update);
+
 router.route('/generated-exam/delete/:id')
   .delete(passportJWT, generatedExam.delete);
 
-router.route('/generated-exam/update/:id')
-  .put(passportJWT, generatedExam.update);
+router.route('/generated-exam/check-status/:examiner')
+  .get(passportJWT, generatedExam.checkStatus);
 
 module.exports = router;
