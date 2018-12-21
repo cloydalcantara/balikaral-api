@@ -134,12 +134,20 @@ module.exports = {
     res.json({data: update})
   },
   updatePicture: async (req, res, next) => {
+    console.log(req.file)
     const data = {
       personalInformation: {
-        image: req.file.filename
+        image: req.file.filename,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        middleName: req.body.middleName,
+        houseNoStreet: req.body.houseNoStreet,
+        barangay: req.body.barangay,
+        city: req.body.city,
+        province: req.body.province
       }
     }
-    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   }
 }
