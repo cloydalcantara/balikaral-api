@@ -6,16 +6,23 @@ const Schema = mongoose.Schema;
 const examSchema = new Schema({
   level:{
     type: Schema.Types.ObjectId,
-    ref: "level"
+    ref: "level",
+    required: true
   },
   learningStrand:{
     type: Schema.Types.ObjectId,
-    ref: "learningStrand"
+    ref: "learningStrand",
+    required: true
+  },
+  learningStrandSub:{
+    type: Schema.Types.ObjectId,
+    ref: "learningStrandSub",
+    required: true
   },
   uploader: {
     type: Schema.Types.ObjectId,
     ref: "user",
-    // required: true
+    required: true
   },
   validator: [
     {
