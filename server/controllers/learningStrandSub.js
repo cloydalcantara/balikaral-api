@@ -4,18 +4,25 @@ const { JWT_SECRET } = require('../configuration');
 
 module.exports = {
   add: async (req, res, next) => {
-    console.log(req.body)
     const data = new Model(req.body)
     const save = await data.save() 
     
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-    const find = await Model.find({}).exec()
+
+    let findQuery = {}
+    if(req.query){
+      let query = req.query
+      if(query.learningStrand){
+        findQuery = {...findQuery, learningStrand: query.learningStrand }
+      }
+    }
+    const find = await Model.find(findQuery).populate({path:"learningStrand"}).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate({path:"learningStrand"}).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {

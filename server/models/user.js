@@ -44,11 +44,26 @@ const userSchema = new Schema({
     firstName: { type: String },
     lastName: { type: String },
     middleName: String,
+    
     houseNoStreet: String,
     barangay: String,
     city: String,
     province: String,
-    image: String
+
+    image: String,
+
+    learningCenter: String,
+    gradeLevel: String,
+    reasongForStopping: String,
+    lifeStatus: String,
+
+    gender: String,
+    about: [
+      { 
+        title: String,
+        description: String
+      }
+    ]
   }
 });
 

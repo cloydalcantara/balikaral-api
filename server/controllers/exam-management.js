@@ -6,10 +6,10 @@ const csvtojson = require('csvtojson')
 const rquery = require('mongoose-query-random')
 module.exports = {
   add: async (req, res, next) => {
-    console.log(req.files)
     let addData = {
       level: req.body.level,
       learningStrand: req.body.learningStrand,
+      learningStrandSub: req.body.learningStrandSub,
       uploader: req.body.uploader,
       validation: req.body.validation,
        question:{
@@ -61,15 +61,18 @@ module.exports = {
       if(query.learningStrand){
         findQuery = {...findQuery, learningStrand: query.learningStrand }
       }
+      if(query.learningStrandSub){
+        findQuery = {...findQuery, learningStrandSub: query.learningStrandSub }
+      }
       if(query.level){
         findQuery = {...findQuery, level: query.level }
       }
     }
-   const find = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
+   const find = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"learningStrand"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {
@@ -80,6 +83,7 @@ module.exports = {
     let updateData = {
       level: req.body.level,
       learningStrand: req.body.learningStrand,
+      learningStrandSub: req.body.learningStrandSub,
       uploader: req.body.uploader,
       validation: req.body.validation,
        question:{
@@ -122,37 +126,7 @@ module.exports = {
     res.json({data: update})
   },
   fetchExam: async( req, res, next ) => { 
-    // let easy = []
-    // let medium = []
-    // let hard = []
     const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"learningStrand"}).exec()
-    
-    // await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand._id}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   easy = data
-    // });
-    // await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand._id}, "question.difficulty":{$eq:"Medium" } }).random(fetchExamType.difficulty.medium, true, function(err, data) {
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   medium = data
-    // });
-    // await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand._id}, "question.difficulty":{$eq:"Hard" } }).random(fetchExamType.difficulty.hard, true, function(err, data) {
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   hard = data
-    // });
-
-    // res.json( {
-    //       easy: easy, 
-    //       medium: medium, 
-    //       hard:hard, 
-    //       examType:fetchExamType
-    //     });
-
 
     await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
       if (err) throw err;
@@ -168,6 +142,12 @@ module.exports = {
       })
     });
   },
+  fetchExerciseExam: async( req, res, next ) => {
+    await Model.find({ learningStrand:req.params.learningStrand }).random(1, true, function(err, data){
+      if (err) throw err;
+      res.json({ data: data });
+    })
+  },
   upload: async( req, res, next ) => {
     await csvtojson()
       .fromFile("csv/"+req.file.filename)
@@ -177,6 +157,7 @@ module.exports = {
           let data = {
             level : req.body.level,
             learningStrand : req.body.learningStrand,
+            learningStrandSub: req.body.learningStrandSub,
             uploader: req.body.uploader,
             validation: req.body.validation,
             question:{

@@ -3,22 +3,22 @@ const router = require('express-promise-router')();
 const passport = require('passport');
 
 const { validateBody, schemas } = require('../helpers/routeHelpers');
-const level = require('../controllers/level');
+const learningStrandSub = require('../controllers/learningStrandSub');
 const passportJWT = passport.authenticate('jwt', { session: false });
 
-router.route('/level')
-  .post(passportJWT, level.add);
+router.route('/learning-strand-sub')
+  .post(passportJWT, learningStrandSub.add);
 
-router.route('/level/all')
-  .get(passportJWT, level.fetchAll);
+router.route('/learning-strand-sub/all')
+  .get(passportJWT, learningStrandSub.fetchAll);
 
-router.route('/level/:id')
-  .get(passportJWT, level.fetchSingle);
+router.route('/learning-strand-sub/:id')
+  .get(passportJWT, learningStrandSub.fetchSingle);
 
-router.route('/level/delete/:id')
-  .delete(passportJWT, level.delete);
+router.route('/learning-strand-sub/delete/:id')
+  .delete(passportJWT, learningStrandSub.delete);
 
-router.route('/level/update/:id')
-  .put(passportJWT, level.update);
+router.route('/learning-strand-sub/update/:id')
+  .put(passportJWT, learningStrandSub.update);
 
 module.exports = router;
