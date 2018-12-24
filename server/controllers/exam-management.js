@@ -6,10 +6,10 @@ const csvtojson = require('csvtojson')
 const rquery = require('mongoose-query-random')
 module.exports = {
   add: async (req, res, next) => {
-    console.log(req.files)
     let addData = {
       level: req.body.level,
       learningStrand: req.body.learningStrand,
+      learningStrandSub: req.body.learningStrandSub,
       uploader: req.body.uploader,
       validation: req.body.validation,
        question:{
@@ -61,15 +61,18 @@ module.exports = {
       if(query.learningStrand){
         findQuery = {...findQuery, learningStrand: query.learningStrand }
       }
+      if(query.learningStrandSub){
+        findQuery = {...findQuery, learningStrandSub: query.learningStrandSub }
+      }
       if(query.level){
         findQuery = {...findQuery, level: query.level }
       }
     }
-   const find = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
+   const find = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"learningStrand"},{path:"uploader"},{path:"validator.user"}]).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"learningStrand"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {
@@ -80,6 +83,7 @@ module.exports = {
     let updateData = {
       level: req.body.level,
       learningStrand: req.body.learningStrand,
+      learningStrandSub: req.body.learningStrandSub,
       uploader: req.body.uploader,
       validation: req.body.validation,
        question:{
@@ -139,6 +143,12 @@ module.exports = {
       })
     });
   },
+  fetchExerciseExam: async( req, res, next ) => {
+    await Model.find({ learningStrand:req.params.learningStrand }).random(1, true, function(err, data){
+      if (err) throw err;
+      res.json({ data: data });
+    })
+  },
   upload: async( req, res, next ) => {
     await csvtojson()
       .fromFile("csv/"+req.file.filename)
@@ -148,6 +158,7 @@ module.exports = {
           let data = {
             level : req.body.level,
             learningStrand : req.body.learningStrand,
+            learningStrandSub: req.body.learningStrandSub,
             uploader: req.body.uploader,
             validation: req.body.validation,
             question:{

@@ -38,7 +38,10 @@ router.route('/exam-management/all')
   .get( examManagement.fetchAll);
 
 router.route('/exam-management/random')
-  .get( examManagement.fetchExam)
+  .get( examManagement.fetchExam);
+
+router.route('/exam-management/exercise/:learningStrand')
+  .get( examManagement.fetchExerciseExam);
 
 router.route('/exam-management/:id')
   .get( examManagement.fetchSingle);
