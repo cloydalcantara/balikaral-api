@@ -34,7 +34,11 @@ const reviewerManagementSchema = new Schema({
       }
     }
   ],
-  validation: Boolean
+  validation: Boolean,
+  reviewerSub: {
+    type: Schema.Types.ObjectId,
+    ref: 'learningStrandSub'
+  }
 });
 
 // Create a model

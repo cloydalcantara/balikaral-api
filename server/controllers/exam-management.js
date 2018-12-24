@@ -121,38 +121,9 @@ module.exports = {
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
+  //for PRE - TEST
   fetchExam: async( req, res, next ) => { 
-    // let easy = []
-    // let medium = []
-    // let hard = []
     const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"learningStrand"}).exec()
-    
-    // await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand._id}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   easy = data
-    // });
-    // await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand._id}, "question.difficulty":{$eq:"Medium" } }).random(fetchExamType.difficulty.medium, true, function(err, data) {
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   medium = data
-    // });
-    // await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand._id}, "question.difficulty":{$eq:"Hard" } }).random(fetchExamType.difficulty.hard, true, function(err, data) {
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   hard = data
-    // });
-
-    // res.json( {
-    //       easy: easy, 
-    //       medium: medium, 
-    //       hard:hard, 
-    //       examType:fetchExamType
-    //     });
-
 
     await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
       if (err) throw err;

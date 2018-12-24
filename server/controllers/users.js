@@ -42,7 +42,12 @@ module.exports = {
         city:city,
         province:province,
         zipcode: zipcode
-      }
+      },
+      preTest: {
+        
+      },
+      adaptiveTest: [],
+      postTest: []
     });
 
     await newUser.save();

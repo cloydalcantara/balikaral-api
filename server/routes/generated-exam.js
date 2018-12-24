@@ -7,21 +7,21 @@ const generatedExam = require('../controllers/generated-exam');
 const passportJWT = passport.authenticate('jwt', { session: false });
 
 router.route('/generated-exam')
-  .post(passportJWT, generatedExam.add);
+  .post( generatedExam.add);
 
 router.route('/generated-exam/all')
-  .get(passportJWT, generatedExam.fetchAll);
+  .get( generatedExam.fetchAll);
 
 router.route('/generated-exam/:id')
-  .get(passportJWT, generatedExam.fetchSingle);
+  .get( generatedExam.fetchSingle);
 
 router.route('/generated-exam/update/:id')
-  .put(passportJWT, generatedExam.update);
+  .put( generatedExam.update);
 
 router.route('/generated-exam/delete/:id')
-  .delete(passportJWT, generatedExam.delete);
+  .delete( generatedExam.delete);
 
 router.route('/generated-exam/check-status/:examiner')
-  .get(passportJWT, generatedExam.checkStatus);
+  .get( generatedExam.checkStatus);
 
 module.exports = router;

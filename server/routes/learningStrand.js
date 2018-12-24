@@ -7,18 +7,18 @@ const LearningStrandController = require('../controllers/learningStrand');
 const passportJWT = passport.authenticate('jwt', { session: false });
 
 router.route('/learning-strand')
-  .post(passportJWT, LearningStrandController.add);
+  .post( LearningStrandController.add);
 
 router.route('/learning-strand/all')
-  .get(passportJWT, LearningStrandController.fetchAll);
+  .get( LearningStrandController.fetchAll);
 
 router.route('/learning-strand/:id')
-  .get(passportJWT, LearningStrandController.fetchSingle);
+  .get( LearningStrandController.fetchSingle);
 
 router.route('/learning-strand/delete/:id')
-  .delete(passportJWT, LearningStrandController.delete);
+  .delete( LearningStrandController.delete);
 
 router.route('/learning-strand/update/:id')
-  .put(passportJWT, LearningStrandController.update);
+  .put( LearningStrandController.update);
 
 module.exports = router;

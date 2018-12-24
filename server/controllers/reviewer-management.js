@@ -10,6 +10,7 @@ module.exports = {
       description: req.body.description,
       uploader: req.body.uploader,
       validation: req.body.validation,
+      reviewerSub: req.body.reviewerSub
     }
 
     const data = new Model(rmData)
