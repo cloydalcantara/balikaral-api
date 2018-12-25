@@ -1,6 +1,5 @@
 const JWT = require('jsonwebtoken');
-const Model = require('../models/learningStrand');
-const Exam = require('../models/exam-management');
+const Model = require('../models/level');
 const { JWT_SECRET } = require('../configuration');
 
 module.exports = {
@@ -12,20 +11,11 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-
-    let findQuery = {}
-    if(req.query){
-      let query = req.query
-      if(query.level){
-        findQuery = {...findQuery, level: query.level }
-      }
-    }
-    const find = await Model.find(findQuery).populate({path:"level"}).sort([['level', -1]]).exec()
+    const find = await Model.find({}).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
     const find = await Model.findOne({_id:req.params.id}).exec()
-
     res.json({data: find})
   },
   delete: async (req, res, next) => {
@@ -33,16 +23,8 @@ module.exports = {
     res.json({message: "Deleted!"})
   },
   update: async (req, res, next) => {
-    const examList = await Exam.find({'learningStrand': { $eq: req.params.id } }).exec()
-    const data = {
-      name: req.body.name,
-      level:req.body.level,
-      description: req.body.description,
-      noOfQuestions: examList.length
-    }
-
+    const data = req.body
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-
     res.json({data: update})
   }
 }

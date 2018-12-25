@@ -14,8 +14,7 @@ const generatedExamSchema = new Schema({
   },
   exam: [
     { 
-      question: 
-      {
+      question: {
         type: Schema.Types.ObjectId,
         ref: 'exam'
       },
@@ -29,12 +28,8 @@ const generatedExamSchema = new Schema({
   dateStarted: {
     type: Date
   },
-  status: String, //completed, pending,
-  timeRemaining: String, //if not completed,
-  score: {
-    points: Number,
-    dateFinished: Date
-  }
+  status: String, //completed, pending, 
+  timeRemaining: String
 });
 
 // Create a model

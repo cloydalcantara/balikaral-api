@@ -1,6 +1,9 @@
 const JWT = require('jsonwebtoken');
 const Model = require('../models/exam-management');
 const ExamType = require('../models/exam-type-management')
+const User = require('../models/user')
+const GeneratedExam = require('../models/generated-exam')
+const Result = require('../models/examination-result')
 const { JWT_SECRET } = require('../configuration');
 const csvtojson = require('csvtojson')
 const rquery = require('mongoose-query-random')
@@ -126,7 +129,78 @@ module.exports = {
     res.json({data: update})
   },
   //for PRE - TEST
-  fetchExam: async( req, res, next ) => { 
+  fetchExam: async( req, res, next ) => {
+    const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"learningStrand"}).exec()
+
+    await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
+      if (err) throw err;
+      const easy = data
+      Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.difficulty.medium,true, function(err, data){
+        if (err) throw err;
+        const medium = data
+        Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.difficulty.hard, true, function(err, data){
+          if (err) throw err;
+          const hard = data
+          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
+        })
+      })
+    });
+  },
+  fetchAdaptiveTest: async ( req, res, next ) => {
+    const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"learningStrand"}).exec()
+
+    await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
+      if (err) throw err;
+      const easy = data
+      Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.difficulty.medium,true, function(err, data){
+        if (err) throw err;
+        const medium = data
+        Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.difficulty.hard, true, function(err, data){
+          if (err) throw err;
+          const hard = data
+          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
+        })
+      })
+    });
+    // const examResult = await Result.find({examiner:req.query.examinerId, status: 'completed'}).count().exec()
+    // if(examResult > 0){
+
+    //   const result = await Result.find({examiner:req.body.examinerId, status: 'completed'}).sort({date: -1}).limit(1).exec()
+    //   const examType = await ExamType.findOne({_id:req.query.examId}).exec()
+      
+    //   await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
+    //     if (err) throw err;
+    //     const easy = data
+    //     Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.difficulty.medium,true, function(err, data){
+    //       if (err) throw err;
+    //       const medium = data
+    //       Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.difficulty.hard, true, function(err, data){
+    //         if (err) throw err;
+    //         const hard = data
+    //         res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
+    //       })
+    //     })
+    //   });
+
+    // }else{ 
+    //   const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"learningStrand"}).exec()
+
+    //   await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
+    //     if (err) throw err;
+    //     const easy = data
+    //     Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.difficulty.medium,true, function(err, data){
+    //       if (err) throw err;
+    //       const medium = data
+    //       Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.difficulty.hard, true, function(err, data){
+    //         if (err) throw err;
+    //         const hard = data
+    //         res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
+    //       })
+    //     })
+    //   });
+    // }
+  },
+  fetchPostTest: async ( req, res, next ) => {
     const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"learningStrand"}).exec()
 
     await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {

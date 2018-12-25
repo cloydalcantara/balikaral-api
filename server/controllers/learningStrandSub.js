@@ -18,7 +18,7 @@ module.exports = {
         findQuery = {...findQuery, learningStrand: query.learningStrand }
       }
     }
-    const find = await Model.find(findQuery).populate({path:"learningStrand"}).exec()
+    const find = await Model.find(findQuery).populate({path:"learningStrand"}).sort([['learningStrand', -1]]).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {

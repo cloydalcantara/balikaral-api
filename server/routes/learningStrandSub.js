@@ -6,19 +6,19 @@ const { validateBody, schemas } = require('../helpers/routeHelpers');
 const learningStrandSub = require('../controllers/learningStrandSub');
 const passportJWT = passport.authenticate('jwt', { session: false });
 
-router.route('/level')
-  .post( level.add);
+router.route('/learning-strand')
+  .post( learningStrandSub.add);
 
-router.route('/level/all')
-  .get( level.fetchAll);
+router.route('/learning-strand/all')
+  .get( learningStrandSub.fetchAll);
 
-router.route('/level/:id')
-  .get( level.fetchSingle);
+router.route('/learning-strand/:id')
+  .get( learningStrandSub.fetchSingle);
 
-router.route('/level/delete/:id')
-  .delete( level.delete);
+router.route('/learning-strand/delete/:id')
+  .delete( learningStrandSub.delete);
 
-router.route('/level/update/:id')
-  .put( level.update);
+router.route('/learning-strand/update/:id')
+  .put( learningStrandSub.update);
 
 module.exports = router;
