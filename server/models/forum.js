@@ -17,7 +17,17 @@ const forumSchema = new Schema({
     description: String,
     image: String
   },
-  comments: [] // comment_data, date and time
+  datePosted: Date,
+  comments: [
+    {
+      user: { 
+          type: Schema.Types.ObjectId,
+          ref: "user" 
+      },
+      dateComment: Date,
+      comment: String
+    }
+  ] // comment_data, date and time
 });
 
 // Create a model

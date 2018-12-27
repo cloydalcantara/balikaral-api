@@ -1,5 +1,5 @@
 const JWT = require('jsonwebtoken');
-const Model = require('../models/level');
+const Model = require('../models/examination-result');
 const { JWT_SECRET } = require('../configuration');
 
 module.exports = {
