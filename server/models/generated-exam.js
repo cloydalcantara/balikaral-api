@@ -17,8 +17,10 @@ const generatedExamSchema = new Schema({
       answer: String
     }
   ],
+
+  score: Number,
   
-  percentagePerlearningStrand:[
+  percentagePerLearningStrand:[
     {
       learningStrand: { 
         type: Schema.Types.ObjectId,

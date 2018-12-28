@@ -11,11 +11,11 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-    const find = await Model.find({}).exec()
+    const find = await Model.find({}).populate({path:"learningStrand"}).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate({path:"learningStrand"}).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {

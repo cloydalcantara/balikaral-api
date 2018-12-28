@@ -12,6 +12,10 @@ const forumSchema = new Schema({
   description:{
     type: String
   },
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    ref: "user" 
+  },
   initial_post: {
     title: String,
     description: String,

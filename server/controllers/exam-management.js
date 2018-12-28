@@ -139,15 +139,14 @@ module.exports = {
     const fetchExamType = await ExamType.findOne({ _id: req.query.examId}).populate({path:"level"}).exec()
 
     if(checkexamResult.length == 1){
-      res.json({message: "You've already passed the examination! Please proceed to Post examination!"})
+      res.json({status: true})
     }
     let learningStrandId = []
 
-    console.log(examResult)
-
     if(examResult.length > 0){//retake
       //fetch learningStrandId from generatedExam.percentagePerLearningStrand
-      let failedLearningStrand = examResult.percentagePerLearningStrand.filter((attr)=>{
+      
+      let failedLearningStrand = examResult[examResult.length - 1].percentagePerLearningStrand.filter((attr)=>{
         return attr.percentage < 90
       })
       failedLearningStrand.map((attr)=>{
@@ -171,7 +170,7 @@ module.exports = {
         Model.find({ "level": {$eq: fetchExamType.level}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.hard, true, function(err, data){
           if (err) throw err;
           const hard = data
-          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
+          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType, status: false})
         })
       })
     });
