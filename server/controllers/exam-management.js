@@ -306,7 +306,7 @@ module.exports = {
         })
       });
     }
-  },
+  },  
   fetchExerciseExam: async( req, res, next ) => {
     await Model.find({ learningStrand:req.params.learningStrand }).random(1, true, function(err, data){
       if (err) throw err;

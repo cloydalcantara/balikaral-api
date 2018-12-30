@@ -58,12 +58,7 @@ const userSchema = new Schema({
     lifeStatus: String,
 
     gender: String,
-    about: [
-      { 
-        title: String,
-        description: String
-      }
-    ]
+    about: String
   }
 });
 

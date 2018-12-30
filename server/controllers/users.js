@@ -78,7 +78,14 @@ module.exports = {
   },
 
   fetchAll: async (req, res, next) => {
-    const find = await User.find({}).exec()
+    let findQuery = {}
+    if(req.query){
+      let query = req.query
+      if(query.type){
+        findQuery = {...findQuery, "local.userType": query.type}
+      }
+    }
+    const find = await User.find(findQuery).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
@@ -94,13 +101,26 @@ module.exports = {
   updatePersonalInfo: async (req, res, next) => {
     const data = {
       personalInformation:{
+        image: req.body.image,
+
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         middleName: req.body.middleName,
+
         houseNoStreet: req.body.houseNoStreet,
         barangay: req.body.barangay,
         city: req.body.city,
-        province: req.body.province
+        province: req.body.province,
+
+
+        learningCenter: req.body.learningCenter,
+        gradeLevel: req.body.gradeLevel,
+        reasongForStopping: req.body.reasongForStopping,
+        lifeStatus: req.body.lifeStatus,
+
+        gender: req.body.gender,
+
+        about: req.body.about
       }
     }
     
@@ -139,10 +159,30 @@ module.exports = {
   updatePicture: async (req, res, next) => {
     const data = {
       personalInformation: {
-        image: req.file.filename
+        image: req.file.filename,
+
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        middleName: req.body.middleName,
+
+        houseNoStreet: req.body.houseNoStreet,
+        barangay: req.body.barangay,
+        city: req.body.city,
+        province: req.body.province,
+
+
+        learningCenter: req.body.learningCenter,
+        gradeLevel: req.body.gradeLevel,
+        reasongForStopping: req.body.reasongForStopping,
+        lifeStatus: req.body.lifeStatus,
+
+        gender: req.body.gender,
+
+        about: req.body.about
+
       }
     }
-    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   }
 }

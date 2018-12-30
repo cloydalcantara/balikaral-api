@@ -24,7 +24,7 @@ module.exports = {
         findQuery = {...findQuery, status: query.status }
       }
     }
-    const find = await Model.find(findQuery).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
+    const find = await Model.find(findQuery).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"},{path:"exam.question.learningStrand"}]).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {

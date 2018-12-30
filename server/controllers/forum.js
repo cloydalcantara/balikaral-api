@@ -7,11 +7,11 @@ module.exports = {
     let postData = {
       forum: req.body.forum,
       description: req.body.description,
-      initial_post: {
-        title: req.body.title,
-        description: req.body.description,
-        image: req.files.image[0].filename
-      }
+      title: req.body.title,
+      createdBy: req.body.createdBy,
+      datePosted: req.body.datePosted,
+      description: req.body.description,
+      image: req.files.image ? req.files.image[0].filename : null,
     }
 
     const data = new Model(postData)
@@ -20,11 +20,15 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-    const find = await Model.find({}).exec()
+    const find = await Model.find({}).populate([{path:"forum"},{path:"createdBy"}, {path:"comments.user"}]).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"forum"},{path:"createdBy"}, {path:"comments.user"}]).exec()
+    res.json({data: find})
+  },
+  fetchByManagement: async (req, res, next) => {
+    const find = await Model.find({ forum: req.params.id}).populate([{path:"forum"},{path:"createdBy"}, {path:"comments.user"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {

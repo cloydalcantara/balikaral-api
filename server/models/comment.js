@@ -3,24 +3,23 @@ const bcrypt = require('bcryptjs');
 const Schema = mongoose.Schema;
 
 // Create a schema
-const forumSchema = new Schema({
+const commentSchema = new Schema({
   //student and teachers can post and comment in this group.
   forum:{
     type: Schema.Types.ObjectId,
-    ref: "managementForum"
+    ref: "forum"
   },
-  createdBy: {
-    type: Schema.Types.ObjectId,
-    ref: "user" 
+  
+  user: { 
+      type: Schema.Types.ObjectId,
+      ref: "user" 
   },
-  title: String,
-  description: String,
-  image: String,
-  datePosted: Date,
+  dateComment: Date,
+  comment: String
 });
 
 // Create a model
-const Forum = mongoose.model('forum', forumSchema);
+const Comment = mongoose.model('comment', commentSchema);
 
 // Export the model
-module.exports = Forum;
+module.exports = Comment;
