@@ -12,6 +12,9 @@ router.route('/learning-strand')
 router.route('/learning-strand/all')
   .get( LearningStrandController.fetchAll);
 
+router.route('/learning-strand/fetchall')
+  .get( LearningStrandController.fetchAllWithQuestion);
+
 router.route('/learning-strand/:id')
   .get( LearningStrandController.fetchSingle);
 
