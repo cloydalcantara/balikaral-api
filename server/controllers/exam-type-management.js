@@ -27,7 +27,7 @@ module.exports = {
     })
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).populate({path:"learningStrand"}).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate({path:"level"}).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {

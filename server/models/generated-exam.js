@@ -4,10 +4,6 @@ const Schema = mongoose.Schema;
 
 // Create a schema
 const generatedExamSchema = new Schema({
-  learningStrand: {
-    type: Schema.Types.ObjectId,
-    ref: 'learningStrand'
-  },
   examType: {
     type: Schema.Types.ObjectId,
     ref: 'examType'
@@ -21,6 +17,23 @@ const generatedExamSchema = new Schema({
       answer: String
     }
   ],
+
+  score: Number,
+  
+  percentagePerLearningStrand:[
+    {
+      learningStrand: { 
+        type: Schema.Types.ObjectId,
+        ref: 'learningStrand'
+      },
+      percentage: Number,
+      score: Number,
+      totalQuestion: Number
+    }
+  ],
+
+  type: String,
+
   examiner: {
     type: Schema.Types.ObjectId,
     ref: 'user'
@@ -28,7 +41,11 @@ const generatedExamSchema = new Schema({
   dateStarted: {
     type: Date
   },
+  dateFinished: {
+     type: Date
+  },
   status: String, //completed, pending, 
+
   timeRemaining: String
 });
 

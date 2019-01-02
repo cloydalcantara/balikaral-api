@@ -6,20 +6,25 @@ const Schema = mongoose.Schema;
 const examTypeSchema = new Schema({
   examType: {
     type: String,
-    required: true //pre test, adaptive test, post test
+    required: true //Pre Test, Post Test, Adaptive Test
   },
-  learningStrand: {
+  level: {
     type: Schema.Types.ObjectId,
-    ref: 'learningStrand'
+    ref: 'level'
   },
   examDescription: String,
-  difficulty: {
-    easy: Number, //ex 50
-    medium: Number, 
-    hard: Number
-  },
+  learningStrandQuestions: [
+    {
+      learningStrand: {
+        type: Schema.Types.ObjectId,
+        ref: 'learningStrand'
+      }
+    }
+  ],
+  easy: Number,
+  medium: Number,
+  hard: Number,
   examTotal: Number,
-  passingRate: Number,
   totalHours: String
 });
 

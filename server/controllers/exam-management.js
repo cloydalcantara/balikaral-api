@@ -144,29 +144,111 @@ module.exports = {
   },
   //for PRE - TEST
   fetchExam: async( req, res, next ) => {
-    const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"learningStrand"}).exec()
+    // const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"level"}).exec()
 
-    await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
+    const checkexamResult = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Completed', type: req.query.type }).exec()
+
+    const examResult = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Retake', type: req.query.type}).exec()
+
+    const fetchExamType = await ExamType.findOne({ _id: req.query.examId}).populate({path:"level"}).exec()
+
+    if(checkexamResult.length == 1){
+      res.json({status: true})
+    }
+    let learningStrandId = []
+
+    if(examResult.length > 0){//retake
+      //fetch learningStrandId from generatedExam.percentagePerLearningStrand
+      
+      let failedLearningStrand = examResult[examResult.length - 1].percentagePerLearningStrand.filter((attr)=>{
+        return attr.percentage < 90
+      })
+      failedLearningStrand.map((attr)=>{
+        learningStrandId = [...learningStrandId, attr.learningStrand]
+      })
+    }else{//new exam
+      fetchExamType.learningStrandQuestions.map((attr)=>{
+        learningStrandId = [...learningStrandId, attr.learningStrand]
+      })
+    }
+
+    console.log(learningStrandId)
+
+
+    await Model.find({ "level": {$eq: fetchExamType.level}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
       if (err) throw err;
       const easy = data
-      Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.difficulty.medium,true, function(err, data){
+      Model.find({ "level": {$eq: fetchExamType.level}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.medium,true, function(err, data){
         if (err) throw err;
         const medium = data
-        Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.difficulty.hard, true, function(err, data){
+        Model.find({ "level": {$eq: fetchExamType.level}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.hard, true, function(err, data){
           if (err) throw err;
           const hard = data
-          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
+          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType, status: false})
         })
       })
     });
+
+
+
+    // if(examResult > 0){
+    //   await Model.find({ "learningStrand": {$eq: req.query.learningStrand}, learningStrandSub: {$in: [...req.body.lesson]}, "question.difficulty":{$eq:"Easy" } }).random(req.query.easy, true, function(err, data) {
+    //     if (err) throw err;
+    //     const easy = data
+    //     Model.find({ "learningStrand": {$eq: req.query.learningStrand}, learningStrandSub: {$in: [...req.body.lesson]}, "question.difficulty":{ $eq:"Medium" } }).random(req.query.medium,true, function(err, data){
+    //       if (err) throw err;
+    //       const medium = data
+    //       Model.find({ "learningStrand": {$eq: req.query.learningStrand}, learningStrandSub: {$in: [...req.body.lesson]}, "question.difficulty":{ $eq:"Hard" } }).random(req.query.hard, true, function(err, data){
+    //         if (err) throw err;
+    //         const hard = data
+    //         res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
+    //       })
+    //     })
+    //   });
+
+    // }else{ 
+    //   const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"learningStrand"}).exec()
+
+    //   await Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, learningStrandSub: {$in: [...req.body.lesson]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.difficulty.easy, true, function(err, data) {
+    //     if (err) throw err;
+    //     const easy = data
+    //     Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, learningStrandSub: {$in: [...req.body.lesson]}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.difficulty.medium,true, function(err, data){
+    //       if (err) throw err;
+    //       const medium = data
+    //       Model.find({ "learningStrand": {$eq: fetchExamType.learningStrand}, learningStrandSub: {$in: [...req.body.lesson]}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.difficulty.hard, true, function(err, data){
+    //         if (err) throw err;
+    //         const hard = data
+    //         res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
+    //       })
+    //     })
+    //   });
+    // }
+
+
+
   },
   fetchAdaptiveTest: async ( req, res, next ) => {
     
-    const checkexamResult = await Result.find({examiner:req.query.examinerId, status: 'completed'}).count().exec()
-    const examResult = await Result.find({examiner:req.query.examinerId, status: 'retake'}).count().exec()
+    const checkexamResult = await GeneratedExam.find({examiner:req.query.examinerId, status: 'Completed'}).count().exec()
+
+    const examResult = await GeneratedExam.find({examiner:req.query.examinerId, status: 'Retake'}).count().exec()
+
+    const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"level"}).exec()
+
     if(checkexamResult == 1){
       res.json({message: "You've already passed the examination! Please proceed to Post examination!"})
     }
+    let learningStrandId = []
+    if(examResult > 0){//retake
+      //fetch from generatedExam
+
+    }else{//new exam
+
+    }
+
+
+
+
     if(examResult > 0){
       await Model.find({ "learningStrand": {$eq: req.query.learningStrand}, learningStrandSub: {$in: [...req.body.lesson]}, "question.difficulty":{$eq:"Easy" } }).random(req.query.easy, true, function(err, data) {
         if (err) throw err;
@@ -238,7 +320,7 @@ module.exports = {
         })
       });
     }
-  },
+  },  
   fetchExerciseExam: async( req, res, next ) => {
     await Model.find({ learningStrand:req.params.learningStrand }).random(1, true, function(err, data){
       if (err) throw err;

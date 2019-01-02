@@ -24,6 +24,9 @@ router.route('/forum')
 router.route('/forum/all')
   .get( forum.fetchAll);
 
+router.route('/forum/discussions/:id')
+  .get( forum.fetchByManagement);
+
 router.route('/forum/:id')
   .get( forum.fetchSingle);
 

@@ -1,5 +1,5 @@
 const JWT = require('jsonwebtoken');
-const Model = require('../models/management-forum');
+const Model = require('../models/comment');
 const { JWT_SECRET } = require('../configuration');
 
 module.exports = {
@@ -11,11 +11,15 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-    const find = await Model.find({}).populate({path:"learningStrand"}).exec()
+    const find = await Model.find({}).populate([{path:"forum"},{path:"user"}]).exec()
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).populate({path:"learningStrand"}).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"forum"},{path:"user"}]).exec()
+    res.json({data: find})
+  },
+  fetchByForum: async (req, res, next) => {
+    const find = await Model.find({forum:req.params.id}).populate([{path:"forum"},{path:"user"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {
