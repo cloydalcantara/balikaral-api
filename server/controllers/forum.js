@@ -20,7 +20,10 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-    const find = await Model.find({}) .skip(skip).limit(10).exec()
+    const count = await Model.find({}).count().exec()
+    const pageCount = Math.ceil(count / 10)
+    const skip = (parseInt(req.query.page) - 1) * 10 
+    const find = await Model.find({}).skip(skip).limit(10).exec()
     res.json({
       data: find,
       currentPage: parseInt(req.query.page),
@@ -34,6 +37,21 @@ module.exports = {
   fetchSingle: async (req, res, next) => {
     const find = await Model.findOne({_id:req.params.id}).exec()
     res.json({data: find})
+  },
+  fetchByManagement: async (req, res, next) => {
+    const count =  await Model.find({forum:req.params.id}).count().exec()
+    const pageCount = Math.ceil(count / 10)
+    const skip = (parseInt(req.query.page) - 1) * 10 
+    const find =  await Model.find({forum:req.params.id}).skip(skip).limit(10).exec()
+    res.json({
+      data: find,
+      currentPage: parseInt(req.query.page),
+      previousPage: (parseInt(req.query.page) - 1 <= 0 ? null : parseInt(req.query.page) - 1),
+      nextPage: (parseInt(count) > 10 && parseInt(req.query.page) != pageCount ? parseInt(req.query.page) + 1 : null ),
+      perPage: 10,
+      pageCount: pageCount,
+      totalCount: count
+    })
   },
   delete: async (req, res, next) => {
     const remove = await Model.remove({_id:req.params.id}).exec()

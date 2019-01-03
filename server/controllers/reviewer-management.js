@@ -36,8 +36,20 @@ module.exports = {
         findQuery = {...findQuery, learningStrand: query.learningStrand }
       }
     }
-    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"}]).exec()
-    res.json({data: find})
+    const count = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"}]).count().exec()
+    const pageCount = Math.ceil(count / 10)
+    const skip = (parseInt(req.query.page) - 1) * 10
+    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"}]).skip(skip).limit(10).exec()
+      res.json({
+        data: find,
+        currentPage: parseInt(req.query.page),
+        previousPage: (parseInt(req.query.page) - 1 <= 0 ? null : parseInt(req.query.page) - 1),
+        nextPage: (parseInt(count) > 10 && parseInt(req.query.page) != pageCount ? parseInt(req.query.page) + 1 : null ),
+        perPage: 10,
+        pageCount: pageCount,
+        totalCount: count
+    })
+   
   },
   fetchSingle: async (req, res, next) => {
     const find = await Model.findOne({_id:req.params.id}).populate([{path:"uploader"},{path:"learningStrand"},{path:"validator.user"}]).exec()

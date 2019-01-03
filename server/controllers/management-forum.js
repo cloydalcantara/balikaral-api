@@ -11,7 +11,20 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
+    const count = await Model.find({}).populate({path:"learningStrand"}).count().exec()
+    const pageCount = Math.ceil(count / 10)
+    const skip = (parseInt(req.query.page) - 1) * 10 
     const find = await Model.find({}).populate({path:"learningStrand"}).exec()
+    res.json({
+      data: find,
+      currentPage: parseInt(req.query.page),
+      previousPage: (parseInt(req.query.page) - 1 <= 0 ? null : parseInt(req.query.page) - 1),
+      nextPage: (parseInt(count) > 10 && parseInt(req.query.page) != pageCount ? parseInt(req.query.page) + 1 : null ),
+      perPage: 10,
+      pageCount: pageCount,
+      totalCount: count
+    })
+    
     res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {

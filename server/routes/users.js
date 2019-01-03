@@ -49,6 +49,9 @@ router.route('/user/update-account-info/:id')
 router.route('/user/disable/:id')
   .put( UsersController.disable);
 
+router.route('/user/update-pre-test/:id')
+  .put( UsersController.updatePreTest);
+
 router.route('/user/update-profile-picture/:id')
   .put( upload, UsersController.updatePicture);
 

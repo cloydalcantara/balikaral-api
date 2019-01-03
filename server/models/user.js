@@ -40,8 +40,8 @@ const userSchema = new Schema({
       lowercase: true
     }
   },
-  userExp: {
-    hadPreTest: false,
+  userSettings: {
+    hadPreTest: Boolean,
   },
   personalInformation:{
     firstName: { type: String },

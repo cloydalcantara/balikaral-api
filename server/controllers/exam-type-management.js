@@ -11,11 +11,10 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-    const count = await Model.find({}).populate({path:"learningStrand"}).count().exec()
+    const count = await Model.find({examType: {$ne: 'Pre Test'}}).populate({path:"level"}).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-
-    const find = await Model.find({}).populate({path:"learningStrand"}).skip(skip).limit(10).exec()
+    const find = await Model.find({examType: {$ne: 'Pre Test'}}).populate({path:"level"}).skip(skip).limit(10).exec()
     res.json({
       data: find,
       currentPage: parseInt(req.query.page),
@@ -25,6 +24,10 @@ module.exports = {
       pageCount: pageCount,
       totalCount: count
     })
+  },
+  fetchPreTest: async (req, res, next) => {
+    const find = await Model.find({examType: {$eq: 'Pre Test'}}).populate({path:"level"}).exec()
+    res.json({ data: find })
   },
   fetchSingle: async (req, res, next) => {
     const find = await Model.findOne({_id:req.params.id}).populate({path:"level"}).exec()

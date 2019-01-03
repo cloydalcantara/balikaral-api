@@ -40,8 +40,8 @@ router.route('/exam-management/all')
 router.route('/exam-management/random')
   .get( examManagement.fetchExam);
 
-router.route('/exam-management/adaptive-test')
-  .get(examManagement.fetchAdaptiveTest)
+router.route('/exam-management/pre-test')
+  .get(examManagement.fetchPreTest)
 
 router.route('/exam-management/exercise/:learningStrand')
   .get( examManagement.fetchExerciseExam);
