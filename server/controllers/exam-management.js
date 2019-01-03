@@ -12,7 +12,6 @@ module.exports = {
     let addData = {
       level: req.body.level,
       learningStrand: req.body.learningStrand,
-      learningStrandSub: req.body.learningStrandSub,
       uploader: req.body.uploader,
       validation: req.body.validation,
        question:{
@@ -41,6 +40,10 @@ module.exports = {
         difficulty: req.body.difficulty
       },
       
+    }
+
+    if(req.body.learningStrandSub){
+      data.learningStrandSub = req.body.learningStrandSub
     }
 
     const data = new Model(addData)
@@ -96,7 +99,6 @@ module.exports = {
     res.json({message: "Deleted!"})
   },
   update: async (req, res, next) => {
-    console.log(req.body.learningStrandSub)
     let updateData = {
       level: req.body.level,
       learningStrand: req.body.learningStrand,
