@@ -31,8 +31,8 @@ const photo = multer({ storage: photostorage })
 
 router.route('/exam-management')
   .post( photo.fields([{ name: 'questionImage', maxCount: 1 },
-  { name: 'aImage', maxCount: 1 },{ name: 'bImage', maxCount: 1 },
-  { name: 'cImage', maxCount: 1 },{ name: 'dImage', maxCount: 1 }]), examManagement.add);
+    { name: 'aImage', maxCount: 1 },{ name: 'bImage', maxCount: 1 },
+    { name: 'cImage', maxCount: 1 },{ name: 'dImage', maxCount: 1 }]), examManagement.add);
 
 router.route('/exam-management/all')
   .get( examManagement.fetchAll);

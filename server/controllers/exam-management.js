@@ -71,8 +71,22 @@ module.exports = {
         findQuery = {...findQuery, level: query.level }
       }
     }
-   const find = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).exec()
-    res.json({data: find})
+
+    
+    const count = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).count().exec()
+    const pageCount = Math.ceil(count / 10)
+    const skip = (parseInt(req.query.page) - 1) * 10
+    console.log(skip)
+    const find = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).skip(skip).limit(10).exec()
+      res.json({
+        data: find,
+        currentPage: parseInt(req.query.page),
+        previousPage: (parseInt(req.query.page) - 1 <= 0 ? null : parseInt(req.query.page) - 1),
+        nextPage: (parseInt(count) > 10 && parseInt(req.query.page) != pageCount ? parseInt(req.query.page) + 1 : null ),
+        perPage: 10,
+        pageCount: pageCount,
+        totalCount: count
+    })
   },
   fetchSingle: async (req, res, next) => {
     const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"learningStrand"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).exec()

@@ -12,7 +12,6 @@ module.exports = {
     res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
-
     let findQuery = {}
     if(req.query){
       let query = req.query
@@ -20,8 +19,42 @@ module.exports = {
         findQuery = {...findQuery, level: query.level }
       }
     }
-    const find = await Model.find(findQuery).populate({path:"level"}).sort([['level', -1]]).exec()
-    res.json({data: find})
+    const count = await Model.find(findQuery).populate().count().exec()
+    const pageCount = Math.ceil(count / 10)
+    const skip = (parseInt(req.query.page) - 1) * 10
+
+    
+    const find = await Model.find(findQuery).populate({path:"level"}).sort([['level', -1]]).skip(skip).limit(10).exec()
+    res.json({data: find,
+      currentPage: parseInt(req.query.page),
+      previousPage: (parseInt(req.query.page) - 1 <= 0 ? null : parseInt(req.query.page) - 1),
+      nextPage: (parseInt(count) > 10 && parseInt(req.query.page) != pageCount ? parseInt(req.query.page) + 1 : null ),
+      perPage: 10,
+      pageCount: pageCount,
+      totalCount: count
+    })
+  },
+  fetchAllWithQuestion: async ( req, res, next ) => {
+    const count = await Model.find().populate().count().exec()
+    const pageCount = Math.ceil(count / 10)
+    const skip = (parseInt(req.query.page) - 1) * 10
+
+    const find = await Model.aggregate([
+      {
+        $lookup:
+          {
+            from: "exams",
+            localField: "_id",
+            foreignField: "learningStrand",
+            as: "questions"
+          }
+     },
+     { $skip : skip },
+     { $limit : 10 }
+    ]).exec((err, data) => {
+        if (err) throw err;
+        console.log(data);
+    })
   },
   fetchSingle: async (req, res, next) => {
     const find = await Model.findOne({_id:req.params.id}).exec()
