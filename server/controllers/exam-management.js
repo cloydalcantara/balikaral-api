@@ -96,6 +96,7 @@ module.exports = {
     res.json({message: "Deleted!"})
   },
   update: async (req, res, next) => {
+    console.log(req.body.learningStrandSub)
     let updateData = {
       level: req.body.level,
       learningStrand: req.body.learningStrand,
