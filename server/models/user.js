@@ -40,6 +40,9 @@ const userSchema = new Schema({
       lowercase: true
     }
   },
+  userExp: {
+    hadPreTest: false,
+  },
   personalInformation:{
     firstName: { type: String },
     lastName: { type: String },

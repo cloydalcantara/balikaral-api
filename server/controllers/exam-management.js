@@ -138,14 +138,14 @@ module.exports = {
 
     const fetchExamType = await ExamType.findOne({ _id: req.query.examId}).populate({path:"level"}).exec()
 
+    let learningStrandId = []
+
     if(checkexamResult.length == 1){
       res.json({status: true})
     }
-    let learningStrandId = []
-
-    if(examResult.length > 0){//retake
+    
+    if(examResult.length > 0 && req.query.type !== 'Pre Test'){//retake
       //fetch learningStrandId from generatedExam.percentagePerLearningStrand
-      
       let failedLearningStrand = examResult[examResult.length - 1].percentagePerLearningStrand.filter((attr)=>{
         return attr.percentage < 90
       })
