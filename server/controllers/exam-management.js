@@ -129,7 +129,7 @@ module.exports = {
     }
 
     if(req.body.learningStrandSub){
-      updateData.learningStrandSub = req.body.learningStrandSub,
+      updateData.learningStrandSub = req.body.learningStrandSub
     }
 
     const data = updateData
