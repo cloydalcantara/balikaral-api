@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single('image')
 
 router.route('/signup')
-  .post(validateBody(schemas.authSchema), UsersController.signUp);
+  .post( UsersController.signUp);
 
 router.route('/signin')
   .post(validateBody(schemas.authSchema), passportSignIn, UsersController.signIn);
