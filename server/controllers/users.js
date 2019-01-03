@@ -40,11 +40,7 @@ module.exports = {
         houseNoStreet:houseNoStreet,
         barangay:barangay,
         city:city,
-        province:province,
-        zipcode: zipcode
-      },
-      preTest: {
-        learningStrand: [] // score and learningStrand
+        province:province
       }
     });
 
@@ -153,6 +149,15 @@ module.exports = {
       }
     }
     
+    const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    res.json({data: update})
+  },
+  updatePreTest: async (req, res, next) => {
+    const data = {
+      userSettings:{
+        disabled: req.body.hadPreTest
+      }
+    }
     const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
