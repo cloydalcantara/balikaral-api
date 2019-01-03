@@ -99,7 +99,6 @@ module.exports = {
     let updateData = {
       level: req.body.level,
       learningStrand: req.body.learningStrand,
-      learningStrandSub: req.body.learningStrandSub,
       uploader: req.body.uploader,
       validation: req.body.validation,
        question:{
@@ -127,6 +126,10 @@ module.exports = {
         answer: req.body.answer,
         difficulty: req.body.difficulty
       }
+    }
+
+    if(req.body.learningStrandSub){
+      updateData.learningStrandSub = req.body.learningStrandSub,
     }
 
     const data = updateData
