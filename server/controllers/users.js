@@ -16,7 +16,7 @@ module.exports = {
   signUp: async (req, res, next) => {
     console.log("req.body",req.body)
     const { email, password, firstName, lastName, middleName, houseNoStreet,
-    barangay, city, province, zipcode, userType } = req.value.body;
+    barangay, city, province, zipcode, userType } = req.body;
     
     // Check if there is a user with the same email
     const foundUser = await User.findOne({ "local.email": email });
@@ -40,7 +40,11 @@ module.exports = {
         houseNoStreet:houseNoStreet,
         barangay:barangay,
         city:city,
-        province:province
+        province:province,
+        zipcode: zipcode
+      },
+      preTest: {
+        learningStrand: [] // score and learningStrand
       }
     });
 
@@ -81,21 +85,8 @@ module.exports = {
         findQuery = {...findQuery, "local.userType": query.type}
       }
     }
-
-    const count = await User.find(findQuery).count().exec()
-    const pageCount = Math.ceil(count / 10)
-    const skip = (parseInt(req.query.page) - 1) * 10
-    const find =  await User.find(findQuery).skip(skip).limit(10).exec()
-      res.json({
-        data: find,
-        currentPage: parseInt(req.query.page),
-        previousPage: (parseInt(req.query.page) - 1 <= 0 ? null : parseInt(req.query.page) - 1),
-        nextPage: (parseInt(count) > 10 && parseInt(req.query.page) != pageCount ? parseInt(req.query.page) + 1 : null ),
-        perPage: 10,
-        pageCount: pageCount,
-        totalCount: count
-    })
-
+    const find = await User.find(findQuery).exec()
+    res.json({data: find})
   },
   fetchSingle: async (req, res, next) => {
     const find = await User.findOne({_id:req.params.id}).exec()
@@ -159,16 +150,6 @@ module.exports = {
     const data = {
       local:{
         disabled: req.body.disabled
-      }
-    }
-    
-    const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
-  },
-  updatePreTest: async (req, res, next) => {
-    const data = {
-      userSettings:{
-        hadPreTest: req.body.hadPreTest
       }
     }
     

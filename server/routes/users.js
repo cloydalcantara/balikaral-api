@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }).single('image')
 
 router.route('/signup')
-  .post(validateBody(schemas.authSchema), UsersController.signUp);
+  .post( UsersController.signUp);
 
 router.route('/signin')
   .post(validateBody(schemas.authSchema), passportSignIn, UsersController.signIn);
@@ -49,8 +49,8 @@ router.route('/user/update-account-info/:id')
 router.route('/user/disable/:id')
   .put( UsersController.disable);
 
-router.route('/user/update-pre-test/:id')
-  .put( UsersController.updatePreTest);
+// router.route('/user/update-pre-test/:id')
+//   .put( UsersController.updatePreTest);
 
 router.route('/user/update-profile-picture/:id')
   .put( upload, UsersController.updatePicture);

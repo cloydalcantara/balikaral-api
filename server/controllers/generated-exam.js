@@ -43,6 +43,9 @@ module.exports = {
     const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
     res.json({data: find})
   },
+  fetchAnalyticsPerStudent: async( req, res, next ) => {
+    
+  },
   checkStatus: async (req, res, next) => {
     const find = await Model.find({examiner:req.params.examiner, "status": {$eq: "Pending"}}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
     res.json({data: find})
