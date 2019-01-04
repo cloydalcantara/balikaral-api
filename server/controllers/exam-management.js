@@ -28,7 +28,7 @@ module.exports = {
           },
           c:{
             image: req.files.cImage ? req.files.cImage[0].filename : null,
-            details: req.body.aDetails
+            details: req.body.cDetails
           },
           d:{
             image: req.files.dImage ? req.files.dImage[0].filename : null,
@@ -118,7 +118,7 @@ module.exports = {
           },
           c:{
             image: req.files.cImage ? req.files.cImage[0].filename : req.body.cImageText,
-            details: req.body.aDetails
+            details: req.body.cDetails
           },
           d:{
             image: req.files.dImage ? req.files.dImage[0].filename : req.body.dImageText,

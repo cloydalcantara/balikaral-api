@@ -40,11 +40,7 @@ module.exports = {
         houseNoStreet:houseNoStreet,
         barangay:barangay,
         city:city,
-        province:province,
-        zipcode: zipcode
-      },
-      preTest: {
-        learningStrand: [] // score and learningStrand
+        province:province
       }
     });
 
@@ -85,8 +81,20 @@ module.exports = {
         findQuery = {...findQuery, "local.userType": query.type}
       }
     }
-    const find = await User.find(findQuery).exec()
-    res.json({data: find})
+    
+    const count = await await User.find(findQuery).count().exec()
+    const pageCount = Math.ceil(count / 10)
+    const skip = (parseInt(req.query.page) - 1) * 10
+    const find = await await User.find(findQuery).skip(skip).limit(10).exec()
+      res.json({
+        data: find,
+        currentPage: parseInt(req.query.page),
+        previousPage: (parseInt(req.query.page) - 1 <= 0 ? null : parseInt(req.query.page) - 1),
+        nextPage: (parseInt(count) > 10 && parseInt(req.query.page) != pageCount ? parseInt(req.query.page) + 1 : null ),
+        perPage: 10,
+        pageCount: pageCount,
+        totalCount: count
+    })
   },
   fetchSingle: async (req, res, next) => {
     const find = await User.findOne({_id:req.params.id}).exec()
@@ -153,6 +161,15 @@ module.exports = {
       }
     }
     
+    const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    res.json({data: update})
+  },
+  updatePreTest: async (req, res, next) => {
+    const data = {
+      userSettings:{
+        disabled: req.body.hadPreTest
+      }
+    }
     const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
