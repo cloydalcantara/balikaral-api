@@ -33,5 +33,6 @@ app.use('/balikaral', require('./routes/forum'));
 app.use('/balikaral', require('./routes/comment'));
 app.use('/balikaral', require('./routes/management-forum'));
 app.use('/balikaral', require('./routes/examination-result'));
+app.use('/balikaral', require('./routes/landing-page'));
 
 module.exports = app;

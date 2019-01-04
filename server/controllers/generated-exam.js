@@ -1,5 +1,6 @@
 const JWT = require('jsonwebtoken');
 const Model = require('../models/generated-exam');
+const User = require('../models/user')
 const { JWT_SECRET } = require('../configuration');
 
 module.exports = {
@@ -43,8 +44,43 @@ module.exports = {
     const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
     res.json({data: find})
   },
-  fetchAnalyticsPerStudent: async( req, res, next ) => {
-    
+  // examType: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'examType'
+  // }
+  // score: Number,
+  // percentagePerLearningStrand:[
+  //   {
+  //     learningStrand: { 
+  //       type: Schema.Types.ObjectId,
+  //       ref: 'learningStrand'
+  //     },
+  //     percentage: Number,
+  //     score: Number,
+  //     totalQuestion: Number
+  //   }
+  // ],
+  // type: String,
+  // examiner: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'user'
+  // },
+  // dateStarted
+  // dateFinished
+  // status: String, //completed, pending, 
+  // timeRemaining: String
+  fetchAnalyticsOfPassers: async( req, res, next ) => {
+    const count = await User.find({"local.userType":req.query.userType}).count().exec() // userType is yung sa Learner
+    //fetch natin yung mga nakapasa na. Per examType. Siguro naka donut to. Para ex. 60% passed out of 40% ongoing
+    const find = await Model.find({examType:req.query.examType,status:req.query.status}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
+    res.json({data: find, totalLearner: count})
+  },
+  fetchAnalyticsOfPerLearner: async( req, res, next ) => {
+    // Display mo sa Pre-Test ay Percentage lang.
+    // Display mo sa Adaptive yung Graph. Kung nakailang take. tapos kung pataas ba ang percentage nya.
+    // Same sa Adaptive yung sa POST
+    const find = await Model.find({examType:req.query.examType,status:req.query.status,examiner: req.query.examiner}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
+    res.json({data: find})
   },
   checkStatus: async (req, res, next) => {
     const find = await Model.find({examiner:req.params.examiner, "status": {$eq: "Pending"}}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
