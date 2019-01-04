@@ -25,10 +25,10 @@ module.exports = {
         findQuery = {...findQuery, status: query.status }
       }
     }
-    const count = await Model.find(findQuery).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"},{path:"exam.question.learningStrand"}]).count().exec()
+    const count = await Model.find(findQuery).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"},{path:"exam.question.learningStrand"},{path:"percentagePerLearningStrand.learningStrand"}]).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-    const find = await Model.find(findQuery).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"},{path:"exam.question.learningStrand"}]).skip(skip).limit(10).exec()
+    const find = await Model.find(findQuery).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"},{path:"exam.question.learningStrand"},{path:"percentagePerLearningStrand.learningStrand"}]).skip(skip).limit(10).exec()
       res.json({
         data: find,
         currentPage: parseInt(req.query.page),
@@ -83,12 +83,34 @@ module.exports = {
     res.json({data: find})
   },
 
-  fetchCountOfExamType: async( req, res, next ) => {
-   
-    const completed = await Model.find({examType:req.query.examType,status:'Completed'}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).count().exec()
-    const retake = await Model.find({examType:req.query.examType,status:'Retake'}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).count().exec()
-    const pending = await Model.find({examType:req.query.examType,status:'Pending'}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).count().exec()
-    const total = await Model.find({examType:req.query.examType}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).count().exec()
+  fetchCountOfExamType: async( req, res, next ) => { 
+    let completedQuery = {
+      examType: req.query.examType,
+      status: 'Completed'
+    }
+    let retakeQuery = {
+      examType: req.query.examType,
+      status: 'Retake'
+    }
+    let pendingQuery = {
+      examType: req.query.examType,
+      status: 'Pending'
+    }
+    let totalQuery = {
+      examType: req.query.examType
+    }
+    if(req.query.examiner){
+      completedQuery = {...completedQuery, examiner: req.query.examiner}
+      retakeQuery = {...retakeQuery, examiner: req.query.examiner}
+      pendingQuery = {...pendingQuery, examiner: req.query.examiner}
+      totalQuery = {...totalQuery, examiner: req.query.examiner}
+    }
+    
+
+    const completed = await Model.find(completedQuery).count().exec()
+    const retake = await Model.find(retakeQuery).count().exec()
+    const pending = await Model.find(pendingQuery).count().exec()
+    const total = await Model.find(totalQuery).count().exec()
 
     res.json({completed: completed, retake: retake, pending: pending, total: total})
   },

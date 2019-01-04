@@ -12,6 +12,9 @@ router.route('/generated-exam')
 router.route('/generated-exam/all')
   .get( generatedExam.fetchAll);
 
+router.route('/generated-exam/exam-count')
+  .get( generatedExam.fetchCountOfExamType);
+
 router.route('/generated-exam/:id')
   .get( generatedExam.fetchSingle);
 
@@ -24,8 +27,7 @@ router.route('/generated-exam/delete/:id')
 router.route('/generated-exam/check-status/:examiner')
   .get( generatedExam.checkStatus);
 
-router.route('/generated-exam/stat-count')
-  .get( generatedExam.fetchCountOfExamType);
+
 
   
 
