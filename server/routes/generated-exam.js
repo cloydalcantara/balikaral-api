@@ -24,4 +24,9 @@ router.route('/generated-exam/delete/:id')
 router.route('/generated-exam/check-status/:examiner')
   .get( generatedExam.checkStatus);
 
+router.route('/generated-exam/stat-count')
+  .get( generatedExam.fetchCountOfExamType);
+
+  
+
 module.exports = router;

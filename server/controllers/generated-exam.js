@@ -82,6 +82,18 @@ module.exports = {
     const find = await Model.find({examType:req.query.examType,status:req.query.status,examiner: req.query.examiner}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
     res.json({data: find})
   },
+
+  fetchCountOfExamType: async( req, res, next ) => {
+   
+    const completed = await Model.find({examType:req.query.examType,status:'Completed'}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).count().exec()
+    const retake = await Model.find({examType:req.query.examType,status:'Retake'}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).count().exec()
+    const pending = await Model.find({examType:req.query.examType,status:'Pending'}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).count().exec()
+    const total = await Model.find({examType:req.query.examType}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).count().exec()
+
+    res.json({completed: completed, retake: retake, pending: pending, total: total})
+  },
+
+
   checkStatus: async (req, res, next) => {
     const find = await Model.find({examiner:req.params.examiner, "status": {$eq: "Pending"}}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
     res.json({data: find})

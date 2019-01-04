@@ -235,22 +235,17 @@ module.exports = {
             validation: req.body.validation,
             question:{
               details : element.Details,
-              images : element.Images,
               choices:{
                 a:{
-                  image : element['A Image'],
                   details: element['A Details']
                 },
                 b:{
-                  image : element['B Image'],
                   details: element['B Details']
                 },
                 c:{
-                  image : element['C Image'],
                   details: element['C Details']
                 },
                 d:{
-                  image : element['D Image'],
                   details: element['D Details']
                 }
               },
