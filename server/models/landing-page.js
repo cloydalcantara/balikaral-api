@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 // Create a schema
 const landingPageSchema = new Schema({
-  activate: Boolean,
+  active: Boolean,
   logo: String,
   page1Description: String, //tayo na at mag balik aral description,
   page1Logo: String,

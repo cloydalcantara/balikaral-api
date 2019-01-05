@@ -70,16 +70,26 @@ module.exports = {
     const skip = (parseInt(req.query.page) - 1) * 10
 
     const find = await Model.aggregate([
-      
+      {
+        $unwind: "$percentagePerLearningStrand"
+      },
       {
         $lookup:
           {
             from: "generatedExams",
             localField: "_id",
-            foreignField: "exam.question.learningStrand",
+            foreignField: "_id",
             as: "learningStrandExam"
           }
       },
+      {
+          $match: { "learningStrandExam": { $ne: [] } }
+      },
+      { "$group": {
+        "_id": "$_id",
+        "learningStrandExam": { "$push": "$learningStrandExam" },
+        "percentagePerLearningStrand": { "$push": "$percentagePerLearningStrand" }
+      }}
     ]).exec((err, data) => {
         if (err) throw err;
         console.log(data);
