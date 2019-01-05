@@ -167,7 +167,7 @@ module.exports = {
   updatePreTest: async (req, res, next) => {
     const data = {
       userSettings:{
-        disabled: req.body.hadPreTest
+        hadPreTest: req.body.hadPreTest
       }
     }
     const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()

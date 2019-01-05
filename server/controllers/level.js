@@ -20,7 +20,7 @@ module.exports = {
         currentPage: parseInt(req.query.page),
         previousPage: (parseInt(req.query.page) - 1 <= 0 ? null : parseInt(req.query.page) - 1),
         nextPage: (parseInt(count) > 10 && parseInt(req.query.page) != pageCount ? parseInt(req.query.page) + 1 : null ),
-        perPage: 10,
+        perPage: 10, 
         pageCount: pageCount,
         totalCount: count
     })
