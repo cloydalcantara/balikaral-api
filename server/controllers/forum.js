@@ -7,13 +7,12 @@ module.exports = {
     let postData = {
       forum: req.body.forum,
       description: req.body.description,
-      initial_post: {
-        title: req.body.title,
-        description: req.body.description,
-        image: req.files.image[0].filename
-      }
+      createdBy: req.body.createdBy,
+      title: req.body.title,
+      datePosted: req.body.datePosted,
+      image: req.files.image ? req.files.image[0].filename : null,
+      
     }
-
     const data = new Model(postData)
     const save = await data.save() 
     
@@ -58,6 +57,7 @@ module.exports = {
     res.json({message: "Deleted!"})
   },
   update: async (req, res, next) => {
+
     const data = req.body
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
