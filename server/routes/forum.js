@@ -34,6 +34,6 @@ router.route('/forum/delete/:id')
   .delete( forum.delete);
 
 router.route('/forum/update/:id')
-  .put( forum.update);
+  .put( photo.fields([{ name: 'image', maxCount: 1 }]), forum.update);
 
 module.exports = router;

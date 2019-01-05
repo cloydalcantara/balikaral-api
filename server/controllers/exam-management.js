@@ -157,10 +157,19 @@ module.exports = {
 
     const fetchExamType = await ExamType.findOne({ _id: req.query.examId}).populate({path:"level"}).exec()
 
+
+    const adaptiveExamType = await ExamType.find({ level: req.query.level, examType: 'Adaptive Test'}).populate({path:"level"}).exec()
+    
+    const checkIfAdaptiveTestHasPassed = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Completed', examType: adaptiveExamType[0]._id }).exec()
+    
     let learningStrandId = []
 
+    if(req.query.type === 'Post Test' && checkIfAdaptiveTestHasPassed.length === 0){
+      res.json({ status: 'Take Adaptive Test' })
+    }
+
     if(checkexamResult.length == 1){
-      res.json({status: true})
+      res.json({status: 'Passed'})
     }
     
     if(examResult.length > 0){//retake
@@ -176,16 +185,16 @@ module.exports = {
         learningStrandId = [...learningStrandId, attr.learningStrand]
       })
     }
-    await Model.find({ "level": {$eq: fetchExamType.level}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
+    await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
       if (err) throw err;
       const easy = data
-      Model.find({ "level": {$eq: fetchExamType.level}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.medium,true, function(err, data){
+      Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.medium,true, function(err, data){
         if (err) throw err;
         const medium = data
-        Model.find({ "level": {$eq: fetchExamType.level}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.hard, true, function(err, data){
+        Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.hard, true, function(err, data){
           if (err) throw err;
           const hard = data
-          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType, status: false})
+          res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType, status: 'Taking'})
         })
       })
     });
@@ -200,13 +209,13 @@ module.exports = {
       })
       console.log(learningStrandId)
    
-      Model.find({ "level": {$eq: fetchExamType.level}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
+      Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
         if (err) throw err;
         const easy = data
-        Model.find({ "level": {$eq: fetchExamType.level}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.medium,true, function(err, data){
+        Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Medium" } }).random(fetchExamType.medium,true, function(err, data){
           if (err) throw err;
           const medium = data
-          Model.find({ "level": {$eq: fetchExamType.level}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.hard, true, function(err, data){
+          Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Hard" } }).random(fetchExamType.hard, true, function(err, data){
             if (err) throw err;
             const hard = data
             res.json({easy: easy, medium: medium, hard:hard, examType:fetchExamType})
@@ -220,6 +229,13 @@ module.exports = {
       if (err) throw err;
       res.json({ data: data });
     })
+  },
+  fetchDifficultyCount: async( req, res, next ) => {
+    const easy = await Model.find({ "question.difficulty":{ $eq:"Easy" }, validation: {$eq: true} }).count().exec()
+    const medium = await Model.find({ "question.difficulty":{ $eq:"Medium" }, validation: {$eq: true} }).count().exec()
+    const hard = await Model.find({ "question.difficulty":{ $eq:"Hard" }, validation: {$eq: true} }).count().exec()
+
+    res.json({easy: easy, medium: medium, hard: hard})
   },
   upload: async( req, res, next ) => {
     await csvtojson()

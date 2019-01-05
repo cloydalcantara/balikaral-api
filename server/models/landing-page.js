@@ -6,14 +6,14 @@ const Schema = mongoose.Schema;
 const landingPageSchema = new Schema({
   active: Boolean,
   logo: String,
-  page1Description: String, //tayo na at mag balik aral description,
-  page1Logo: String,
+  pageDescription: String, //tayo na at mag balik aral description,
+  pageLogo: String,
   tungkolSaProgramaDescription: String,
   tungkolSaProgramaLogo: String,
-  contactUs: {
-      email: String,
-      contact: String
-  },
+ 
+  email: String,
+  contact: String,
+  
   facebook: String, //link
   twitter: String,
   instagram: String,

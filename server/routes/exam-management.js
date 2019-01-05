@@ -46,6 +46,9 @@ router.route('/exam-management/pre-test')
 router.route('/exam-management/exercise/:learningStrand')
   .get( examManagement.fetchExerciseExam);
 
+router.route('/exam-management/difficulty-count')
+  .get(examManagement.fetchDifficultyCount)
+
 router.route('/exam-management/:id')
   .get( examManagement.fetchSingle);
 

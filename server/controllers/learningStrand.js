@@ -64,6 +64,36 @@ module.exports = {
         })
     })
   },
+  fetchAllWithReviewer: async ( req, res, next ) => {
+    const count = await Model.find().populate().count().exec()
+    const pageCount = Math.ceil(count / 10)
+    const skip = (parseInt(req.query.page) - 1) * 10
+
+    const find = await Model.aggregate([
+      {
+        $lookup:
+          {
+            from: "reviewermanagements",
+            localField: "_id",
+            foreignField: "learningStrand",
+            as: "reviewer"
+          }
+     },
+     { $skip : skip },
+     { $limit : 10 }
+    ]).exec((err, data) => {
+        if (err) throw err;
+        res.json({
+          data: data,
+          currentPage: parseInt(req.query.page),
+          previousPage: (parseInt(req.query.page) - 1 <= 0 ? null : parseInt(req.query.page) - 1),
+          nextPage: (parseInt(count) > 10 && parseInt(req.query.page) != pageCount ? parseInt(req.query.page) + 1 : null ),
+          perPage: 10,
+          pageCount: pageCount,
+          totalCount: count
+        })
+    })
+  },
   fetchGeneratedExam: async ( req, res, next ) => {
     const count = await Model.find().populate().count().exec()
     const pageCount = Math.ceil(count / 10)

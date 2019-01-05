@@ -31,16 +31,31 @@ const photo = multer({ storage: photostorage })
 
 router.route('/landing-page')
   .post( photo.fields([{ name: 'logo', maxCount: 1 },
-  { name: 'page1Logo', maxCount: 1 },
+  { name: 'pageLogo', maxCount: 1 },
   { name: 'tungkolSaProgramaLogo', maxCount: 1 }]),landingpage.add);
 
 router.route('/landing-page/all')
   .get( landingpage.fetchAll);
 
+router.route('/landing-page/fetch-active')
+  .get( landingpage.fetchActive);
+
 router.route('/landing-page/:id')
   .get( landingpage.fetchSingle);
 
+router.route('/landing-page/delete/:id')
+  .delete( landingpage.delete);
+
 router.route('/landing-page/update/:id')
-  .put( landingpage.update);
+  .put(  photo.fields([{ name: 'logo', maxCount: 1 },
+  { name: 'pageLogo', maxCount: 1 },
+  { name: 'tungkolSaProgramaLogo', maxCount: 1 }]), landingpage.update);
+  
+router.route('/landing-page/set-active/:id')
+  .put( landingpage.setActive);
+
+
+
+
 
 module.exports = router;
