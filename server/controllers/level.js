@@ -25,6 +25,13 @@ module.exports = {
         totalCount: count
     })
   },
+  fetchWithoutPagination: async (req, res, next) => {
+    
+    const find = await Model.find({}).exec()
+      res.json({
+        data: find       
+    })
+  },
   fetchSingle: async (req, res, next) => {
     const find = await Model.findOne({_id:req.params.id}).exec()
     res.json({data: find})

@@ -225,10 +225,16 @@ module.exports = {
     })
   },
   fetchExerciseExam: async( req, res, next ) => {
-    await Model.find({ learningStrand:req.params.learningStrand }).random(1, true, function(err, data){
-      if (err) throw err;
-      res.json({ data: data });
-    })
+    const checkIfHasExam = await Model.find({ learningStrand:req.params.learningStrand }).count().exec()
+    if(checkIfHasExam > 0){
+      Model.find({ learningStrand:req.params.learningStrand }).random(1, true, function(err, data){
+        if (err) throw err;
+        res.json({ data: data });
+      })
+    }else{
+        res.json({ data: false });
+    }
+    
   },
   fetchDifficultyCount: async( req, res, next ) => {
     const easy = await Model.find({ "question.difficulty":{ $eq:"Easy" }, validation: {$eq: true} }).count().exec()

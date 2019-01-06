@@ -11,7 +11,8 @@ router.route('/level')
 
 router.route('/level/all')
   .get( level.fetchAll);
-
+router.route('/level/fetchAllWithoutPagination')
+  .get( level.fetchWithoutPagination);
 router.route('/level/:id')
   .get( level.fetchSingle);
 
