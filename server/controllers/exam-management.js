@@ -43,7 +43,7 @@ module.exports = {
     }
 
     if(req.body.learningStrandSub){
-      data.learningStrandSub = req.body.learningStrandSub
+      addData = { ...addData, learningStrandSub: req.body.learningStrandSub }
     }
 
     const data = new Model(addData)
@@ -132,7 +132,7 @@ module.exports = {
     }
 
     if(req.body.learningStrandSub){
-      updateData.learningStrandSub = req.body.learningStrandSub
+      updateData = { ...updateData, learningStrandSub: req.body.learningStrandSub }
     }
 
     const data = updateData
@@ -147,6 +147,12 @@ module.exports = {
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
+  validateMultiple: async (req, res, next) => {
+  
+    const update = await Model.updateMany({_id:{$in:[...req.body.id]}},{$set:{validation: true, validator: req.body.validator }}).exec()
+    res.json({data: update})
+  },
+
   //for PRE - TEST
   fetchExam: async( req, res, next ) => {
     // const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"level"}).exec()
@@ -252,7 +258,6 @@ module.exports = {
           let data = {
             level : req.body.level,
             learningStrand : req.body.learningStrand,
-            learningStrandSub: req.body.learningStrandSub,
             uploader: req.body.uploader,
             validation: req.body.validation,
             question:{
@@ -275,6 +280,11 @@ module.exports = {
               difficulty: element.Difficulty
             }
           }
+         if(req.body.learningStrandSub){
+            data = { ...data, learningStrandSub: req.body.learningStrandSub }
+          }
+
+
           const finalData = new Model(data)
           const insert = finalData.save()
         });

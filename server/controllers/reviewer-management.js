@@ -71,5 +71,9 @@ module.exports = {
     }
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
-  }
+  },
+   validateMultiple: async (req, res, next) => {
+    const update = await Model.updateMany({_id:{$in:[...req.body.id]}},{$set:{validation: true, validator: req.body.validator }}).exec()
+    res.json({data: update})
+  },
 }

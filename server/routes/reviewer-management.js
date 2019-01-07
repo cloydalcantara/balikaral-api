@@ -36,4 +36,6 @@ router.route('/reviewer-management/update/:id')
 router.route('/reviewer-management/validate/:id')
   .put(  reviewerManagement.validate);
 
+router.route('/reviewer-management/validate-multiple')
+  .put(  reviewerManagement.validateMultiple);
 module.exports = router;
