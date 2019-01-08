@@ -12,6 +12,9 @@ module.exports = {
       validation: req.body.validation,
       reviewerSub: req.body.reviewerSub
     }
+    if(req.body.validator){
+      rmData = { ...rmData, validator: [ { user: req.body.validator} ] }
+    }
 
     const data = new Model(rmData)
     const save = await data.save() 
@@ -36,10 +39,10 @@ module.exports = {
         findQuery = {...findQuery, learningStrand: query.learningStrand }
       }
     }
-    const count = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"}]).count().exec()
+    const count = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"validator.user"}]).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"}]).skip(skip).limit(10).exec()
+    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"validator.user"}]).skip(skip).limit(10).exec()
       res.json({
         data: find,
         currentPage: parseInt(req.query.page),

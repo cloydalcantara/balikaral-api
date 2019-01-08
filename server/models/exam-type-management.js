@@ -22,8 +22,8 @@ const examTypeSchema = new Schema({
     }
   ],
   easy: Number,
-  medium: Number,
-  hard: Number,
+  average: Number,
+  difficult: Number,
   examTotal: Number,
   totalHours: String
 });
