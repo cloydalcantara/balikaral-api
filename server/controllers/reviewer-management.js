@@ -6,7 +6,6 @@ module.exports = {
   add: async (req, res, next) => {
     let rmData = {
       learningStrand: req.body.learningStrand,
-      pdf: req.file.filename,
       description: req.body.description,
       uploader: req.body.uploader,
       validation: req.body.validation,
@@ -14,6 +13,12 @@ module.exports = {
     }
     if(req.body.validator){
       rmData = { ...rmData, validator: [ { user: req.body.validator} ] }
+    }
+    if(req.file){
+      rmData = {...rmData, pdf: req.file.filename }
+    }
+    if(req.body.youtubeVideo){
+      rmData = { ...rmData, youtubeVideo: req.body.youtubeVideo }
     }
 
     const data = new Model(rmData)

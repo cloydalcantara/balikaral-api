@@ -10,8 +10,10 @@ const reviewerManagementSchema = new Schema({
       required: true
   },
   pdf: {
-      type: String,
-      required: true
+    type: String
+  },
+  youtubeVideo: {
+    type: String
   },
   description: {
       type: String
