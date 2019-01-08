@@ -6,11 +6,19 @@ module.exports = {
   add: async (req, res, next) => {
     let rmData = {
       learningStrand: req.body.learningStrand,
-      pdf: req.file.filename,
       description: req.body.description,
       uploader: req.body.uploader,
       validation: req.body.validation,
       reviewerSub: req.body.reviewerSub
+    }
+    if(req.body.validator){
+      rmData = { ...rmData, validator: [ { user: req.body.validator} ] }
+    }
+    if(req.file){
+      rmData = {...rmData, pdf: req.file.filename }
+    }
+    if(req.body.youtubeVideo){
+      rmData = { ...rmData, youtubeVideo: req.body.youtubeVideo }
     }
 
     const data = new Model(rmData)
@@ -36,10 +44,10 @@ module.exports = {
         findQuery = {...findQuery, learningStrand: query.learningStrand }
       }
     }
-    const count = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"}]).count().exec()
+    const count = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"validator.user"}]).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"}]).skip(skip).limit(10).exec()
+    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"validator.user"}]).skip(skip).limit(10).exec()
       res.json({
         data: find,
         currentPage: parseInt(req.query.page),
@@ -71,5 +79,9 @@ module.exports = {
     }
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
-  }
+  },
+   validateMultiple: async (req, res, next) => {
+    const update = await Model.updateMany({_id:{$in:[...req.body.id]}},{$set:{validation: true, validator: req.body.validator }}).exec()
+    res.json({data: update})
+  },
 }

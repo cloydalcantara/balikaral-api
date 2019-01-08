@@ -66,6 +66,9 @@ router.route('/exam-management/csv')
 router.route('/exam-management/validate/:id')
   .put(  examManagement.validate);
 
+router.route('/exam-management/validate-multiple')
+  .put(  examManagement.validateMultiple);
+
 
 
 module.exports = router;
