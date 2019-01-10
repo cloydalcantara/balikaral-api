@@ -285,22 +285,22 @@ module.exports = {
             uploader: req.body.uploader,
             validation: req.body.validation,
             question:{
-              details : element.Details,
+              details : element['Exam Question'],
               choices:{
                 a:{
-                  details: element['A Details']
+                  details: element['Option (A)']
                 },
                 b:{
-                  details: element['B Details']
+                  details: element['Option (B)']
                 },
                 c:{
-                  details: element['C Details']
+                  details: element['Option (C)']
                 },
                 d:{
-                  details: element['D Details']
+                  details: element['Option (D)']
                 }
               },
-              answer: element.Answer,
+              answer: element['Answer'],
               difficulty: element.Difficulty
             }
           }
