@@ -22,6 +22,9 @@ const upload = multer({ storage: storage }).single('image')
 router.route('/signup')
   .post( UsersController.signUp);
 
+router.route('/signup-facebook')
+  .post( UsersController.signUpFacebook);
+
 router.route('/signin')
   .post(validateBody(schemas.authSchema), passportSignIn, UsersController.signIn);
 

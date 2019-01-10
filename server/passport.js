@@ -73,22 +73,23 @@ passport.use('facebookToken', new FacebookTokenStrategy({
       return done(null, existingUser);
     }
 
-    const newUser = new User({
-      method: 'facebook',
-      facebook: {
-        id: profile.id,
-        email: profile.emails[0].value,
-        userType: profile.name.userType
-      },
-      personalInformation:{
-        firstName: profile.name.givenName,
-        middleName: profile.name.middleName,
-        lastName: profile.name.familyName
-      }
-    });
+    // const newUser = new User({
+    //   method: 'facebook',
+    //   facebook: {
+    //     id: profile.id,
+    //     email: profile.emails[0].value,
+    //     userType: profile.name.userType,
+    //     disabled: true
+    //   },
+    //   personalInformation:{
+    //     firstName: profile.name.givenName,
+    //     middleName: profile.name.middleName,
+    //     lastName: profile.name.familyName
+    //   }
+    // });
 
-    await newUser.save();
-    done(null, newUser);
+    // await newUser.save();
+    // done(null, newUser);
   } catch(error) {
     done(error, false, error.message);
   }

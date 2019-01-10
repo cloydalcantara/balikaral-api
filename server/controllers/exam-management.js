@@ -200,7 +200,7 @@ module.exports = {
     const averageCount = await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Average" } }).count().exec()
     const difficultCount = await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Difficult" } }).count().exec()
 
-    if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
+    // if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
       await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
         if (err) throw err;
         const easy = data
@@ -214,9 +214,9 @@ module.exports = {
           })
         })
       });
-    }else{
-      res.json({status: 'Not Enough Number of Question'})
-    }
+    // }else{
+    //   res.json({status: 'Not Enough Number of Question'})
+    // }
 
     
   },
@@ -234,7 +234,7 @@ module.exports = {
       const difficultCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Difficult" } }).count().exec()
 
 
-      if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
+      // if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
         Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
           if (err) throw err;
           const easy = data
@@ -248,9 +248,9 @@ module.exports = {
             })
           })
         });
-      }else{
-        res.json({status: 'Not Enough Number of Question'})
-      }
+      // }else{
+      //   res.json({status: 'Not Enough Number of Question'})
+      // }
       
     })
   },

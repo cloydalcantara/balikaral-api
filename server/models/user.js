@@ -38,7 +38,9 @@ const userSchema = new Schema({
     email: {
       type: String,
       lowercase: true
-    }
+    },
+    disabled: Boolean,
+    userType: String
   },
   userSettings: {
     hadPreTest: Boolean,
