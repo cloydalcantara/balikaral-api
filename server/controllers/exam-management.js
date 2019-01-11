@@ -200,6 +200,8 @@ module.exports = {
     const averageCount = await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Average" } }).count().exec()
     const difficultCount = await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Difficult" } }).count().exec()
 
+    console.log(easyCount + ', ' + averageCount + ', ' + difficultCount)
+
     // if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
       await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
         if (err) throw err;
@@ -267,9 +269,25 @@ module.exports = {
     
   },
   fetchDifficultyCount: async( req, res, next ) => {
-    const easy = await Model.find({ "question.difficulty":{ $eq:"Easy" }, validation: {$eq: true} }).count().exec()
-    const average = await Model.find({ "question.difficulty":{ $eq:"Average" }, validation: {$eq: true} }).count().exec()
-    const difficult = await Model.find({ "question.difficulty":{ $eq:"Difficult" }, validation: {$eq: true} }).count().exec()
+    let findQuery = {
+      validation: {$eq: true}
+    }
+    if(req.query){
+      let query = req.query
+      if(query.level){
+        findQuery = {...findQuery, level: query.level}
+      }
+      // if(query.learningStrand && query.learningStrand !== ''){
+      //   findQuery = {...findQuery, learningStrand:  { $in:[ query.learningStrand]} }
+      // }
+    }
+  
+    let easyCountQuery = {...findQuery, "question.difficulty":{ $eq:"Easy" }}
+    let averageCountQuery = {...findQuery, "question.difficulty":{ $eq:"Average" }}
+    let difficultCountQuery = {...findQuery, "question.difficulty":{ $eq:"Difficult" }}
+    const easy = await Model.find(easyCountQuery).count().exec()
+    const average = await Model.find(averageCountQuery).count().exec()
+    const difficult = await Model.find(difficultCountQuery).count().exec()
 
     res.json({easy: easy, average: average, difficult: difficult})
   },
@@ -288,16 +306,16 @@ module.exports = {
               details : element['Exam Question'],
               choices:{
                 a:{
-                  details: element['Option (A)']
+                  details: element['Option - A']
                 },
                 b:{
-                  details: element['Option (B)']
+                  details: element['Option - B']
                 },
                 c:{
-                  details: element['Option (C)']
+                  details: element['Option - C']
                 },
                 d:{
-                  details: element['Option (D)']
+                  details: element['Option - D']
                 }
               },
               answer: element['Answer'],
@@ -310,7 +328,7 @@ module.exports = {
         if(req.body.validator){
           data = { ...data, validator: [ { user: req.body.validator} ] }
         }
-
+ 
 
           const finalData = new Model(data)
           const insert = finalData.save()
