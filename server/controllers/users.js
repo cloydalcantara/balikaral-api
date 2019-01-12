@@ -33,7 +33,7 @@ module.exports = {
         email: email, 
         password: password,
         userType: userType,
-        disabled: false
+        disabled: true
       },
       personalInformation: {
         firstName:firstName,
@@ -70,7 +70,7 @@ module.exports = {
       facebook: {
         id: req.body.id,
         email: req.body.email,
-        disabled: false,
+        disabled: true,
         userType: req.body.userType
       }
     });
@@ -84,8 +84,14 @@ module.exports = {
 
   signIn: async (req, res, next) => {
     // Generate token
-    const token = signToken(req.user);
-    res.status(200).json({ token , data:req.user});
+    console.log(req.user)
+    if(req.user && req.user.local && req.user.local.disabled){
+        res.status(200).json({ disabled: true });
+    }else{
+        const token = signToken(req.user);
+        res.status(200).json({ token , data:req.user});
+    }
+   
     
   },
 
