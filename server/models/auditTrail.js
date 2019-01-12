@@ -9,6 +9,7 @@ const auditTrailSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref:'user'
   },
+  date: Date,
   module: String, //para malaman kung saang module pupunta pagclick ng notif.
   // dito naman malalaman kung saang lang sya lalabas.
   validator: Boolean,

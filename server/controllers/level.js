@@ -1,6 +1,8 @@
 const JWT = require('jsonwebtoken');
 const Model = require('../models/level');
 const { JWT_SECRET } = require('../configuration');
+const AuditTrail = require('../models/auditTrail')
+
 
 module.exports = {
   add: async (req, res, next) => {
@@ -14,7 +16,8 @@ module.exports = {
         module: "Level",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: new Date()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
@@ -56,7 +59,8 @@ module.exports = {
         module: "Level",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: new Date()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
@@ -74,7 +78,8 @@ module.exports = {
         module: "Level",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: new Date()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()

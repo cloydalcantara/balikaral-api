@@ -2,6 +2,8 @@ const JWT = require('jsonwebtoken');
 const Model = require('../models/generated-exam');
 const User = require('../models/user')
 const { JWT_SECRET } = require('../configuration');
+const AuditTrail = require('../models/auditTrail')
+
 
 module.exports = {
   add: async (req, res, next) => {
@@ -15,7 +17,8 @@ module.exports = {
         module: "Generate Exam",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
@@ -134,7 +137,8 @@ module.exports = {
         module: "Generate Exam",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
@@ -151,7 +155,8 @@ module.exports = {
         module: "Generate Exam",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()

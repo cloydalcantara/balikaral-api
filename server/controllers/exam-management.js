@@ -53,15 +53,19 @@ module.exports = {
 
     const data = new Model(addData)
     const save = await data.save() 
+  
     if(save){
-      const trail = {
+      let trail = {
         title: "Insert Question/s!",
         user: req.query.userId,
         module: "Exam Management",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
+      
+
       const trailData = new AuditTrail(trail)
       await trailData.save()
       res.json({ data: save });
@@ -119,7 +123,8 @@ module.exports = {
         module: "Exam Management",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
@@ -173,7 +178,8 @@ module.exports = {
         module: "Exam Management",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
@@ -194,7 +200,8 @@ module.exports = {
         module: "Exam Management",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
@@ -402,19 +409,27 @@ module.exports = {
 
           const finalData = new Model(data)
           const insert = finalData.save()
+
+          if(insert){
+             const trail = {
+                title: "Upload Question/s!",
+                user: req.query.userId,
+                module: "Exam Management",
+                validator: req.query.validator,
+                contributor: req.query.contributor,
+                learner  : req.query.learner
+              }
+              const trailData = new AuditTrail(trail)
+              trailData.save()
+              res.json({data:"Inserted!"})
+          }
+         
+
         });
-        const trail = {
-          title: "Upload Question/s!",
-          user: req.query.userId,
-          module: "Exam Management",
-          validator: req.query.validator,
-          contributor: req.query.contributor,
-          learner  : req.query.learner
-        }
-        const trailData = new AuditTrail(trail)
-        await trailData.save()
+
         
-        res.json({data:"Inserted!"})
+        
+        
       })
   }
 }

@@ -14,7 +14,8 @@ module.exports = {
         module: "Comment",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
@@ -66,7 +67,8 @@ module.exports = {
         module: "Comment",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
@@ -83,7 +85,8 @@ module.exports = {
         module: "Comment",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()

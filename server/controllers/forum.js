@@ -1,6 +1,7 @@
 const JWT = require('jsonwebtoken');
 const Model = require('../models/forum');
 const { JWT_SECRET } = require('../configuration');
+const AuditTrail = require('../models/auditTrail')
 
 module.exports = {
   add: async (req, res, next) => {
@@ -22,7 +23,8 @@ module.exports = {
         module: "Forum",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
@@ -72,7 +74,8 @@ module.exports = {
         module: "Forum",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
@@ -97,7 +100,8 @@ module.exports = {
         module: "Forum",
         validator: req.query.validator,
         contributor: req.query.contributor,
-        learner  : req.query.learner
+        learner  : req.query.learner,
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
