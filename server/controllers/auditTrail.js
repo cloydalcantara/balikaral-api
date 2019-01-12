@@ -1,5 +1,5 @@
 const JWT = require('jsonwebtoken');
-const Model = require('../models/level');
+const Model = require('../models/auditTrail');
 const { JWT_SECRET } = require('../configuration');
 
 module.exports = {
@@ -7,19 +7,8 @@ module.exports = {
     console.log(req.body)
     const data = new Model(req.body)
     const save = await data.save() 
-    if(save){
-      const trail = {
-        title: "Insert Level.",
-        user: req.query.userId,
-        module: "Level",
-        validator: req.query.validator,
-        contributor: req.query.contributor,
-        learner  : req.query.learner
-      }
-      const trailData = new AuditTrail(trail)
-      await trailData.save()
-      res.json({ data: save });
-    }
+    
+    res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
     const count = await Model.find({}).count().exec()
@@ -49,36 +38,11 @@ module.exports = {
   },
   delete: async (req, res, next) => {
     const remove = await Model.remove({_id:req.params.id}).exec()
-    if(remove){
-      const trail = {
-        title: "Delete Level.",
-        user: req.query.userId,
-        module: "Level",
-        validator: req.query.validator,
-        contributor: req.query.contributor,
-        learner  : req.query.learner
-      }
-      const trailData = new AuditTrail(trail)
-      await trailData.save()
-      res.json({message: "Deleted!"})
-    }
-    
+    res.json({message: "Deleted!"})
   },
   update: async (req, res, next) => {
     const data = req.body
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    if(update){
-      const trail = {
-        title: "Edit Level.",
-        user: req.query.userId,
-        module: "Level",
-        validator: req.query.validator,
-        contributor: req.query.contributor,
-        learner  : req.query.learner
-      }
-      const trailData = new AuditTrail(trail)
-      await trailData.save()
-      res.json({data: update})
-    }
+    res.json({data: update})
   }
 }

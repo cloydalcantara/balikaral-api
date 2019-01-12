@@ -7,8 +7,20 @@ module.exports = {
     console.log(req.body)
     const data = new Model(req.body)
     const save = await data.save() 
+    if(save){
+      const trail = {
+        title: "Add examination result.",
+        user: req.query.userId,
+        module: "Examination Result",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({ data: save });
+    }
     
-    res.json({ data: save });
   },
   fetchAll: async (req, res, next) => {
     const find = await Model.find({}).count().exec()
@@ -32,11 +44,37 @@ module.exports = {
   },
   delete: async (req, res, next) => {
     const remove = await Model.remove({_id:req.params.id}).exec()
-    res.json({message: "Deleted!"})
+    if(remove){
+      const trail = {
+        title: "Delete examination result.",
+        user: req.query.userId,
+        module: "Examination Result",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({message: "Deleted!"})
+    }
+    
   },
   update: async (req, res, next) => {
     const data = req.body
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Edit examination result.",
+        user: req.query.userId,
+        module: "Examination Result",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({data: update})
+    }
+    
   }
 }

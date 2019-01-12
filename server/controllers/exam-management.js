@@ -7,6 +7,7 @@ const Result = require('../models/examination-result')
 const { JWT_SECRET } = require('../configuration');
 const csvtojson = require('csvtojson')
 const rquery = require('mongoose-query-random')
+const AuditTrail = require('../models/auditTrail')
 module.exports = {
   add: async (req, res, next) => {
     let addData = {
@@ -52,8 +53,19 @@ module.exports = {
 
     const data = new Model(addData)
     const save = await data.save() 
-    
-    res.json({ data: save });
+    if(save){
+      const trail = {
+        title: "Insert Question/s!",
+        user: req.query.userId,
+        module: "Exam Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({ data: save });
+    }
   },
   fetchAll: async (req, res, next) => {
     let findQuery = {}
@@ -100,7 +112,20 @@ module.exports = {
   },
   delete: async (req, res, next) => {
     const remove = await Model.remove({_id:req.params.id}).exec()
-    res.json({message: "Deleted!"})
+    if(remove){
+      const trail = {
+        title: "Delete Question/s!",
+        user: req.query.userId,
+        module: "Exam Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({message: "Deleted!"})
+    }
+    
   },
   update: async (req, res, next) => {
     let updateData = {
@@ -141,7 +166,20 @@ module.exports = {
 
     const data = updateData
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Edit Question/s!",
+        user: req.query.userId,
+        module: "Exam Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({data: update})
+    }
+    
   },
   validate: async (req, res, next) => {
     const data = {
@@ -149,12 +187,37 @@ module.exports = {
       validation: req.body.validation
     }
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Validate Question.",
+        user: req.query.userId,
+        module: "Exam Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({data: update})
+    }
   },
   validateMultiple: async (req, res, next) => {
   
     const update = await Model.updateMany({_id:{$in:[...req.body.id]}},{$set:{validation: true, validator: req.body.validator }}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Validate Questions.",
+        user: req.query.userId,
+        module: "Exam Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({data: update})
+    }
+    
   },
 
   //for PRE - TEST
@@ -340,7 +403,17 @@ module.exports = {
           const finalData = new Model(data)
           const insert = finalData.save()
         });
-
+        const trail = {
+          title: "Upload Question/s!",
+          user: req.query.userId,
+          module: "Exam Management",
+          validator: req.query.validator,
+          contributor: req.query.contributor,
+          learner  : req.query.learner
+        }
+        const trailData = new AuditTrail(trail)
+        await trailData.save()
+        
         res.json({data:"Inserted!"})
       })
   }
