@@ -43,7 +43,10 @@ const userSchema = new Schema({
     userType: String
   },
   userSettings: {
-    hadPreTest: Boolean,
+    level: {
+      type: Schema.Types.ObjectId,
+      ref: "level"
+    }
   },
   personalInformation:{
     firstName: { type: String },

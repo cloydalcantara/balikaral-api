@@ -15,6 +15,15 @@ router.route('/generated-exam/all')
 router.route('/generated-exam/exam-count')
   .get( generatedExam.fetchCountOfExamType);
 
+router.route('/generated-exam/check-status/:examiner')
+  .get( generatedExam.checkStatus);
+
+router.route('/generated-exam/learner-pre-test')
+  .get( generatedExam.fetchIfHasPreTest); 
+
+router.route('/generated-exam/learner-adaptive-test')
+  .get( generatedExam.fetchIfHasAdaptiveTest); 
+
 router.route('/generated-exam/:id')
   .get( generatedExam.fetchSingle);
 
@@ -24,9 +33,7 @@ router.route('/generated-exam/update/:id')
 router.route('/generated-exam/delete/:id')
   .delete( generatedExam.delete);
 
-router.route('/generated-exam/check-status/:examiner')
-  .get( generatedExam.checkStatus);
-
+  
 
 
   

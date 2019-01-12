@@ -8,6 +8,10 @@ const generatedExamSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'examType'
   },
+  level: {
+    type: Schema.Types.ObjectId,
+    ref: 'level'
+  },
   exam: [
     { 
       question: {

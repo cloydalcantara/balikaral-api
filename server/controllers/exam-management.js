@@ -7,6 +7,7 @@ const Result = require('../models/examination-result')
 const { JWT_SECRET } = require('../configuration');
 const csvtojson = require('csvtojson')
 const rquery = require('mongoose-query-random')
+const AuditTrail = require('../models/auditTrail')
 module.exports = {
   add: async (req, res, next) => {
     let addData = {
@@ -52,8 +53,23 @@ module.exports = {
 
     const data = new Model(addData)
     const save = await data.save() 
-    
-    res.json({ data: save });
+  
+    if(save){
+      let trail = {
+        title: "Insert Question/s!",
+        user: req.query.userId,
+        module: "Exam Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: Date.now()
+      }
+      
+
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({ data: save });
+    }
   },
   fetchAll: async (req, res, next) => {
     let findQuery = {}
@@ -100,7 +116,21 @@ module.exports = {
   },
   delete: async (req, res, next) => {
     const remove = await Model.remove({_id:req.params.id}).exec()
-    res.json({message: "Deleted!"})
+    if(remove){
+      const trail = {
+        title: "Delete Question/s!",
+        user: req.query.userId,
+        module: "Exam Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: Date.now()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({message: "Deleted!"})
+    }
+    
   },
   update: async (req, res, next) => {
     let updateData = {
@@ -141,7 +171,21 @@ module.exports = {
 
     const data = updateData
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Edit Question/s!",
+        user: req.query.userId,
+        module: "Exam Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: Date.now()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({data: update})
+    }
+    
   },
   validate: async (req, res, next) => {
     const data = {
@@ -149,12 +193,38 @@ module.exports = {
       validation: req.body.validation
     }
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Validate Question.",
+        user: req.query.userId,
+        module: "Exam Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: Date.now()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({data: update})
+    }
   },
   validateMultiple: async (req, res, next) => {
   
     const update = await Model.updateMany({_id:{$in:[...req.body.id]}},{$set:{validation: true, validator: req.body.validator }}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Validate Questions.",
+        user: req.query.userId,
+        module: "Exam Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({data: update})
+    }
+    
   },
 
   //for PRE - TEST
@@ -200,7 +270,9 @@ module.exports = {
     const averageCount = await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Average" } }).count().exec()
     const difficultCount = await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Difficult" } }).count().exec()
 
-    // if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
+    console.log(easyCount + ', ' + averageCount + ', ' + difficultCount)
+
+    if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
       await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
         if (err) throw err;
         const easy = data
@@ -214,45 +286,52 @@ module.exports = {
           })
         })
       });
-    // }else{
-    //   res.json({status: 'Not Enough Number of Question'})
-    // }
+    }else{
+      res.json({status: 'Not Enough Number of Question'})
+    }
 
     
   },
   fetchPreTest: async ( req, res, next ) => {
-    await ExamType.find({examType: {$eq: 'Pre Test'}}).populate({path:"level"}).random(1, true, function(err, data) {
-      if (err) throw err;
-      let fetchExamType = data[0]
-      let learningStrandId = []
-      fetchExamType.learningStrandQuestions.map((attr)=>{
-        learningStrandId = [...learningStrandId, attr.learningStrand]
-      })
+    console.log(req.query.level)
+    let countPreTest = await ExamType.find({examType: {$eq: 'Pre Test'}, "level": {$eq: req.query.level} }).count().exec()
+    console.log(countPreTest)
+    if(countPreTest > 0){
+      await ExamType.find({examType: {$eq: 'Pre Test'}, "level": {$eq: req.query.level} }).populate({path:"level"}).random(1, true, function(err, data) {
+        if (err) throw err;
+        let fetchExamType = data[0]
+        let learningStrandId = []
+        fetchExamType.learningStrandQuestions.map((attr)=>{
+          learningStrandId = [...learningStrandId, attr.learningStrand]
+        })
 
-      const easyCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).count().exec()
-      const averageCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Average" } }).count().exec()
-      const difficultCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Difficult" } }).count().exec()
-
-
-      // if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
-        Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
-          if (err) throw err;
-          const easy = data
-          Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Average" } }).random(fetchExamType.average,true, function(err, data){
+        const easyCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).count().exec()
+        const averageCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Average" } }).count().exec()
+        const difficultCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Difficult" } }).count().exec()
+       
+        if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
+          Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
             if (err) throw err;
-            const average = data
-            Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Difficult" } }).random(fetchExamType.difficult, true, function(err, data){
+            const easy = data
+            Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Average" } }).random(fetchExamType.average,true, function(err, data){
               if (err) throw err;
-              const difficult = data
-              res.json({easy: easy, average: average, difficult:difficult, examType:fetchExamType})
+              const average = data
+              Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Difficult" } }).random(fetchExamType.difficult, true, function(err, data){
+                if (err) throw err;
+                const difficult = data
+                res.json({easy: easy, average: average, difficult:difficult, examType:fetchExamType})
+              })
             })
-          })
-        });
-      // }else{
-      //   res.json({status: 'Not Enough Number of Question'})
-      // }
-      
-    })
+          });
+        }else{
+          res.json({status: 'Not Enough Number of Question'})
+        }
+        
+      })
+    }else{
+      res.json({status: 'No pre test available for your level'})
+    }
+    
   },
   fetchExerciseExam: async( req, res, next ) => {
     const checkIfHasExam = await Model.find({ learningStrand:req.params.learningStrand }).count().exec()
@@ -267,9 +346,25 @@ module.exports = {
     
   },
   fetchDifficultyCount: async( req, res, next ) => {
-    const easy = await Model.find({ "question.difficulty":{ $eq:"Easy" }, validation: {$eq: true} }).count().exec()
-    const average = await Model.find({ "question.difficulty":{ $eq:"Average" }, validation: {$eq: true} }).count().exec()
-    const difficult = await Model.find({ "question.difficulty":{ $eq:"Difficult" }, validation: {$eq: true} }).count().exec()
+    let findQuery = {
+      validation: {$eq: true}
+    }
+    if(req.body){
+      let body = req.body
+      if(body.level){
+        findQuery = {...findQuery, level: body.level}
+      }
+      if(body.learningStrand && body.learningStrand !== ''){
+        findQuery = {...findQuery, learningStrand: { $in:[...body.learningStrand]} }
+      }
+    }
+  
+    let easyCountQuery = {...findQuery, "question.difficulty":{ $eq:"Easy" }}
+    let averageCountQuery = {...findQuery, "question.difficulty":{ $eq:"Average" }}
+    let difficultCountQuery = {...findQuery, "question.difficulty":{ $eq:"Difficult" }}
+    const easy = await Model.find(easyCountQuery).count().exec()
+    const average = await Model.find(averageCountQuery).count().exec()
+    const difficult = await Model.find(difficultCountQuery).count().exec()
 
     res.json({easy: easy, average: average, difficult: difficult})
   },
@@ -288,16 +383,16 @@ module.exports = {
               details : element['Exam Question'],
               choices:{
                 a:{
-                  details: element['Option (A)']
+                  details: element['Option - A']
                 },
                 b:{
-                  details: element['Option (B)']
+                  details: element['Option - B']
                 },
                 c:{
-                  details: element['Option (C)']
+                  details: element['Option - C']
                 },
                 d:{
-                  details: element['Option (D)']
+                  details: element['Option - D']
                 }
               },
               answer: element['Answer'],
@@ -310,13 +405,31 @@ module.exports = {
         if(req.body.validator){
           data = { ...data, validator: [ { user: req.body.validator} ] }
         }
-
+ 
 
           const finalData = new Model(data)
           const insert = finalData.save()
+
+          if(insert){
+             const trail = {
+                title: "Upload Question/s!",
+                user: req.query.userId,
+                module: "Exam Management",
+                validator: req.query.validator,
+                contributor: req.query.contributor,
+                learner  : req.query.learner
+              }
+              const trailData = new AuditTrail(trail)
+              trailData.save()
+              res.json({data:"Inserted!"})
+          }
+         
+
         });
 
-        res.json({data:"Inserted!"})
+        
+        
+        
       })
   }
 }

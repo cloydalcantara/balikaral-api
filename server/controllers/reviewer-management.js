@@ -1,6 +1,8 @@
 const JWT = require('jsonwebtoken');
 const Model = require('../models/reviewer-management');
 const { JWT_SECRET } = require('../configuration');
+const AuditTrail = require('../models/auditTrail')
+
 
 module.exports = {
   add: async (req, res, next) => {
@@ -23,8 +25,20 @@ module.exports = {
 
     const data = new Model(rmData)
     const save = await data.save() 
-    
-    res.json({ data: save });
+    if(save){
+      const trail = {
+        title: "Insert Reviewer.",
+        user: req.query.userId,
+        module: "Reviewer Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: new Date()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({ data: save });
+    }
   },
   fetchAll: async (req, res, next) => {
 
@@ -65,12 +79,39 @@ module.exports = {
   },
   delete: async (req, res, next) => {
     const remove = await Model.remove({_id:req.params.id}).exec()
-    res.json({message: "Deleted!"})
+    if(remove){
+      const trail = {
+        title: "Remove Reviewer.",
+        user: req.query.userId,
+        module: "Reviewer Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: new Date()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({message: "Deleted!"})
+    }
   },
   update: async (req, res, next) => {
     const data = req.body
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Update Reviewer.",
+        user: req.query.userId,
+        module: "Reviewer Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: new Date()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({data: update})
+    }
+    
   },
   validate: async (req, res, next) => {
     const data = {
@@ -78,10 +119,35 @@ module.exports = {
       validation: req.body.validation
     }
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Validate Reviewer.",
+        user: req.query.userId,
+        module: "Reviewer Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({data: update})
+    }
+    
   },
    validateMultiple: async (req, res, next) => {
     const update = await Model.updateMany({_id:{$in:[...req.body.id]}},{$set:{validation: true, validator: req.body.validator }}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Validate Reviewer.",
+        user: req.query.userId,
+        module: "Reviewer Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({data: update})
+    }
   },
 }

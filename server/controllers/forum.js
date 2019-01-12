@@ -1,6 +1,7 @@
 const JWT = require('jsonwebtoken');
 const Model = require('../models/forum');
 const { JWT_SECRET } = require('../configuration');
+const AuditTrail = require('../models/auditTrail')
 
 module.exports = {
   add: async (req, res, next) => {
@@ -15,8 +16,20 @@ module.exports = {
     }
     const data = new Model(postData)
     const save = await data.save() 
-    
-    res.json({ data: save });
+    if(save){
+      const trail = {
+        title: "Insert Forum.",
+        user: req.query.userId,
+        module: "Forum",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: Date.now()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({ data: save });
+    }
   },
   fetchAll: async (req, res, next) => {
     const count = await Model.find({}).count().exec()
@@ -54,7 +67,20 @@ module.exports = {
   },
   delete: async (req, res, next) => {
     const remove = await Model.remove({_id:req.params.id}).exec()
-    res.json({message: "Deleted!"})
+    if(remove){
+      const trail = {
+        title: "Delete Forum.",
+        user: req.query.userId,
+        module: "Forum",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: Date.now()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({message: "Deleted!"})
+    }
   },
   update: async (req, res, next) => {
     let postData = {
@@ -67,6 +93,19 @@ module.exports = {
     }
     const data = postData.body
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Update Forum.",
+        user: req.query.userId,
+        module: "Forum",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: Date.now()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({data: update})
+    }
   }
 }

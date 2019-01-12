@@ -21,11 +21,9 @@ module.exports = {
       firstName:Joi.string(),
       lastName:Joi.string(),
       middleName:Joi.string(),
-      houseNoStreet:Joi.string(),
-      barangay:Joi.string(),
-      city:Joi.string(),
-      province:Joi.string(),
-      zipcode: Joi.string(),
+      level:Joi.string(),
+      gender:Joi.string(),
+      birthday:Joi.string(),
       userType: Joi.string()
     })
   }

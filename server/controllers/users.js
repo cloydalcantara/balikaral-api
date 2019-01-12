@@ -2,6 +2,9 @@ const JWT = require('jsonwebtoken');
 const User = require('../models/user');
 const { JWT_SECRET } = require('../configuration');
 const bcrypt = require('bcryptjs');
+const AuditTrail = require('../models/auditTrail')
+
+
 
 signToken = user => {
   return JWT.sign({
@@ -15,8 +18,7 @@ signToken = user => {
 module.exports = {
   signUp: async (req, res, next) => {
     console.log("req.body",req.body)
-    const { email, password, firstName, lastName, middleName, houseNoStreet,
-    barangay, city, province, zipcode, userType } = req.body;
+    const { email, password, firstName, lastName, middleName, gender, birthday ,userType, level } = req.body;
     
     // Check if there is a user with the same email
     const foundUser = await User.findOne({ "local.email": email });
@@ -25,7 +27,7 @@ module.exports = {
     }
     
     // Create a new user
-    const newUser = new User({ 
+    let newUserData = {
       method: 'local',
       local: {
         email: email, 
@@ -37,12 +39,14 @@ module.exports = {
         firstName:firstName,
         lastName:lastName,
         middleName:middleName,
-        houseNoStreet:houseNoStreet,
-        barangay:barangay,
-        city:city,
-        province:province
+        gender: gender,
+        birthday: birthday
       }
-    });
+    }
+    if(userType==='Learner'){
+      newUserData = {...newUserData, userSettings: { level: level }}
+    }
+    const newUser = new User(newUserData);
 
     await newUser.save();
 
@@ -188,14 +192,9 @@ module.exports = {
     const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
-  updatePreTest: async (req, res, next) => {
-    const data = {
-      userSettings:{
-        hadPreTest: req.body.hadPreTest
-      }
-    }
-    const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+  delete: async (req, res, next) => {
+    const remove = await User.remove({_id:req.params.id}).exec()
+    res.json({message: "Deleted!"})
   },
   updatePicture: async (req, res, next) => {
     const data = {

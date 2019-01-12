@@ -1,21 +1,40 @@
 const JWT = require('jsonwebtoken');
 const Model = require('../models/exam-type-management');
 const { JWT_SECRET } = require('../configuration');
-
+const AuditTrail = require('../models/auditTrail')
 module.exports = {
   add: async (req, res, next) => {
     console.log(req.body)
     const data = new Model(req.body)
     const save = await data.save() 
+    if(save){
+      const trail = {
+        title: "Update Examination Type.",
+        user: req.query.userId,
+        module: "Exam Type Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: Date.now()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({ data: save });
+    }
     
-    res.json({ data: save });
   },
-  fetchAll: async (req, res, next) => {
+  fetchAll: async (req, res, next) => { 
     let findQuery = {}
     if(req.query){
       let query = req.query
       if(query.hidePreTest){
         findQuery = {...findQuery, examType: {$ne: 'Pre Test'}}
+      }
+      if(query.hidePostTest){
+        findQuery = {...findQuery, examType: {$nin: ['Pre Test', 'Post Test']}} 
+      }
+      if(query.level){
+        findQuery = {...findQuery, level: query.level}
       }
     }
     const count = await Model.find(findQuery).populate({path:"level"}).count().exec()
@@ -42,11 +61,38 @@ module.exports = {
   },
   delete: async (req, res, next) => {
     const remove = await Model.remove({_id:req.params.id}).exec()
-    res.json({message: "Deleted!"})
+    if(remove){
+      const trail = {
+        title: "Delete Examination Type.",
+        user: req.query.userId,
+        module: "Exam Type Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: Date.now()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({message: "Deleted!"})
+    }
+    
   },
   update: async (req, res, next) => {
     const data = req.body
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Edit Examination Type.",
+        user: req.query.userId,
+        module: "Exam Type Management",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: Date.now()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({data: update})
+    }
   }
 }

@@ -1,6 +1,7 @@
 const JWT = require('jsonwebtoken');
 const Model = require('../models/landing-page');
 const { JWT_SECRET } = require('../configuration');
+const AuditTrail = require('../models/auditTrail')
 
 
 const LearningStrand = require('../models/learningStrand');
@@ -35,10 +36,24 @@ module.exports = {
     }
 
 
+
     const data = new Model(postData)
     const save = await data.save() 
-    
-    res.json({ data: save });
+
+    if(save){
+      const trail = {
+        title: "Added New Landing Page",
+        user: req.query.userId,
+        module: "Landing Page",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: new Date()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({ data: save });
+    }
   },
   fetchAll: async (req, res, next) => {
     const count = await Model.find({}).count().exec()
@@ -61,7 +76,20 @@ module.exports = {
   },
   delete: async (req, res, next) => {
     const remove = await Model.remove({_id:req.params.id}).exec()
-    res.json({message: "Deleted!"})
+     if(remove){
+      const trail = {
+        title: "Deleted Landing Page",
+        user: req.query.userId,
+        module: "Landing Page",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: new Date()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+      res.json({ message: "Deleted!" });
+    }
   },
   setActive: async (req, res, next) => {
     const data = req.body
@@ -71,9 +99,22 @@ module.exports = {
     const activeUpdate = await Model.findOneAndUpdate({_id:active._id},{$set:active}).exec()
     
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    
 
-    res.json({data: update})
+     if(update){
+      const trail = {
+        title: "Landing Page Changed",
+        user: req.query.userId,
+        module: "Landing Page",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: new Date()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+     res.json({data: update})
+    }
+    
   },
   fetchActive: async (req, res, next) => {
     let landingPage = await Model.findOne({active: {$eq: true}}).exec()
@@ -112,6 +153,19 @@ module.exports = {
     }
     const data = updateData
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+    if(update){
+      const trail = {
+        title: "Landing Page Changed",
+        user: req.query.userId,
+        module: "Landing Page",
+        validator: req.query.validator,
+        contributor: req.query.contributor,
+        learner  : req.query.learner,
+        date: new Date()
+      }
+      const trailData = new AuditTrail(trail)
+      await trailData.save()
+     res.json({data: update})
+    }
   }
 }
