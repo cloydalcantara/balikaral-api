@@ -17,13 +17,17 @@ if (process.env.NODE_ENV === 'test') {
     JWT_SECRET: 'balikaralauthentication',
     oauth: {
       google: {
-        clientID: '1234',
-        clientSecret: '1234',
+        clientID: '1111',
+        clientSecret: '1111',
       },
       facebook: {
-        clientID: '518018998676781',
-        clientSecret: '9d45fb75acbaac0c58eedf692559ef66',
+        clientID: '344679316117018',
+        clientSecret: '101d522a604515ea7ff3eaa8110391a7',
       },
     },
   };
 }
+//518018998676781 -fb apId
+//9d45fb75acbaac0c58eedf692559ef66 - clientId
+//
+//

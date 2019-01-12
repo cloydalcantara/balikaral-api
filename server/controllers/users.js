@@ -54,6 +54,30 @@ module.exports = {
 
   },
 
+  signUpFacebook: async (req, res, next) => {
+    // Check if there is a user with the same email
+    const foundUser = await User.findOne({ "facebook.email": req.body.email });
+    if (foundUser) { 
+      return res.status(403).json({ error: 'Email is already in use'});
+    }
+    // Create a new user
+    const newUser = new User({ 
+      method: 'facebook',
+      facebook: {
+        id: req.body.id,
+        email: req.body.email,
+        disabled: false,
+        userType: req.body.userType
+      }
+    });
+    await newUser.save();
+    // Generate the token
+    // const token = signToken(newUser);
+    // Respond with token
+    // res.status(200).json({ token });
+    res.status(200).json({message:'Facebook Account Created'})
+  },
+
   signIn: async (req, res, next) => {
     // Generate token
     const token = signToken(req.user);
@@ -64,13 +88,13 @@ module.exports = {
   googleOAuth: async (req, res, next) => {
     // Generate token
     const token = signToken(req.user);
-    res.status(200).json({ token });
+    res.status(200).json({ token, data: req.user });
   },
 
   facebookOAuth: async (req, res, next) => {
     // Generate token
     const token = signToken(req.user);
-    res.status(200).json({ token });
+    res.status(200).json({ token, data: req.user });
   },
 
   fetchAll: async (req, res, next) => {
