@@ -10,12 +10,18 @@ module.exports = {
     
     res.json({ data: save });
   },
-  fetchAll: async (req, res, next) => {
+  fetchAll: async (req, res, next) => { 
     let findQuery = {}
     if(req.query){
       let query = req.query
       if(query.hidePreTest){
         findQuery = {...findQuery, examType: {$ne: 'Pre Test'}}
+      }
+      if(query.hidePostTest){
+        findQuery = {...findQuery, examType: {$nin: ['Pre Test', 'Post Test']}} 
+      }
+      if(query.level){
+        findQuery = {...findQuery, level: query.level}
       }
     }
     const count = await Model.find(findQuery).populate({path:"level"}).count().exec()

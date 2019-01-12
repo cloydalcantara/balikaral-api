@@ -202,7 +202,7 @@ module.exports = {
 
     console.log(easyCount + ', ' + averageCount + ', ' + difficultCount)
 
-    // if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
+    if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
       await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
         if (err) throw err;
         const easy = data
@@ -216,45 +216,52 @@ module.exports = {
           })
         })
       });
-    // }else{
-    //   res.json({status: 'Not Enough Number of Question'})
-    // }
+    }else{
+      res.json({status: 'Not Enough Number of Question'})
+    }
 
     
   },
   fetchPreTest: async ( req, res, next ) => {
-    await ExamType.find({examType: {$eq: 'Pre Test'}}).populate({path:"level"}).random(1, true, function(err, data) {
-      if (err) throw err;
-      let fetchExamType = data[0]
-      let learningStrandId = []
-      fetchExamType.learningStrandQuestions.map((attr)=>{
-        learningStrandId = [...learningStrandId, attr.learningStrand]
-      })
+    console.log(req.query.level)
+    let countPreTest = await ExamType.find({examType: {$eq: 'Pre Test'}, "level": {$eq: req.query.level} }).count().exec()
+    console.log(countPreTest)
+    if(countPreTest > 0){
+      await ExamType.find({examType: {$eq: 'Pre Test'}, "level": {$eq: req.query.level} }).populate({path:"level"}).random(1, true, function(err, data) {
+        if (err) throw err;
+        let fetchExamType = data[0]
+        let learningStrandId = []
+        fetchExamType.learningStrandQuestions.map((attr)=>{
+          learningStrandId = [...learningStrandId, attr.learningStrand]
+        })
 
-      const easyCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).count().exec()
-      const averageCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Average" } }).count().exec()
-      const difficultCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Difficult" } }).count().exec()
-
-
-      // if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
-        Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
-          if (err) throw err;
-          const easy = data
-          Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Average" } }).random(fetchExamType.average,true, function(err, data){
+        const easyCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).count().exec()
+        const averageCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Average" } }).count().exec()
+        const difficultCount = Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Difficult" } }).count().exec()
+       
+        if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
+          Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
             if (err) throw err;
-            const average = data
-            Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Difficult" } }).random(fetchExamType.difficult, true, function(err, data){
+            const easy = data
+            Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Average" } }).random(fetchExamType.average,true, function(err, data){
               if (err) throw err;
-              const difficult = data
-              res.json({easy: easy, average: average, difficult:difficult, examType:fetchExamType})
+              const average = data
+              Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Difficult" } }).random(fetchExamType.difficult, true, function(err, data){
+                if (err) throw err;
+                const difficult = data
+                res.json({easy: easy, average: average, difficult:difficult, examType:fetchExamType})
+              })
             })
-          })
-        });
-      // }else{
-      //   res.json({status: 'Not Enough Number of Question'})
-      // }
-      
-    })
+          });
+        }else{
+          res.json({status: 'Not Enough Number of Question'})
+        }
+        
+      })
+    }else{
+      res.json({status: 'No pre test available for your level'})
+    }
+    
   },
   fetchExerciseExam: async( req, res, next ) => {
     const checkIfHasExam = await Model.find({ learningStrand:req.params.learningStrand }).count().exec()
@@ -272,14 +279,14 @@ module.exports = {
     let findQuery = {
       validation: {$eq: true}
     }
-    if(req.query){
-      let query = req.query
-      if(query.level){
-        findQuery = {...findQuery, level: query.level}
+    if(req.body){
+      let body = req.body
+      if(body.level){
+        findQuery = {...findQuery, level: body.level}
       }
-      // if(query.learningStrand && query.learningStrand !== ''){
-      //   findQuery = {...findQuery, learningStrand:  { $in:[ query.learningStrand]} }
-      // }
+      if(body.learningStrand && body.learningStrand !== ''){
+        findQuery = {...findQuery, learningStrand: { $in:[...body.learningStrand]} }
+      }
     }
   
     let easyCountQuery = {...findQuery, "question.difficulty":{ $eq:"Easy" }}
