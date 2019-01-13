@@ -171,18 +171,35 @@ module.exports = {
   },
 
   updateAccountInfo: async (req, res, next) => {
-    let data = {
-      local:{
-        password: "",
-        email: req.body.email,
-        disabled: req.body.disabled,
-        userType: req.body.userType,
+    const user  = await User.findOne({_id: req.params.id}).exec()
+    console.log(user)
+ 
+    let data = {}
+    if(req.body.password === '' || !req.body.password){
+      data = {
+        local:{
+          password: user.local.password,
+          email: req.body.email,
+          disabled: req.body.disabled,
+          userType: req.body.userType,
+        }
       }
+    }else{
+      data = {
+        local:{
+          password: "",
+          email: req.body.email,
+          disabled: req.body.disabled,
+          userType: req.body.userType,
+        }
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(req.body.password, salt);
+      data.local.password = passwordHash;
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(req.body.password, salt);
-    data.local.password = passwordHash;
+    
     
     const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
