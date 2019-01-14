@@ -37,9 +37,6 @@ router.route('/exam-management')
 router.route('/exam-management/all')
   .get( examManagement.fetchAll);
 
-router.route('/exam-management/random')
-  .get( examManagement.fetchExam);
-
 router.route('/exam-management/generate-random')
   .get( examManagement.generateRandomExam);
 
@@ -57,7 +54,7 @@ router.route('/exam-management/exercise/:learningStrand')
   .get( examManagement.fetchExerciseExam);
 
 router.route('/exam-management/difficulty-count')
-  .post(examManagement.fetchDifficultyCount)
+  .get(examManagement.fetchDifficultyCount)
 
 router.route('/exam-management/:id')
   .get( examManagement.fetchSingle);

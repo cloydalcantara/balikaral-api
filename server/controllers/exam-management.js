@@ -478,13 +478,13 @@ module.exports = {
     let findQuery = {
       validation: {$eq: true}
     }
-    if(req.body){
-      let body = req.body
-      if(body.level){
-        findQuery = {...findQuery, level: body.level}
+    if(req.query){
+      let query = req.query
+      if(query.level){
+        findQuery = {...findQuery, level: query.level}
       }
-      if(body.learningStrand && body.learningStrand !== ''){
-        findQuery = {...findQuery, learningStrand: { $in:[...body.learningStrand]} }
+      if(query.learningStrand){
+        findQuery = {...findQuery, learningStrand: query.learningStrand }
       }
     }
   
