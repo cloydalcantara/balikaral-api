@@ -231,61 +231,61 @@ module.exports = {
   fetchExam: async( req, res, next ) => {
     // const fetchExamType = await ExamType.findOne({_id: req.query.examId}).populate({path:"level"}).exec()
 
-    const checkexamResult = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Completed', type: req.query.type, }).exec()
+    // const checkexamResult = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Completed', type: req.query.type, }).exec()
 
-    const examResult = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Retake', type: req.query.type}).exec()
+    // const examResult = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Retake', type: req.query.type}).exec()
 
-    const fetchExamType = await ExamType.findOne({ _id: req.query.examId}).populate({path:"level"}).exec()
+    // const fetchExamType = await ExamType.findOne({ _id: req.query.examId}).populate({path:"level"}).exec()
 
 
    
     
-    const checkIfAdaptiveTestHasPassed = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Completed', examType: adaptiveExamType[0]._id }).exec()
+    // const checkIfAdaptiveTestHasPassed = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Completed', examType: adaptiveExamType[0]._id }).exec()
     
-    let learningStrandId = []
+    // let learningStrandId = []
 
-    if(req.query.type === 'Post Test' && checkIfAdaptiveTestHasPassed.length === 0){
-      res.json({ status: 'Take Adaptive Test' })
-    }
+    // if(req.query.type === 'Post Test' && checkIfAdaptiveTestHasPassed.length === 0){
+    //   res.json({ status: 'Take Adaptive Test' })
+    // }
 
-    if(checkexamResult.length == 1){
-      res.json({status: 'Passed'})
-    }
+    // if(checkexamResult.length == 1){
+    //   res.json({status: 'Passed'})
+    // }
     
-    if(examResult.length > 0){//retake
+    // if(examResult.length > 0){//retake
       //fetch learningStrandId from generatedExam.percentagePerLearningStrand
-      let failedLearningStrand = examResult[examResult.length - 1].percentagePerLearningStrand.filter((attr)=>{
-        return attr.percentage < 90
-      })
-      failedLearningStrand.map((attr)=>{
-        learningStrandId = [...learningStrandId, attr.learningStrand]
-      })
-    }else{//new exam
-      fetchExamType.learningStrandQuestions.map((attr)=>{
-        learningStrandId = [...learningStrandId, attr.learningStrand]
-      })
-    }
+    //   let failedLearningStrand = examResult[examResult.length - 1].percentagePerLearningStrand.filter((attr)=>{
+    //     return attr.percentage < 90
+    //   })
+    //   failedLearningStrand.map((attr)=>{
+    //     learningStrandId = [...learningStrandId, attr.learningStrand]
+    //   })
+    // }else{//new exam
+    //   fetchExamType.learningStrandQuestions.map((attr)=>{
+    //     learningStrandId = [...learningStrandId, attr.learningStrand]
+    //   })
+    // }
 
-    const easyCount = await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).count().exec()
-    const averageCount = await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Average" } }).count().exec()
-    const difficultCount = await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Difficult" } }).count().exec()
+    // const easyCount = await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).count().exec()
+    // const averageCount = await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Average" } }).count().exec()
+    // const difficultCount = await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Difficult" } }).count().exec()
 
-    console.log(easyCount + ', ' + averageCount + ', ' + difficultCount)
+    // console.log(easyCount + ', ' + averageCount + ', ' + difficultCount)
 
-    // if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
-      await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
-        if (err) throw err;
-        const easy = data
-        Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Average" } }).random(fetchExamType.average,true, function(err, data){
-          if (err) throw err;
-          const average = data
-          Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Difficult" } }).random(fetchExamType.difficult, true, function(err, data){
-            if (err) throw err;
-            const difficult = data
-            res.json({easy: easy, average: average, difficult:difficult, examType:fetchExamType, status: 'Taking'})
-          })
-        })
-      });
+    // // if(easyCount <= fetchExamType.easy && averageCount <= fetchExamType.average && difficultCount <= fetchExamType.difficult){
+    //   await Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{$eq:"Easy" } }).random(fetchExamType.easy, true, function(err, data) {
+    //     if (err) throw err;
+    //     const easy = data
+    //     Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Average" } }).random(fetchExamType.average,true, function(err, data){
+    //       if (err) throw err;
+    //       const average = data
+    //       Model.find({ "level": {$eq: fetchExamType.level}, validation: {$eq: true}, learningStrand: {$in: [...learningStrandId]}, "question.difficulty":{ $eq:"Difficult" } }).random(fetchExamType.difficult, true, function(err, data){
+    //         if (err) throw err;
+    //         const difficult = data
+    //         res.json({easy: easy, average: average, difficult:difficult, examType:fetchExamType, status: 'Taking'})
+    //       })
+    //     })
+    //   });
     // }else{
     //   res.json({status: 'Not Enough Number of Question'})
     // }
