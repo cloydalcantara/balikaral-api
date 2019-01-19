@@ -6,9 +6,9 @@ const cors = require('cors');
 
 mongoose.Promise = global.Promise;
 if (process.env.NODE_ENV === 'test') {
-  mongoose.connect('mongodb://localhost/APIAuthenticationTEST');
+  mongoose.connect('mongodb://localhost/APIAuthenticationTEST', { useNewUrlParser: true, useCreateIndex: true });
 } else {
-  mongoose.connect('mongodb://localhost/APIAuthentication');
+  mongoose.connect('mongodb://localhost/APIAuthentication', { useNewUrlParser: true, useCreateIndex: true });
 }
 
 const app = express();
@@ -33,6 +33,7 @@ app.use('/balikaral', require('./routes/forum'));
 app.use('/balikaral', require('./routes/comment'));
 app.use('/balikaral', require('./routes/management-forum'));
 app.use('/balikaral', require('./routes/examination-result'));
+app.use('/balikaral', require('./routes/session-guilde-management'));
 app.use('/balikaral', require('./routes/landing-page'));
 app.use('/balikaral', require('./routes/auditTrail'));
 
