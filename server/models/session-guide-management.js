@@ -9,6 +9,11 @@ const sessionGuideManagementSchema = new Schema({
       ref: "learningStrand",
       required: true
   },
+  level : {
+      type: Schema.Types.ObjectId,
+      ref: "level",
+      required: true
+  },
   pdf: {
     type: String
   },

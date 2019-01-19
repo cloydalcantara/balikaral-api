@@ -89,7 +89,7 @@ module.exports = {
   },
   signUpGoogle: async (req, res, next) => {
     // Check if there is a user with the same email
-    const foundUser = await User.findOne({ "facebook.email": req.body.email });
+    const foundUser = await User.findOne({ "google.email": req.body.email });
     if (foundUser) { 
       return res.status(403).json({ error: 'Email is already in use'});
     }

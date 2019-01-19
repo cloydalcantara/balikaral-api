@@ -1,5 +1,5 @@
 const JWT = require('jsonwebtoken');
-const Model = require('../models/session-guilde-management');
+const Model = require('../models/session-guide-management');
 const { JWT_SECRET } = require('../configuration');
 const AuditTrail = require('../models/auditTrail')
 
@@ -8,6 +8,7 @@ module.exports = {
   add: async (req, res, next) => {
     let rmData = {
       learningStrand: req.body.learningStrand,
+      level: req.body.level,
       description: req.body.description,
       uploader: req.body.uploader,
       validation: req.body.validation
@@ -25,7 +26,7 @@ module.exports = {
       const trail = {
         title: "Insert Session Guide.",
         user: req.query.userId,
-        module: "Reviewer Management",
+        module: "Session Guide Management",
         validator: req.query.validator,
         contributor: req.query.contributor,
         learner  : req.query.learner,
@@ -54,10 +55,10 @@ module.exports = {
         findQuery = {...findQuery, learningStrand: query.learningStrand }
       }
     }
-    const count = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"validator.user"}]).count().exec()
+    const count = await Model.find(findQuery).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"validator.user"}]).skip(skip).limit(10).exec()
+    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"level"},{path:"validator.user"}]).skip(skip).limit(10).exec()
       res.json({
         data: find,
         currentPage: parseInt(req.query.page),
@@ -70,16 +71,16 @@ module.exports = {
    
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).populate([{path:"uploader"},{path:"learningStrand"},{path:"validator.user"}]).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"uploader"},{path:"learningStrand"},{path:"level"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {
     const remove = await Model.remove({_id:req.params.id}).exec()
     if(remove){
       const trail = {
-        title: "Remove Reviewer.",
+        title: "Remove Session Guide.",
         user: req.query.userId,
-        module: "Reviewer Management",
+        module: "Session Guide Management",
         validator: req.query.validator,
         contributor: req.query.contributor,
         learner  : req.query.learner,
@@ -95,9 +96,9 @@ module.exports = {
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     if(update){
       const trail = {
-        title: "Update Reviewer.",
+        title: "Update Session Guide.",
         user: req.query.userId,
-        module: "Reviewer Management",
+        module: "Session Guide Management",
         validator: req.query.validator,
         contributor: req.query.contributor,
         learner  : req.query.learner,
@@ -117,9 +118,9 @@ module.exports = {
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     if(update){
       const trail = {
-        title: "Validate Reviewer.",
+        title: "Validate Session Guide.",
         user: req.query.userId,
-        module: "Reviewer Management",
+        module: "Session Guide Management",
         validator: req.query.validator,
         contributor: req.query.contributor,
         learner  : req.query.learner
@@ -134,9 +135,9 @@ module.exports = {
     const update = await Model.updateMany({_id:{$in:[...req.body.id]}},{$set:{validation: true, validator: req.body.validator }}).exec()
     if(update){
       const trail = {
-        title: "Validate Reviewer.",
+        title: "Validate Session Guide.",
         user: req.query.userId,
-        module: "Reviewer Management",
+        module: "Session Guide Management",
         validator: req.query.validator,
         contributor: req.query.contributor,
         learner  : req.query.learner
