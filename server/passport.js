@@ -39,21 +39,21 @@ passport.use('googleToken', new GooglePlusTokenStrategy({
     console.log('accessToken', accessToken);
     console.log('refreshToken', refreshToken);
 
-    const existingUser = await User.findOne({ "google.id": profile.id });
+    const existingUser = await User.findOne({ "google.id": profile.googleId });
     if (existingUser) {
       return done(null, existingUser);
     }
 
-    const newUser = new User({
-      method: 'google',
-      google: {
-        id: profile.id,
-        email: profile.emails[0].value
-      }
-    });
+    // const newUser = new User({
+    //   method: 'google',
+    //   google: {
+    //     id: profile.id,
+    //     email: profile.emails[0].value
+    //   }
+    // });
 
-    await newUser.save();
-    done(null, newUser);
+    // await newUser.save();
+    // done(null, newUser);
   } catch(error) {
     done(error, false, error.message);
   }
@@ -78,14 +78,7 @@ passport.use('facebookToken', new FacebookTokenStrategy({
     //   facebook: {
     //     id: profile.id,
     //     email: profile.emails[0].value,
-    //     userType: profile.name.userType,
-    //     disabled: true
     //   },
-    //   personalInformation:{
-    //     firstName: profile.name.givenName,
-    //     middleName: profile.name.middleName,
-    //     lastName: profile.name.familyName
-    //   }
     // });
 
     // await newUser.save();

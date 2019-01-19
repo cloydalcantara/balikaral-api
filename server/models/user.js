@@ -29,7 +29,10 @@ const userSchema = new Schema({
     email: {
       type: String,
       lowercase: true
-    }
+    },
+    disabled: Boolean,
+    userType: String,
+    name: String
   },
   facebook: {
     id: {
@@ -40,7 +43,8 @@ const userSchema = new Schema({
       lowercase: true
     },
     disabled: Boolean,
-    userType: String
+    userType: String,
+    name: String
   },
   userSettings: {
     level: {
@@ -59,6 +63,9 @@ const userSchema = new Schema({
     province: String,
 
     image: String,
+
+    civilStatus: String,
+    birthday: String,
 
     learningCenter: String,
     gradeLevel: String,

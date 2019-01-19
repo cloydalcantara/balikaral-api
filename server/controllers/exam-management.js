@@ -538,20 +538,20 @@ module.exports = {
 
           const finalData = new Model(data)
           const insert = finalData.save()
-
-          if(insert){
-             const trail = {
-                title: "Upload Question/s!",
-                user: req.query.userId,
-                module: "Exam Management",
-                validator: req.query.validator,
-                contributor: req.query.contributor,
-                learner  : req.query.learner
-              }
-              const trailData = new AuditTrail(trail)
-              trailData.save()
-              res.json({data:"Inserted!"})
-          }
+          res.json({data: insert})
+          // if(insert){
+          //    const trail = {
+          //       title: "Upload Question/s!",
+          //       user: req.query.userId,
+          //       module: "Exam Management",
+          //       validator: req.query.validator,
+          //       contributor: req.query.contributor,
+          //       learner  : req.query.learner
+          //     }
+          //     const trailData = new AuditTrail(trail)
+          //     trailData.save()
+          //     res.json({data:"Inserted!"})
+          // }
          
 
         });

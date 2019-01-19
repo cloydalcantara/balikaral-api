@@ -25,6 +25,9 @@ router.route('/signup')
 router.route('/signup-facebook')
   .post( UsersController.signUpFacebook);
 
+router.route('/signup-google')
+  .post( UsersController.signUpGoogle);
+
 router.route('/signin')
   .post(validateBody(schemas.authSchema), passportSignIn, UsersController.signIn);
 
@@ -48,6 +51,9 @@ router.route('/user/update-personal-info/:id')
 
 router.route('/user/update-account-info/:id')
   .put( UsersController.updateAccountInfo);
+
+router.route('/user/update-social-info/:id')
+  .put( UsersController.updateSocialInfo);
 
 router.route('/user/disable/:id')
   .put( UsersController.disable);

@@ -8,10 +8,13 @@ module.exports = {
   add: async (req, res, next) => {
     let rmData = {
       learningStrand: req.body.learningStrand,
+      level: req.body.level,
       description: req.body.description,
       uploader: req.body.uploader,
-      validation: req.body.validation,
-      reviewerSub: req.body.reviewerSub
+      validation: req.body.validation
+    }
+    if(req.body.learningStrandSub){
+      rmData = { ...rmData, learningStrandSub: req.body.learningStrandSub }
     }
     if(req.body.validator){
       rmData = { ...rmData, validator: [ { user: req.body.validator} ] }
@@ -57,11 +60,14 @@ module.exports = {
       if(query.learningStrand){
         findQuery = {...findQuery, learningStrand: query.learningStrand }
       }
+       if(query.level){
+        findQuery = {...findQuery, level: query.level }
+      }
     }
-    const count = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"validator.user"}]).count().exec()
+    const count = await Model.find(findQuery).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"validator.user"}]).skip(skip).limit(10).exec()
+    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"level"},{path:"learningStrandSub"},{path:"validator.user"}]).skip(skip).limit(10).exec()
       res.json({
         data: find,
         currentPage: parseInt(req.query.page),
@@ -74,7 +80,7 @@ module.exports = {
    
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).populate([{path:"uploader"},{path:"learningStrand"},{path:"validator.user"}]).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"uploader"},{path:"learningStrand"},{path:"level"},{path:"learningStrandSub"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {

@@ -4,9 +4,10 @@ const { JWT_SECRET } = require('../configuration');
 const AuditTrail = require('../models/auditTrail')
 module.exports = {
   add: async (req, res, next) => {
-    console.log(req.body)
+    console.log(req.query.userId)
     const data = new Model(req.body)
     const save = await data.save() 
+    
     if(save){
       const trail = {
         title: "Update Examination Type.",

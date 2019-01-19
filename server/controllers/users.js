@@ -18,7 +18,7 @@ signToken = user => {
 module.exports = {
   signUp: async (req, res, next) => {
     console.log("req.body",req.body)
-    const { email, password, firstName, lastName, middleName, gender, birthday ,userType, level } = req.body;
+    const { email, password, firstName, lastName, middleName, gender, birthday ,userType, level, civilStatus } = req.body;
     
     // Check if there is a user with the same email
     const foundUser = await User.findOne({ "local.email": email });
@@ -40,7 +40,8 @@ module.exports = {
         lastName:lastName,
         middleName:middleName,
         gender: gender,
-        birthday: birthday
+        birthday: birthday,
+        civilStatus: civilStatus
       }
     }
     if(userType==='Learner'){
@@ -65,21 +66,54 @@ module.exports = {
       return res.status(403).json({ error: 'Email is already in use'});
     }
     // Create a new user
-    const newUser = new User({ 
+    let newUserData = {
       method: 'facebook',
       facebook: {
         id: req.body.id,
         email: req.body.email,
         disabled: true,
-        userType: req.body.userType
+        userType: req.body.userType,
+        name: req.body.name
       }
-    });
+    }
+    if(req.body.userType==='Learner'){
+      newUserData = {...newUserData, userSettings: { level: req.body.level }}
+    }
+    const newUser = new User(newUserData);
     await newUser.save();
     // Generate the token
     // const token = signToken(newUser);
     // Respond with token
     // res.status(200).json({ token });
     res.status(200).json({message:'Facebook Account Created'})
+  },
+  signUpGoogle: async (req, res, next) => {
+    // Check if there is a user with the same email
+    const foundUser = await User.findOne({ "facebook.email": req.body.email });
+    if (foundUser) { 
+      return res.status(403).json({ error: 'Email is already in use'});
+    }
+    // Create a new user
+    let newUserData = { 
+      method: 'google',
+      google: {
+        id: req.body.id,
+        email: req.body.email,
+        disabled: true,
+        userType: req.body.userType,
+        name: req.body.name
+      }
+    }
+    if(req.body.userType==='Learner'){
+      newUserData = {...newUserData, userSettings: { level: req.body.level }}
+    }
+    const newUser = new User(newUserData);
+    await newUser.save();
+    // Generate the token
+    // const token = signToken(newUser);
+    // Respond with token
+    // res.status(200).json({ token });
+    res.status(200).json({message:'Google Account Created'})
   },
 
   signIn: async (req, res, next) => {
@@ -154,6 +188,8 @@ module.exports = {
         city: req.body.city,
         province: req.body.province,
 
+        birthday: req.body.birthday,
+        civilStatus: req.body.civilStatus,
 
         learningCenter: req.body.learningCenter,
         gradeLevel: req.body.gradeLevel,
@@ -204,6 +240,34 @@ module.exports = {
     const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     res.json({data: update})
   },
+  updateSocialInfo: async (req, res, next) => {
+    let data = {}
+    if(req.query.type === 'facebook'){
+      data = {
+        facebook:{
+          id: req.body.id,
+          email: req.body.email,
+          disabled: req.body.disabled,
+          userType: req.body.userType,
+          name: req.body.name
+        }
+      }
+    }
+    if(req.query.type === 'google'){
+      data = {
+        google: {
+          id: req.body.id,
+          email: req.body.email,
+          disabled: req.body.disabled,
+          userType: req.body.userType,
+          name: req.body.name
+        }
+      }
+    }
+    const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    res.json({data: update})
+  },
+
 
   disable: async (req, res, next) => {
     const data = {
@@ -233,7 +297,8 @@ module.exports = {
         city: req.body.city,
         province: req.body.province,
 
-
+        civilStatus: req.body.civilStatus,
+        birthday: req.body.birthday,
         learningCenter: req.body.learningCenter,
         gradeLevel: req.body.gradeLevel,
         reasongForStopping: req.body.reasongForStopping,

@@ -9,6 +9,10 @@ const reviewerManagementSchema = new Schema({
       ref: "learningStrand",
       required: true
   },
+  level : {
+      type: Schema.Types.ObjectId,
+      ref: "level",
+  },
   pdf: {
     type: String
   },
@@ -37,7 +41,7 @@ const reviewerManagementSchema = new Schema({
     }
   ],
   validation: Boolean,
-  reviewerSub: {
+  learningStrandSub: {
     type: Schema.Types.ObjectId,
     ref: 'learningStrandSub'
   }

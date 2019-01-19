@@ -24,7 +24,9 @@ module.exports = {
       level:Joi.string(),
       gender:Joi.string(),
       birthday:Joi.string(),
+      civilStatus: Joi.string(),
       userType: Joi.string()
+      
     })
   }
 }
