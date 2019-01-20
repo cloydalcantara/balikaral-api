@@ -1,8 +1,20 @@
 const app = require('./app');
+const https = require('https');
+const fs = require('fs');
+
 // Start the server
-const port = process.env.PORT || 5000;
-app.listen(port);
 
-console.log(`Server listening at ${port}`);
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/balikaralapi.eastus.cloudapp.azure.com-0001/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/balikaralapi.eastus.cloudapp.azure.com-0001/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/balikaralapi.eastus.cloudapp.azure.com-0001/chain.pem', 'utf8');
 
-// refactored code for easier test and feature scale
+const credentials = {
+        key: privateKey,
+        cert: certificate,
+        ca: ca
+};
+
+const httpsServer = https.createServer(credentials, app);
+httpsServer.listen(5000, () => {
+        console.log('HTTPS Server running on port 5000');
+});

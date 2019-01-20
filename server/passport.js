@@ -70,8 +70,12 @@ passport.use('facebookToken', new FacebookTokenStrategy({
     console.log('refreshToken', refreshToken);
     
     const existingUser = await User.findOne({ "facebook.id": profile.id });
-    if (existingUser) {
+    	console.log("existing",existingUser)
+    if (existingUser && !existingUser.facebook.disabled) {
+      
       return done(null, existingUser);
+    }else{
+      return done(null, false);
     }
 
     // const newUser = new User({
