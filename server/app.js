@@ -34,6 +34,8 @@ app.use('/balikaral', require('./routes/comment'));
 app.use('/balikaral', require('./routes/management-forum'));
 app.use('/balikaral', require('./routes/examination-result'));
 app.use('/balikaral', require('./routes/session-guide-management'));
+app.use('/balikaral', require('./routes/survey-management'));
+app.use('/balikaral', require('./routes/survey-user'));
 app.use('/balikaral', require('./routes/landing-page'));
 app.use('/balikaral', require('./routes/auditTrail'));
 

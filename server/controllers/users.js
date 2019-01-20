@@ -311,6 +311,7 @@ module.exports = {
       }
     }
     const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
-    res.json({data: update})
+    const find = await User.findOne({_id:req.params.id}).exec()
+    res.json({data: find})
   }
 }
