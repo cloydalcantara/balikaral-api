@@ -11,7 +11,9 @@ module.exports = {
       level: req.body.level,
       description: req.body.description,
       uploader: req.body.uploader,
-      validation: req.body.validation
+      validation: req.body.validation,
+      fileType: req.body.fileType,
+      fileUsage: req.body.fileUsage
     }
     if(req.body.learningStrandSub){
       rmData = { ...rmData, learningStrandSub: req.body.learningStrandSub }
@@ -60,8 +62,11 @@ module.exports = {
       if(query.learningStrand){
         findQuery = {...findQuery, learningStrand: query.learningStrand }
       }
-       if(query.level){
+      if(query.level){
         findQuery = {...findQuery, level: query.level }
+      }
+      if(query.fileUsage){
+        findQuery = {...findQuery, fileUsage: query.fileUsage }
       }
     }
     const count = await Model.find(findQuery).count().exec()

@@ -7,12 +7,13 @@ const reviewerManagement = require('../controllers/reviewer-management');
 const passportJWT = passport.authenticate('jwt', { session: false });
 
 const multer = require('multer')
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads')
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname + '-' + Date.now() + '.pdf')
+    cb(null, file.originalname + '-' + Date.now() + (req.body.fileType === 'PDF' ? '.pdf' : '') + (req.body.fileType === 'Powerpoint Presentation' ? '.ppt' : '') + (req.body.fileType === 'Microsoft Word Document' ? '.docx' : ''))
   }
 })
 

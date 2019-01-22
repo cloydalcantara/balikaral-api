@@ -13,6 +13,8 @@ const reviewerManagementSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "level",
   },
+  fileType: String,
+  fileUsage: String,
   pdf: {
     type: String
   },
