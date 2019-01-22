@@ -17,12 +17,12 @@ if (process.env.NODE_ENV === 'test') {
     JWT_SECRET: 'balikaralauthentication',
     oauth: {
       google: {
-        clientID: '',
-        clientSecret: '',
+        clientID: '1',
+        clientSecret: '1',
       },
       facebook: {
-        clientID: '',
-        clientSecret: '',
+        clientID: '1',
+        clientSecret: '1',
       },
     },
   };
