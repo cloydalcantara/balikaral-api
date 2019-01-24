@@ -8,8 +8,15 @@ const landingPageSchema = new Schema({
   logo: String,
   pageDescription: String, //tayo na at mag balik aral description,
   pageLogo: String,
+
   tungkolSaProgramaDescription: String,
   tungkolSaProgramaLogo: String,
+
+  learnerDescription: String,
+  learnerDescriptionImage: String,
+
+  contributorDescription: String,
+  contributorDescriptionImage: String,
  
   email: String,
   contact: String,

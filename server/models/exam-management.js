@@ -14,6 +14,11 @@ const examSchema = new Schema({
     ref: "learningStrand",
     
   },
+  reviewer:{
+    type: Schema.Types.ObjectId,
+    ref: "reviewerManagement",
+    
+  },
   learningStrandSub:{
     type: Schema.Types.ObjectId,
     ref: "learningStrandSub",

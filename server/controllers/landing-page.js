@@ -22,9 +22,14 @@ module.exports = {
         medium: req.body.medium,
         google: req.body.google,
 
+        learnerDescription: req.body.learnerDescription,
+        contributorDescription: req.body.contributorDescription,
+
         logo: req.files.logo ? req.files.logo[0].filename : null,
         pageLogo: req.files.pageLogo ? req.files.pageLogo[0].filename : null,
         tungkolSaProgramaLogo: req.files.tungkolSaProgramaLogo ? req.files.tungkolSaProgramaLogo[0].filename : null,
+        learnerDescriptionImage: req.files.learnerDescriptionImage ? req.files.learnerDescriptionImage[0].filename : null,
+        contributorDescriptionImage: req.files.contributorDescriptionImage ? req.files.contributorDescriptionImage[0].filename : null,
     }
     if(req.body.active){
         let active = await Model.findOne({active: {$eq: true}}).exec()
@@ -130,6 +135,8 @@ module.exports = {
         active: req.body.active,
         pageDescription: req.body.pageDescription,
         tungkolSaProgramaDescription: req.body.tungkolSaProgramaDescription,
+        learnerDescription: req.body.learnerDescription,
+        contributorDescription: req.body.contributorDescription,
         email: req.body.email,
         contact: req.body.contact,
         facebook: req.body.facebook,
@@ -138,9 +145,11 @@ module.exports = {
         medium: req.body.medium,
         google: req.body.google,
 
-        logo: req.files.logo ? req.files.logo[0].filename : null,
-        pageLogo: req.files.pageLogo ? req.files.pageLogo[0].filename : null,
-        tungkolSaProgramaLogo: req.files.tungkolSaProgramaLogo ? req.files.tungkolSaProgramaLogo[0].filename : null,
+        logo: req.files.logo ? req.files.logo[0].filename : req.body.logoText,
+        pageLogo: req.files.pageLogo ? req.files.pageLogo[0].filename : req.body.pageLogoText,
+        tungkolSaProgramaLogo: req.files.tungkolSaProgramaLogo ? req.files.tungkolSaProgramaLogo[0].filename : req.body.tungkolSaProgramaLogoText,
+        learnerDescriptionImage: req.files.learnerDescriptionImage ? req.files.learnerDescriptionImage[0].filename : req.body.learnerDescriptionImageText,
+        contributorDescriptionImage: req.files.contributorDescriptionImage ? req.files.contributorDescriptionImage[0].filename : req.body.contributorDescriptionImageText,
 
     }
     if(req.body.active){

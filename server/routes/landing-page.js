@@ -30,9 +30,14 @@ const photostorage = multer.diskStorage({
 const photo = multer({ storage: photostorage })
 
 router.route('/landing-page')
-  .post( photo.fields([{ name: 'logo', maxCount: 1 },
+  .post( photo.fields([
+  { name: 'logo', maxCount: 1 },
   { name: 'pageLogo', maxCount: 1 },
-  { name: 'tungkolSaProgramaLogo', maxCount: 1 }]),landingpage.add);
+  { name: 'tungkolSaProgramaLogo', maxCount: 1 },
+  { name: 'learnerDescriptionImage', maxCount: 1 },
+  { name: 'contributorDescriptionImage', maxCount: 1 }
+
+  ]),landingpage.add);
 
 router.route('/landing-page/all')
   .get( landingpage.fetchAll);
@@ -47,9 +52,13 @@ router.route('/landing-page/delete/:id')
   .delete( landingpage.delete);
 
 router.route('/landing-page/update/:id')
-  .put(  photo.fields([{ name: 'logo', maxCount: 1 },
+  .put(  photo.fields([
+  { name: 'logo', maxCount: 1 },
   { name: 'pageLogo', maxCount: 1 },
-  { name: 'tungkolSaProgramaLogo', maxCount: 1 }]), landingpage.update);
+  { name: 'tungkolSaProgramaLogo', maxCount: 1 },
+  { name: 'learnerDescriptionImage', maxCount: 1 },
+  { name: 'contributorDescriptionImage', maxCount: 1 }
+  ]), landingpage.update);
   
 router.route('/landing-page/set-active/:id')
   .put( landingpage.setActive);

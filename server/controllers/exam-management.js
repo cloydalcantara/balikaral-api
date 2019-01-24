@@ -12,6 +12,7 @@ module.exports = {
   add: async (req, res, next) => {
     let addData = {
       level: req.body.level,
+      reviewer: req.body.reviewer,
       learningStrand: req.body.learningStrand,
       uploader: req.body.uploader,
       validation: req.body.validation,
@@ -96,10 +97,10 @@ module.exports = {
     }
 
     
-    const count = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).count().exec()
+    const count = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"reviewer"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-    const find = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).skip(skip).limit(10).exec()
+    const find = await Model.find(findQuery).populate([{path:"level"},{path:"learningStrand"},{path:"reviewer"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).skip(skip).limit(10).exec()
       res.json({
         data: find,
         currentPage: parseInt(req.query.page),
@@ -111,7 +112,7 @@ module.exports = {
     })
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"learningStrand"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"reviewer"},{path:"learningStrand"},{path:"learningStrandSub"},{path:"uploader"},{path:"validator.user"}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {
@@ -135,6 +136,7 @@ module.exports = {
   update: async (req, res, next) => {
     let updateData = {
       level: req.body.level,
+      reviewer: req.body.reviewer,
       learningStrand: req.body.learningStrand,
       uploader: req.body.uploader,
       validation: req.body.validation,
@@ -505,6 +507,7 @@ module.exports = {
         jsonObj.forEach(element => {
           let data = {
             level : req.body.level,
+            reviewer : req.body.reviewer,
             learningStrand : req.body.learningStrand,
             uploader: req.body.uploader,
             validation: req.body.validation,

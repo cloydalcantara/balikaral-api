@@ -25,6 +25,9 @@ router.route('/reviewer-management')
 router.route('/reviewer-management/all')
   .get(  reviewerManagement.fetchAll);
 
+router.route('/reviewer-management/fetchAllWithoutPagination')
+  .get(  reviewerManagement.fetchAllWithoutPagination);
+
 router.route('/reviewer-management/:id')
   .get(  reviewerManagement.fetchSingle);
 

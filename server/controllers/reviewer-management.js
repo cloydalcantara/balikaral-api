@@ -45,6 +45,32 @@ module.exports = {
       res.json({ data: save });
     }
   },
+
+   fetchAllWithoutPagination: async (req, res, next) => {
+
+     let findQuery = {
+      validation: {$eq: true},
+      fileUsage: {$ne: 'Session Guide'},
+     }
+    if(req.query){
+      let query = req.query
+    
+      if(query.learningStrand){
+        findQuery = {...findQuery, learningStrand: query.learningStrand }
+      }
+      if(query.level){
+        findQuery = {...findQuery, level: query.level }
+      }
+      
+    }
+    
+    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"level"},{path:"learningStrandSub"},{path:"validator.user"}]).exec()
+      res.json({
+        data: find
+    })
+   
+  },
+ 
   fetchAll: async (req, res, next) => {
 
      let findQuery = {}
