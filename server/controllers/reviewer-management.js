@@ -130,7 +130,11 @@ module.exports = {
     }
   },
   update: async (req, res, next) => {
-    const data = req.body
+    const data = { 
+      learningStrand: req.body.learningStrand,
+      level: req.body.level,
+      description: req.body.description 
+    }
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     if(update){
       const trail = {
