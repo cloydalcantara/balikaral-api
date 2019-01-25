@@ -58,9 +58,7 @@ module.exports = {
       if(query.learningStrand){
         findQuery = {...findQuery, learningStrand: query.learningStrand }
       }
-      if(query.level){
-        findQuery = {...findQuery, level: query.level }
-      }
+      
       
     }
     

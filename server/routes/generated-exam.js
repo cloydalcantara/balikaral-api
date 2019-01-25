@@ -24,6 +24,9 @@ router.route('/generated-exam/learner-pre-test')
 router.route('/generated-exam/learner-adaptive-test')
   .get( generatedExam.fetchIfHasAdaptiveTest); 
 
+router.route('/generated-exam/learner-post-test-and-survey')
+  .get( generatedExam.fetchIfHasPostTestAndSurvey);
+
 router.route('/generated-exam/:id')
   .get( generatedExam.fetchSingle);
 

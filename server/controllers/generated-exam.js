@@ -1,6 +1,7 @@
 const JWT = require('jsonwebtoken');
 const Model = require('../models/generated-exam');
 const User = require('../models/user')
+const SurveyUser = require('../models/survey-user')
 const { JWT_SECRET } = require('../configuration');
 const AuditTrail = require('../models/auditTrail')
 
@@ -73,6 +74,20 @@ module.exports = {
       res.json({ adaptivetest: false })
     }
   },
+  fetchIfHasPostTestAndSurvey: async (req, res, next) => {
+    const count = await Model.find({examiner:req.query.examiner, level: {$eq: req.query.level} ,"status": {$eq: "Completed"}, type: {$eq: "Post Test"}}).count().exec()
+    
+    if(count > 0){
+      const countSurvey = await SurveyUser.find({user: req.query.examiner}).count().exec()
+      if(countSurvey > 0){
+        res.json({surveyStatus: 'Has Survey'})
+      }else{
+        res.json({surveyStatus: 'Take Survey'})
+      }
+    }else{
+      res.json({surveyStatus: 'Not Yet Available'})
+    }
+  },
   fetchSingle: async (req, res, next) => {
     const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
     res.json({data: find})
@@ -122,7 +137,7 @@ module.exports = {
 
     res.json({completed: completed, retake: retake, pending: pending, total: total})
   },
-
+  
 
   checkStatus: async (req, res, next) => {
     const find = await Model.find({examiner:req.params.examiner, "status": {$eq: "Pending"}}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
