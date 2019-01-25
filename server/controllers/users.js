@@ -254,7 +254,7 @@ module.exports = {
       }
     }
     if(req.query.type === 'google'){
-      data = {
+      data = {  
         google: {
           id: req.body.id,
           email: req.body.email,
@@ -268,7 +268,16 @@ module.exports = {
     res.json({data: update})
   },
 
+  fetchToEdit: async (req,res,next)=>{
+    const find = await User.findOne({_id: req.params.id}).exec()
+    let personalInformation = find.personalInformation
 
+    if(personalInformation.learningCenter === '' && personalInformation.gradeLevel === '' && personalInformation.reasongForStopping === '' && personalInformation.lifeStatus === '' && personalInformation.about === '') {
+      res.json({learnerStatus: 'Edit Profile'})
+    }else{
+      res.json({learnerStatus: 'Has Edit'})
+    }
+  },
   disable: async (req, res, next) => {
     const data = {
       local:{
