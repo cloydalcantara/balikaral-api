@@ -541,7 +541,8 @@ module.exports = {
 
           const finalData = new Model(data)
           const insert = finalData.save()
-          res.json({data: insert})
+
+         
           // if(insert){
           //    const trail = {
           //       title: "Upload Question/s!",
@@ -563,5 +564,7 @@ module.exports = {
         
         
       })
+      res.json({data: 'Insert'})
   }
+
 }
