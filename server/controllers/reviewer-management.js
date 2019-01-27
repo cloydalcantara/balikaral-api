@@ -18,6 +18,9 @@ module.exports = {
     if(req.body.learningStrandSub){
       rmData = { ...rmData, learningStrandSub: req.body.learningStrandSub }
     }
+    if(req.body.reviewer){
+      rmData = { ...rmData, reviewer: req.body.reviewer }
+    }
     if(req.body.validator){
       rmData = { ...rmData, validator: [ { user: req.body.validator} ] }
     }
@@ -62,7 +65,7 @@ module.exports = {
       
     }
     
-    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"level"},{path:"learningStrandSub"},{path:"validator.user"}]).exec()
+    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"reviewer"},{path:"learningStrand"},{path:"level"},{path:"learningStrandSub"},{path:"validator.user"}]).exec()
       res.json({
         data: find
     })
@@ -92,11 +95,14 @@ module.exports = {
       if(query.fileUsage){
         findQuery = {...findQuery, fileUsage: query.fileUsage }
       }
+      if(query.fileType){
+        findQuery = {...findQuery, fileType: query.fileType }
+      }
     }
     const count = await Model.find(findQuery).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"learningStrand"},{path:"level"},{path:"learningStrandSub"},{path:"validator.user"}]).skip(skip).limit(10).exec()
+    const find = await Model.find(findQuery).populate([{path:"uploader"},{path:"reviewer"},{path:"learningStrand"},{path:"level"},{path:"learningStrandSub"},{path:"validator.user"}]).skip(skip).limit(10).exec()
       res.json({
         data: find,
         currentPage: parseInt(req.query.page),

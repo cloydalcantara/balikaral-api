@@ -36,6 +36,9 @@ module.exports = {
       if(query.level){
         findQuery = {...findQuery, level: query.level }
       }
+      if(query.type){
+        findQuery = {...findQuery, type: query.type }
+      }
       if(query.status){
         findQuery = {...findQuery, status: query.status }
       }

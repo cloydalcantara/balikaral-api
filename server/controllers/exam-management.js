@@ -94,6 +94,9 @@ module.exports = {
       if(query.level){
         findQuery = {...findQuery, level: query.level }
       }
+      if(query.reviewer){
+        findQuery = {...findQuery, reviewer: query.reviewer }
+      }
     }
 
     
