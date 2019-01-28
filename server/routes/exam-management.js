@@ -40,6 +40,9 @@ router.route('/exam-management/all')
 router.route('/exam-management/generate-random')
   .get( examManagement.generateRandomExam);
 
+router.route('/exam-management/generate-exam')
+  .get( examManagement.generateExamination);
+
 router.route('/exam-management/fetch-random-pre-test')
   .get( examManagement.fetchRandomPreTest);
 
