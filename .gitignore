@@ -2,12 +2,7 @@
 /node_modules
 package-lock.json
 .DS_Store
-/.vimrc
-/.ackrc
-/coverage
-/uploads
 npm-debug.log
 yarn-error.log
 .idea
 .nyc_output
-/csv
