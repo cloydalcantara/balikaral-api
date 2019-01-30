@@ -38,5 +38,6 @@ app.use('/balikaral', require('./routes/survey-management'));
 app.use('/balikaral', require('./routes/survey-user'));
 app.use('/balikaral', require('./routes/landing-page'));
 app.use('/balikaral', require('./routes/auditTrail'));
+app.use('/balikaral', require('./routes/site-instruction'));
 
 module.exports = app;

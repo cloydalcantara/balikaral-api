@@ -1,23 +1,31 @@
 const JWT = require('jsonwebtoken');
-const Model = require('../models/level');
+const Model = require('../models/site-instruction');
 const { JWT_SECRET } = require('../configuration');
 const AuditTrail = require('../models/auditTrail')
 
 
 module.exports = {
   add: async (req, res, next) => {
-    console.log(req.body)
-    const data = new Model(req.body)
+   
+    let postData = {
+      title: req.body.title,
+      description: req.body.description,
+     
+      instructionFor: req.body.instructionFor,
+      image: req.files.image ? req.files.image[0].filename : null,
+
+    }
+    const data = new Model(postData)
     const save = await data.save() 
     if(save){
       const trail = {
-        title: "Insert Level.",
+        title: "Insert  Site Instruction.",
         user: req.query.userId,
-        module: "Level",
+        module: " Site Instruction",
         validator: req.query.validator,
         contributor: req.query.contributor,
         learner  : req.query.learner,
-        date: new Date()
+        date: Date.now()
       }
       const trailData = new AuditTrail(trail)
       await trailData.save()
@@ -25,11 +33,17 @@ module.exports = {
     }
   },
   fetchAll: async (req, res, next) => {
-   
-    const count = await Model.find({}).count().exec()
+    let findQuery = {}
+    if(req.query){
+      let query = req.query
+      if(query.instructionFor){
+        findQuery = {...findQuery, instructionFor: query.instructionFor}
+      }
+    }
+    const count = await Model.find(findQuery).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-    const find = await Model.find({}).skip(skip).limit(10).exec()
+    const find = await Model.find(findQuery).skip(skip).limit(10).exec()
       res.json({
         data: find,
         currentPage: parseInt(req.query.page),
@@ -41,8 +55,14 @@ module.exports = {
     })
   },
   fetchWithoutPagination: async (req, res, next) => {
-    
-    const find = await Model.find({}).exec()
+    let findQuery = {}
+    if(req.query){
+      let query = req.query
+      if(query.instructionFor){
+        findQuery = {...findQuery, instructionFor: query.instructionFor}
+      }
+    }
+    const find = await Model.find(findQuery).exec()
       res.json({
         data: find       
     })
@@ -55,9 +75,9 @@ module.exports = {
     const remove = await Model.remove({_id:req.params.id}).exec()
     if(remove){
       const trail = {
-        title: "Delete Level.",
+        title: "Delete Site Instruction.",
         user: req.query.userId,
-        module: "Level",
+        module: "Site Instruction",
         validator: req.query.validator,
         contributor: req.query.contributor,
         learner  : req.query.learner,
@@ -70,13 +90,22 @@ module.exports = {
     
   },
   update: async (req, res, next) => {
-    const data = req.body
-    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+
+    let putData = {
+      title: req.body.title,
+      description: req.body.description,
+     
+      instructionFor: req.body.instructionFor,
+      image: req.files.image ? req.files.image[0].filename : req.body.imageText,
+
+    }
+   
+    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:putData}).exec()
     if(update){
       const trail = {
-        title: "Edit Level.",
+        title: "Edit Site Instruction.",
         user: req.query.userId,
-        module: "Level",
+        module: "Site Instruction",
         validator: req.query.validator,
         contributor: req.query.contributor,
         learner  : req.query.learner,
