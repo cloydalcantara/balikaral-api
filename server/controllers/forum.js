@@ -35,7 +35,7 @@ module.exports = {
     const count = await Model.find({}).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10 
-    const find = await Model.find({}).skip(skip).limit(10).exec()
+    const find = await Model.find({}).populate({path:"createdBy"}).skip(skip).limit(10).exec()
     res.json({
       data: find,
       currentPage: parseInt(req.query.page),
@@ -47,14 +47,14 @@ module.exports = {
     })
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate({path:"createdBy"}).exec()
     res.json({data: find})
   },
   fetchByManagement: async (req, res, next) => {
     const count =  await Model.find({forum:req.params.id}).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10 
-    const find =  await Model.find({forum:req.params.id}).skip(skip).limit(10).exec()
+    const find =  await Model.find({forum:req.params.id}).populate({path:"createdBy"}).skip(skip).limit(10).exec()
     res.json({
       data: find,
       currentPage: parseInt(req.query.page),

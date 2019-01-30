@@ -18,7 +18,7 @@ signToken = user => {
 module.exports = {
   signUp: async (req, res, next) => {
     console.log("req.body",req.body)
-    const { email, password, firstName, lastName, middleName, gender, birthday ,userType, level, civilStatus } = req.body;
+    const { email, password, firstName, lastName, middleName, gender, birthday ,userType, level, civilStatus, learningCenter } = req.body;
     
     // Check if there is a user with the same email
     const foundUser = await User.findOne({ "local.email": email });
@@ -41,7 +41,8 @@ module.exports = {
         middleName:middleName,
         gender: gender,
         birthday: birthday,
-        civilStatus: civilStatus
+        civilStatus: civilStatus,
+        learningCenter: learningCenter,
       }
     }
     if(userType==='Learner'){
@@ -77,7 +78,7 @@ module.exports = {
       }
     }
     if(req.body.userType==='Learner'){
-      newUserData = {...newUserData, userSettings: { level: req.body.level }}
+      newUserData = {...newUserData, userSettings: { level: req.body.level }, personalInformation: {learningCenter: req.body.learningCenter}}
     }
     const newUser = new User(newUserData);
     await newUser.save();
@@ -105,7 +106,7 @@ module.exports = {
       }
     }
     if(req.body.userType==='Learner'){
-      newUserData = {...newUserData, userSettings: { level: req.body.level }}
+      newUserData = {...newUserData, userSettings: { level: req.body.level }, personalInformation: {learningCenter: req.body.learningCenter}}
     }
     const newUser = new User(newUserData);
     await newUser.save();
@@ -119,11 +120,13 @@ module.exports = {
   signIn: async (req, res, next) => {
     // Generate token
     console.log(req.user)
-    if(req.user && req.user.local && req.user.local.disabled){
+    if(req.user && req.user.local && req.user.local.disabled ){
         res.status(200).json({ disabled: true });
-    }else{
+    }else if(req.user && req.user.local && !req.user.local.disabled){
         const token = signToken(req.user);
         res.status(200).json({ token , data:req.user});
+    }else{
+      res.status(200).json({ account: 'No Account Match' });
     }
    
     
@@ -131,14 +134,27 @@ module.exports = {
 
   googleOAuth: async (req, res, next) => {
     // Generate token
-    const token = signToken(req.user);
-    res.status(200).json({ token, data: req.user });
+    if(req.user && req.user.google && req.user.google.disabled ){
+        res.status(200).json({ disabled: true });
+    }else if(req.user && req.user.google && !req.user.google.disabled ){
+      const token = signToken(req.user);
+      res.status(200).json({ token, data: req.user });
+    }else{
+      res.status(200).json({ account: 'No Account Match' });
+    }
+    
   },
 
   facebookOAuth: async (req, res, next) => {
     // Generate token
-    const token = signToken(req.user);
-    res.status(200).json({ token, data: req.user });
+    if(req.user && req.user.facebook && req.user.facebook.disabled ){
+        res.status(200).json({ disabled: true });
+    }else if(req.user && req.user.facebook && !req.user.facebook.disabled ){
+        const token = signToken(req.user);
+        res.status(200).json({ token, data: req.user });
+    }else{
+      res.status(200).json({ account: 'No Account Match' });
+    }
   },
 
   fetchAll: async (req, res, next) => {
@@ -272,10 +288,10 @@ module.exports = {
     const find = await User.findOne({_id: req.params.id}).exec()
     let personalInformation = find.personalInformation
 
-    if(personalInformation.learningCenter === '' && personalInformation.gradeLevel === '' && personalInformation.reasongForStopping === '' && personalInformation.lifeStatus === '' && personalInformation.about === '') {
-      res.json({learnerStatus: 'Edit Profile'})
-    }else{
-      res.json({learnerStatus: 'Has Edit'})
+    if((personalInformation.gradeLevel === '' || !personalInformation.gradeLevel) && (personalInformation.reasongForStopping === '' || !personalInformation.reasongForStopping) && (personalInformation.lifeStatus === '' || !personalInformation.lifeStatus) && (personalInformation.about === '' || !personalInformation.about)) {
+      res.json({learnerStatus: 'Edit Profile', method: find.method})
+    }else if(personalInformation.gradeLevel === '' || personalInformation.reasongForStopping === '' || personalInformation.lifeStatus === '' || personalInformation.about === ''){
+      res.json({learnerStatus: 'Need Update', method: find.method})
     }
   },
   disable: async (req, res, next) => {

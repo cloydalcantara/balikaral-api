@@ -40,7 +40,7 @@ module.exports = {
           
         },
         answer: req.body.answer,
-        difficulty: req.body.difficulty
+       
       },
       
     }
@@ -93,6 +93,9 @@ module.exports = {
       }
       if(query.level){
         findQuery = {...findQuery, level: query.level }
+      }
+      if(query.reviewer){
+        findQuery = {...findQuery, reviewer: query.reviewer }
       }
     }
 
@@ -163,7 +166,6 @@ module.exports = {
           
         },
         answer: req.body.answer,
-        difficulty: req.body.difficulty
       }
     }
 
@@ -429,6 +431,17 @@ module.exports = {
       })
     });
   },
+  generateExamination: async( req, res, next ) => {
+    Model.find({
+      level: req.query.level,
+      learningStrand: req.query.learningStrand,
+      validation: { $eq: true }
+    }).random(req.query.total, true, function(err, data) {
+      if (err) throw err;
+      
+      res.json(({exam: data}))
+    })
+  },
   fetchRandomPreTest: async( req, res, next ) => {
       let countPreTest = await ExamType.find({examType: {$eq: 'Pre Test'}, "level": {$eq: req.query.level} }).count().exec()  
       if(countPreTest > 0){
@@ -489,15 +502,10 @@ module.exports = {
         findQuery = {...findQuery, learningStrand: query.learningStrand }
       }
     }
-  
-    let easyCountQuery = {...findQuery, "question.difficulty":{ $eq:"Easy" }}
-    let averageCountQuery = {...findQuery, "question.difficulty":{ $eq:"Average" }}
-    let difficultCountQuery = {...findQuery, "question.difficulty":{ $eq:"Difficult" }}
-    const easy = await Model.find(easyCountQuery).count().exec()
-    const average = await Model.find(averageCountQuery).count().exec()
-    const difficult = await Model.find(difficultCountQuery).count().exec()
 
-    res.json({easy: easy, average: average, difficult: difficult})
+    const find = await Model.find(findQuery).count().exec()
+   
+    res.json({difficultyCount: find})
   },
   upload: async( req, res, next ) => {
     await csvtojson()
@@ -528,7 +536,7 @@ module.exports = {
                 }
               },
               answer: element['Answer'],
-              difficulty: element.Difficulty
+             
             }
           }
         if(req.body.learningStrandSub){

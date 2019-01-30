@@ -6,6 +6,7 @@ const AuditTrail = require('../models/auditTrail')
 
 const LearningStrand = require('../models/learningStrand');
 const User = require('../models/user');
+const SiteInstruction = require('../models/site-instruction');
 
 module.exports = {
   add: async (req, res, next) => {
@@ -130,6 +131,15 @@ module.exports = {
     res.json({landingPage: landingPage, learningStrand: learningStrand, teacher: teacher, userLength: userLength})
 
   },
+  fetchInstruction: async (req, res, next) => {
+    let landingPage = await Model.findOne({active: {$eq: true}}).exec()
+    let teacher = await User.find({"local.userType": req.query.userType }).exec()
+    let instruction = await SiteInstruction.find({"instructionFor": req.query.instructionFor }).exec()
+
+    res.json({landingPage: landingPage, teacher: teacher, instruction: instruction})
+
+  },
+
   update: async (req, res, next) => {
     let updateData = {
         active: req.body.active,

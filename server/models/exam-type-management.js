@@ -19,15 +19,9 @@ const examTypeSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'learningStrand'
       },
-      easy: Number,
-      average: Number,
-      difficult: Number,
       total: Number
     },
   ],
-  // easy: Number,
-  // average: Number,
-  // difficult: Number,
   examTotal: Number,
   totalHours: String
 });

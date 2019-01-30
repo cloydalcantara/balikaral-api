@@ -43,18 +43,10 @@ passport.use('googleToken', new GooglePlusTokenStrategy({
     console.log('ex', existingUser)
     if (existingUser) {
       return done(null, existingUser);
+    }else{
+      return done(null, {})
     }
 
-    // const newUser = new User({
-    //   method: 'google',
-    //   google: {
-    //     id: profile.id,
-    //     email: profile.emails[0].value
-    //   }
-    // });
-
-    // await newUser.save();
-    // done(null, newUser);
   } catch(error) {
     done(error, false, error.message);
   }
@@ -78,16 +70,6 @@ passport.use('facebookToken', new FacebookTokenStrategy({
       return done(null, false);
     }
 
-    // const newUser = new User({
-    //   method: 'facebook',
-    //   facebook: {
-    //     id: profile.id,
-    //     email: profile.emails[0].value,
-    //   },
-    // });
-
-    // await newUser.save();
-    // done(null, newUser);
   } catch(error) {
     done(error, false, error.message);
   }

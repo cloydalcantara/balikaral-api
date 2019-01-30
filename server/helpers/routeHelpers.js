@@ -25,7 +25,8 @@ module.exports = {
       gender:Joi.string(),
       birthday:Joi.string(),
       civilStatus: Joi.string(),
-      userType: Joi.string()
+      userType: Joi.string(),
+      learningCenter: Joi.string()
       
     })
   }
