@@ -7,6 +7,7 @@ const AuditTrail = require('../models/auditTrail')
 const LearningStrand = require('../models/learningStrand');
 const User = require('../models/user');
 const SiteInstruction = require('../models/site-instruction');
+const GeneratedExam = require('../models/generated-exam');
 
 module.exports = {
   add: async (req, res, next) => {
@@ -127,8 +128,11 @@ module.exports = {
     let learningStrand = await LearningStrand.find({}).populate({path:"level"}).sort([['level', -1]]).exec()
     let teacher = await User.find({"local.userType": "Teacher"}).exec()
     let userLength = await User.find({}).count().exec()
+    let passedExam = await GeneratedExam.find({type: 'Post Test', status: 'Completed'}).count().exec()
 
-    res.json({landingPage: landingPage, learningStrand: learningStrand, teacher: teacher, userLength: userLength})
+    
+
+    res.json({landingPage: landingPage, learningStrand: learningStrand, teacher: teacher, userLength: userLength, passedExam: passedExam})
 
   },
   fetchInstruction: async (req, res, next) => {

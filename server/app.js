@@ -39,5 +39,6 @@ app.use('/balikaral', require('./routes/survey-user'));
 app.use('/balikaral', require('./routes/landing-page'));
 app.use('/balikaral', require('./routes/auditTrail'));
 app.use('/balikaral', require('./routes/site-instruction'));
+app.use('/balikaral', require('./routes/teacher-learner'));
 
 module.exports = app;
