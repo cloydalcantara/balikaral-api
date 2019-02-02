@@ -32,7 +32,7 @@ const userSchema = new Schema({
     },
     disabled: Boolean,
     userType: String,
-    name: String
+    
   },
   facebook: {
     id: {
@@ -44,7 +44,7 @@ const userSchema = new Schema({
     },
     disabled: Boolean,
     userType: String,
-    name: String
+    
   },
   userSettings: {
     level: {
