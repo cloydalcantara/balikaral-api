@@ -74,7 +74,15 @@ module.exports = {
         email: req.body.email,
         disabled: true,
         userType: req.body.userType,
-        name: req.body.name
+      },
+      personalInformation: {
+        firstName: req.body.name,
+        lastName: '',
+        middleName: '',
+        gender: '',
+        birthday: '',
+        civilStatus: '',
+        learningCenter: '',
       }
     }
     if(req.body.userType==='Learner'){
@@ -102,7 +110,15 @@ module.exports = {
         email: req.body.email,
         disabled: true,
         userType: req.body.userType,
-        name: req.body.name
+      },
+      personalInformation: {
+        firstName: req.body.name,
+        lastName: '',
+        middleName: '',
+        gender: '',
+        birthday: '',
+        civilStatus: '',
+        learningCenter: '',
       }
     }
     if(req.body.userType==='Learner'){
