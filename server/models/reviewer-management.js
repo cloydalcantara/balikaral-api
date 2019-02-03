@@ -24,6 +24,10 @@ const reviewerManagementSchema = new Schema({
   description: {
       type: String
   },
+  reviewer: {
+      type: Schema.Types.ObjectId,
+      ref: "reviewerManagement",
+  },
   uploader: {
     type: Schema.Types.ObjectId,
     ref: "user",

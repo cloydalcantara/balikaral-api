@@ -81,9 +81,6 @@ const examSchema = new Schema({
     },
     answer:{
       type: String
-    },
-    difficulty: { 
-      type:String
     }
   }
 });

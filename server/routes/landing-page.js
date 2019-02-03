@@ -45,6 +45,9 @@ router.route('/landing-page/all')
 router.route('/landing-page/fetch-active')
   .get( landingpage.fetchActive);
 
+router.route('/landing-page/fetch-instruction')
+  .get( landingpage.fetchInstruction);
+
 router.route('/landing-page/:id')
   .get( landingpage.fetchSingle);
 

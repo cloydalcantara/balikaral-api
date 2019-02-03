@@ -1,5 +1,5 @@
 const JWT = require('jsonwebtoken');
-const Model = require('../models/level');
+const Model = require('../models/teacher-learner');
 const { JWT_SECRET } = require('../configuration');
 const AuditTrail = require('../models/auditTrail')
 
@@ -25,11 +25,17 @@ module.exports = {
     }
   },
   fetchAll: async (req, res, next) => {
-   
-    const count = await Model.find({}).count().exec()
+      let findQuery = {}
+      if(req.query){
+        let query = req.query
+        if(query.teacher){
+          findQuery = {...findQuery, teacher: query.teacher}
+        }
+      }
+    const count = await Model.find(findQuery).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-    const find = await Model.find({}).skip(skip).limit(10).exec()
+    const find = await Model.find(findQuery).populate([{path:'teacher'},{path:'learner'}]).skip(skip).limit(10).exec()
       res.json({
         data: find,
         currentPage: parseInt(req.query.page),
@@ -48,7 +54,7 @@ module.exports = {
     })
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:'teacher'},{path:'learner'}]).exec()
     res.json({data: find})
   },
   delete: async (req, res, next) => {
