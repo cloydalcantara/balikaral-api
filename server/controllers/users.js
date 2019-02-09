@@ -200,6 +200,24 @@ module.exports = {
     const find = await User.findOne({_id:req.params.id}).exec()
     res.json({data: find})
   },
+  checkIfEmailExist: async (req, res, next) => {
+    
+    if(req.query.type === "local"){
+      const foundUser = await User.find({ "local.email": req.query.email }).count().exec()
+      res.json({count: foundUser})
+    }
+
+    if(req.query.type === "facebook"){
+      const foundUser = await User.find({ "facebook.email": req.query.email }).count().exec()
+      res.json({count: foundUser})
+    }
+
+    if(req.query.type === "google"){
+      const foundUser = await User.find({ "google.email": req.query.email }).count().exec()
+      res.json({count: foundUser})
+    }
+    
+  },
 
   secret: async (req, res, next) => {
     console.log('I managed to get here!');
