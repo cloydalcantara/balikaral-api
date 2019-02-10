@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === 'test') {
       facebook: {
         clientID: '521442691675915',
         clientSecret: 'c89012f33d778db73da4f7d9c9d6e793'
-      },
+      }
     },
   };
 }

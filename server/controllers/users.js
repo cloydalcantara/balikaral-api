@@ -200,6 +200,14 @@ module.exports = {
     const find = await User.findOne({_id:req.params.id}).exec()
     res.json({data: find})
   },
+  checkIfEmailExist: async (req, res, next) => {
+      const local = await User.find({ "local.email": req.query.email }).count().exec()
+      const facebook = await User.find({ "facebook.email": req.query.email }).count().exec()
+      const google = await User.find({ "google.email": req.query.email }).count().exec()
+      let count = 0
+      count = local + facebook + google
+      res.json({count: count})
+  },
 
   secret: async (req, res, next) => {
     console.log('I managed to get here!');
