@@ -3,7 +3,15 @@ const User = require('../models/user');
 const { JWT_SECRET } = require('../configuration');
 const bcrypt = require('bcryptjs');
 const AuditTrail = require('../models/auditTrail')
+const nodemailer = require('nodemailer');
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'balikaralsocmed@gmail.com',
+    pass: 'balikaraladmin'
+  }
+});
 
 
 signToken = user => {
@@ -45,18 +53,36 @@ module.exports = {
         learningCenter: learningCenter,
       }
     }
-    if(userType==='Learner'){
+    if(userType === 'Learner'){
       newUserData = {...newUserData, userSettings: { level: level }}
     }
     const newUser = new User(newUserData);
 
-    await newUser.save();
+    const userSave = await newUser.save();
+    if(userSave){
 
+      mailOptions = {
+        from: 'balikaralsocmed@gmail.com',
+        to: userSave.local.email,
+        subject: 'Email verification!',
+        text: 'Click the link to verify your account https://balikaral.com/verify/'+userSave._id
+      };
+
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });      
+
+      res.status(200).json({message:'Account Created'})
+    }
     // Generate the token
     // const token = signToken(newUser);
     // Respond with token
     // res.status(200).json({ token });
-    res.status(200).json({message:'Account Created'})
+    
 
   },
 
