@@ -6,6 +6,8 @@ package-lock.json
 /.ackrc
 /coverage
 /uploads
+/server/index.js
+package.json
 npm-debug.log
 yarn-error.log
 .idea
