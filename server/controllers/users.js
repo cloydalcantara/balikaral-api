@@ -68,6 +68,14 @@ module.exports = {
         text: 'Click the link to verify your account https://balikaral.com/verify/'+userSave._id
       };
 
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });      
+
       res.status(200).json({message:'Account Created'})
     }
     // Generate the token
