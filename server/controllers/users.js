@@ -238,7 +238,12 @@ module.exports = {
 
         gender: req.body.gender,
 
-        about: req.body.about
+        about: req.body.about,
+
+        lastGradeLevelCompleted: req.body.lastGradeLevelCompleted,
+        reasonDropOut: req.body.reasonDropOut,
+        attendedAlsLessonBefore: req.body.attendedAlsLessonBefore,
+        completedProgram: req.body.completedProgram,
       }
     }
     
@@ -355,7 +360,12 @@ module.exports = {
 
         gender: req.body.gender,
 
-        about: req.body.about
+        about: req.body.about,
+
+        lastGradeLevelCompleted: req.body.lastGradeLevelCompleted,
+        reasonDropOut: req.body.reasonDropOut,
+        attendedAlsLessonBefore: req.body.attendedAlsLessonBefore,
+        completedProgram: req.body.completedProgram,
 
       }
     }

@@ -73,7 +73,12 @@ const userSchema = new Schema({
     lifeStatus: String,
 
     gender: String,
-    about: String
+    about: String,
+
+    lastGradeLevelCompleted: String,
+    reasonDropOut: String,
+    attendedAlsLessonBefore: String,
+    completedProgram: String,
   }
 });
 
