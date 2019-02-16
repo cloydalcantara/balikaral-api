@@ -51,8 +51,35 @@ router.route('/user/check-email')
 router.route('/user/check-profile/:id')
   .get( UsersController.fetchToEdit);
 
+router.route('/user/age')
+  .get( UsersController.ageCount);
 
+router.route('/user/region')
+  .get( UsersController.regionCount);
 
+router.route('/user/occupation')
+  .get( UsersController.occupationCount);
+
+router.route('/user/gender')
+  .get( UsersController.genderCount);
+
+router.route('/user/years-in-als')
+  .get( UsersController.yearsInAlsCount);
+
+router.route('/user/registered-examinee')
+  .get( UsersController.registeredExamineeCount);
+
+router.route('/user/let-passer')
+  .get( UsersController.letPasserCount);
+
+router.route('/user/no-of-years-teaching')
+  .get( UsersController.noOfYearsTeachingCount);
+
+router.route('/user/no-of-years-as-als-teacher')
+  .get( UsersController.noOfYearsAsAlsTeacherCount);
+
+router.route('/user/subject-expertise')
+  .get( UsersController.subjectExpertiseCount);
 
 router.route('/user/:id')
   .get( UsersController.fetchSingle);

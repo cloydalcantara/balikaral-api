@@ -73,7 +73,21 @@ const userSchema = new Schema({
     lifeStatus: String,
 
     gender: String,
-    about: String
+    about: String,
+
+    // If Learner
+    // New to rex. Paadd
+    yearsInAls: Number,
+    registeredExaminee: String, //Yes or No
+    occupation: String, //none, fulltime,parttime
+
+    // If Teacher
+    letPasser: String,
+    noOfYearsTeaching: Number,
+    noOfYearsAsAlsTeacher: Number,
+    subjectExpertise: [], //learningStrand
+    
+
   }
 });
 
