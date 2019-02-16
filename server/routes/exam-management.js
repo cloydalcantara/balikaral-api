@@ -62,6 +62,9 @@ router.route('/exam-management/difficulty-count')
 router.route('/exam-management/:id')
   .get( examManagement.fetchSingle);
 
+router.route('/exam-management/uploaded-count/:id')
+  .get( examManagement.getUploadCount);
+  
 router.route('/exam-management/delete/:id')
   .delete( examManagement.delete);
 

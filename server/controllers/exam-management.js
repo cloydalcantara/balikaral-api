@@ -573,6 +573,13 @@ module.exports = {
         
       })
       res.json({data: 'Insert'})
-  }
+  },
+  getUploadCount: async (req, res, next) => {
+    // STATISTICS
+    // Display pie graph
+    const uploadsCount = await Model.find({uploader: req.body.id}).countDocuments().exec()
+    const validatedCount = await Model.find({uploader: req.body.id,validation: true}).countDocuments().exec()
+    res.json({uploadsCount, validatedCount})
+  },
 
 }
