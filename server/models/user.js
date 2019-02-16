@@ -79,6 +79,24 @@ const userSchema = new Schema({
     reasonDropOut: String,
     attendedAlsLessonBefore: String,
     completedProgram: String,
+    // If Learner
+    yearsInAls: String, 
+    registeredExaminee: String, //Yes or No
+    occupation: String, //none, fulltime,parttime
+
+    // If Teacher
+    letPasser: String,
+    noOfYearsTeaching: String,
+    noOfYearsAsAlsTeacher: String,
+    subjectExpertise:[
+    {
+      learningStrand: {
+        type: Schema.Types.ObjectId,
+        ref: "learningStrand"
+      }
+    }
+  ],
+    
   }
 });
 

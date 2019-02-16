@@ -3,12 +3,12 @@ if (process.env.NODE_ENV === 'test') {
     JWT_SECRET: 'balikaralauthentication',
     oauth: {
       google: {
-        clientID: 'number',
-        clientSecret: 'string',
+        clientID: '197880274985-qae1s30vumso0tbr25iaf9lrk89e3tp7.apps.googleusercontent.com',
+        clientSecret: '_HgQ8_DZkD-HQlfU9TFVGPEX'
       },
       facebook: {
-        clientID: 'number',
-        clientSecret: 'string',
+        clientID: '521442691675915',
+        clientSecret: 'c89012f33d778db73da4f7d9c9d6e793',
       },
     },
   };
@@ -16,13 +16,13 @@ if (process.env.NODE_ENV === 'test') {
   module.exports = {
     JWT_SECRET: 'balikaralauthentication',
     oauth: {
-     google: {
-        clientID: '293000110428-lm6klam4patr7ojnk0e9md79gkip32jd.apps.googleusercontent.com',
-        clientSecret: '9rEBRvn1EsK_Nxq2lNcjG085',
+      google: {
+        clientID: '197880274985-qae1s30vumso0tbr25iaf9lrk89e3tp7.apps.googleusercontent.com',
+        clientSecret: '_HgQ8_DZkD-HQlfU9TFVGPEX'
       },
-    facebook: {
-      clientID: '344679316117018',
-      clientSecret: '101d522a604515ea7ff3eaa8110391a7',
+      facebook: {
+        clientID: '521442691675915',
+        clientSecret: 'c89012f33d778db73da4f7d9c9d6e793'
       }
     },
   };

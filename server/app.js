@@ -7,9 +7,9 @@ const path = require('path');
 
 mongoose.Promise = global.Promise;
 if (process.env.NODE_ENV === 'test') {
-  mongoose.connect('mongodb://localhost/balikaral', { useNewUrlParser: true, useCreateIndex: true });
+  mongoose.connect('mongodb://localhost/APIAuthenticationTEST', { useNewUrlParser: true, useCreateIndex: true });
 } else {
-  mongoose.connect('mongodb://localhost/balikaral', { useNewUrlParser: true, useCreateIndex: true });
+  mongoose.connect('mongodb://localhost/APIAuthentication', { useNewUrlParser: true, useCreateIndex: true });
 }
 
 const app = express();

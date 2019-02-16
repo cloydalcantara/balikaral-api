@@ -180,5 +180,26 @@ module.exports = {
       await trailData.save()
       res.json({data: update})
     }
+  },
+  statsPerExamType: async (req, res, next) => {
+    // STATISTICS
+    // Display Per Exam Type
+   const type = await Model.find({examiner:req.params.id,type:req.params.type}).exec()
+    res.json({data: type})
+  },
+  statsPreAndPost: async (req, res, next) => {
+    // STATISTICS
+    // Display Pre and Post. Line graph
+    const pre = await Model.find({examiner:req.params.id,type:"Pre Test"}).exec()
+    const post = await Model.find({examiner:req.params.id,type:"Post Test"}).exec()
+    res.json({pre: pre, post: post})
+  },
+  performanceIndicator: async (req, res, next) => {
+    // STATISTICS
+    // Display from Pre, Adaptive then post. If post can be highlighted (much better) line graph
+    const pre = await Model.find({examiner:req.params.id,type:"Pre Test"}).exec()
+    const adaptiveTest = await Model.find({examiner:req.params.id,type:"Adaptive Test"}).exec()
+    const post = await Model.find({examiner:req.params.id,type:"Post Test"}).exec()
+    res.json({pre: pre, adaptiveTest: adaptiveTest, post: post})
   }
 }

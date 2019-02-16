@@ -23,7 +23,7 @@ const examTypeSchema = new Schema({
     },
   ],
   examTotal: Number,
-  totalHours: String
+  totalHours: Number
 });
 
 // Create a model

@@ -139,7 +139,9 @@ module.exports = {
     const data = { 
       learningStrand: req.body.learningStrand,
       level: req.body.level,
-      description: req.body.description 
+      description: req.body.description,
+      uploader: req.body.uploader,
+      validator: req.body.validator 
     }
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     if(update){
@@ -195,4 +197,11 @@ module.exports = {
       res.json({data: update})
     }
   },
+  getUploadCount: async (req, res, next) => {
+    // STATISTICS 
+    // Display pie graph
+    const uploadsCount = await Model.find({uploader: req.body.id}).countDocuments().exec()
+    const validatedCount = await Model.find({uploader: req.body.id,validation: true}).countDocuments().exec()
+    res.json({uploadsCount, validatedCount})
+  }
 }
