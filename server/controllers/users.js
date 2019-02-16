@@ -206,12 +206,15 @@ module.exports = {
       if(query.type){
         findQuery = {...findQuery, "local.userType": query.type}
       }
+      if(query.notType){
+        findQuery = {...findQuery, "local.userType": { $ne: query.notType } }
+      }
     }
     
     const count = await await User.find(findQuery).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-    const find = await await User.find(findQuery).skip(skip).limit(10).exec()
+    const find = await await User.find(findQuery).populate([{path:"personalInformation.personalInformation.subjectExpertise.learningStrand"}]).skip(skip).limit(10).exec()
       res.json({
         data: find,
         currentPage: parseInt(req.query.page),
@@ -222,8 +225,25 @@ module.exports = {
         totalCount: count
     })
   },
-  fetchSingle: async (req, res, next) => {
-    const find = await User.findOne({_id:req.params.id}).exec()
+  fetchAllWithoutPagination: async (req, res, next) => {
+    let findQuery = {}
+    if(req.query){
+      let query = req.query
+      if(query.type){
+        findQuery = {...findQuery, "local.userType": query.type}
+      }
+      if(query.notType){
+        findQuery = {...findQuery, "local.userType": { $ne: query.notType } }
+      }
+    }
+    const find = await await User.find(findQuery).populate([{path:"personalInformation.subjectExpertise.learningStrand"}]).exec()
+      res.json({
+        data: find,
+    })
+  },
+
+  fetchSingle: async (req, res, next) => { 
+    const find = await User.findOne({_id:req.params.id}).populate([{path:"personalInformation.subjectExpertise.learningStrand"}]).exec()
     res.json({data: find})
   },
   checkIfEmailExist: async (req, res, next) => {
@@ -264,7 +284,22 @@ module.exports = {
 
         gender: req.body.gender,
 
-        about: req.body.about
+        about: req.body.about,
+
+        lastGradeLevelCompleted: req.body.lastGradeLevelCompleted,
+        reasonDropOut: req.body.reasonDropOut,
+        attendedAlsLessonBefore: req.body.attendedAlsLessonBefore,
+        completedProgram: req.body.completedProgram,
+
+        yearsInAls: req.body.yearsInAls,
+        registeredExaminee: req.body.registeredExaminee,
+        occupation: req.body.occupation,
+        letPasser: req.body.letPasser,
+        noOfYearsTeaching: req.body.noOfYearsTeaching,
+        noOfYearsAsAlsTeacher: req.body.noOfYearsAsAlsTeacher,
+        subjectExpertise: req.body.subjectExpertise,
+
+
       }
     }
     
@@ -381,12 +416,177 @@ module.exports = {
 
         gender: req.body.gender,
 
-        about: req.body.about
+        about: req.body.about,
+
+        lastGradeLevelCompleted: req.body.lastGradeLevelCompleted,
+        reasonDropOut: req.body.reasonDropOut,
+        attendedAlsLessonBefore: req.body.attendedAlsLessonBefore,
+        completedProgram: req.body.completedProgram,
+
+        yearsInAls: req.body.yearsInAls,
+        registeredExaminee: req.body.registeredExaminee,
+        occupation: req.body.occupation,
+
+        letPasser: req.body.letPasser,
+        noOfYearsTeaching: req.body.noOfYearsTeaching,
+        noOfYearsAsAlsTeacher: req.body.noOfYearsAsAlsTeacher,
+        subjectExpertise: req.body.subjectExpertise,
 
       }
     }
     const update = await User.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     const find = await User.findOne({_id:req.params.id}).exec()
     res.json({data: find})
+  },
+  genderCount: async (req,res,next)=>{
+    // STATISTICS 
+    // Display in pie chart
+    const gendertotal = await User.find({}).countDocuments().exec()
+    const male = await User.find({"personalInformation.gender":"Female"}).countDocuments().exec()
+    const female = await User.find({"personalInformation.gender":"Male"}).countDocuments().exec()
+    res.json({
+      male: male, 
+      female: female,
+      nogender: gendertotal - (male + female),
+      gendertotal: gendertotal
+    })
+  },
+  ageCount: async (req,res,next)=>{
+    // STATISTICS 
+    // Display in bar chart
+    
+    const userTotal = await User.find({}).exec()
+    
+    let users = []
+    let noBirthday = 0
+    for(let i = 0; i < userTotal.length; i++){
+      if(userTotal[i].personalInformation.birthday){
+        users.push(Math.round((Date.now() - new Date(userTotal[i].personalInformation.birthday).getTime())/31536000000))
+      }else{
+        noBirthday = noBirthday + 1
+      }
+    }
+    var counts = {};
+    users.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
+    res.json({counts:counts,noBirthday:noBirthday, total: userTotal.length})
+  },
+  occupationCount: async (req,res,next)=>{
+    // STATISTICS 
+    // Display in bar chart
+    const total = await User.find({}).exec()
+    const none = await User.find({"personalInformation.occupation":"none"}).exec()
+    const fulltime = await User.find({"personalInformation.occupation":"fulltime"}).exec()
+    const parttime = await User.find({"personalInformation.occupation":"parttime"}).exec()
+    res.json({none,fulltime,parttime,total})
+  },
+  regionCount: async (req,res,next)=>{
+    // STATISTICS 
+    // Display in bar chart
+    
+    const userTotal = await User.find({}).exec()
+    
+    let region = []
+    let noRegion = 0
+    for(let i = 0; i < userTotal.length; i++){
+      if(userTotal[i].personalInformation.province){
+        region.push(userTotal[i].personalInformation.province)
+      }else{
+        noRegion = noRegion + 1
+      }
+    }
+    var counts = {};
+    region.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
+    res.json({region:counts,noRegion:noRegion, total: userTotal.length})
+  },
+  yearsInAlsCount: async (req,res,next)=>{
+    // STATISTICS 
+    // Display in bar chart
+    const userTotal = await User.find({}).exec()
+    
+    let yearsInAls = []
+    let noYear = 0
+    for(let i = 0; i < userTotal.length; i++){
+      if(userTotal[i].personalInformation.yearsInAls){
+        yearsInAls.push(userTotal[i].personalInformation.yearsInAls)
+      }else{
+        noYear = noYear + 1
+      }
+    }
+    var counts = {};
+    yearsInAls.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
+    res.json({yearsInAls:counts,noYear:noYear, total: userTotal.length})
+  },
+  registeredExamineeCount: async (req,res,next)=>{
+    // STATISTICS 
+    // Display in pie chart
+    const userTotal = await User.find({}).countDocuments().exec()
+    const Yes = await User.find({"personalInformation.registeredExaminee": "Yes"}).countDocuments().exec()
+    const No = await User.find({"personalInformation.registeredExaminee": "No"}).countDocuments().exec()
+    res.json({ Yes:Yes, No: No, total: userTotal, NoData: userTotal - (Yes+No)})
+  },
+  // Teacher stats
+  letPasserCount: async (req,res,next)=>{
+    // STATISTICS 
+    // Display in pie chart
+    const userTotal = await User.find({}).countDocuments().exec()
+    const Yes = await User.find({"personalInformation.letPasser": "Yes"}).countDocuments().exec()
+    const No = await User.find({"personalInformation.letPasser": "No"}).countDocuments().exec()
+    res.json({ Yes:Yes, No: No, total: userTotal, NoData: userTotal - (Yes+No)})
+  },
+  noOfYearsTeachingCount: async (req,res,next)=>{
+    // STATISTICS 
+    // Display in bar chart
+    const userTotal = await User.find({}).exec()
+    
+    let noOfYearsTeaching = []
+    let noYear = 0
+    for(let i = 0; i < userTotal.length; i++){
+      if(userTotal[i].personalInformation.noOfYearsTeaching){
+        noOfYearsTeaching.push(userTotal[i].personalInformation.noOfYearsTeaching)
+      }else{
+        noYear = noYear + 1
+      }
+    }
+    var counts = {};
+    noOfYearsTeaching.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
+    res.json({noOfYearsTeaching:counts,noYear:noYear, total: userTotal.length})
+  },
+  noOfYearsAsAlsTeacherCount: async (req,res,next)=>{
+    // STATISTICS 
+    // Display in bar chart
+    const userTotal = await User.find({}).exec()
+    
+    let noOfYearsAsAlsTeacher = []
+    let noYear = 0
+    for(let i = 0; i < userTotal.length; i++){
+      if(userTotal[i].personalInformation.noOfYearsAsAlsTeacher){
+        noOfYearsAsAlsTeacher.push(userTotal[i].personalInformation.noOfYearsAsAlsTeacher)
+      }else{
+        noYear = noYear + 1
+      }
+    }
+    var counts = {};
+    noOfYearsAsAlsTeacher.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
+    res.json({noOfYearsAsAlsTeacher:counts,noYear:noYear, total: userTotal.length})
+  },
+  subjectExpertiseCount: async (req,res,next)=>{
+    // STATISTICS 
+    // Display in bar chart
+    const userTotal = await User.find({}).exec()
+    
+    let subjectExpertise = []
+    let noYear = 0
+    for(let i = 0; i < userTotal.length; i++){
+      if(userTotal[i].personalInformation.subjectExpertise){
+        for(let a = 0; a < userTotal[i].personalInformation.subjectExpertise.length; a++){
+          subjectExpertise.push(userTotal[i].personalInformation.subjectExpertise[a].name)
+        }
+      }else{
+        noYear = noYear + 1
+      }
+    }
+    var counts = {};
+    subjectExpertise.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
+    res.json({subjectExpertise:counts,noYear:noYear, total: userTotal.length})
   }
 }

@@ -136,12 +136,23 @@ module.exports = {
     }
     
   },
+  updateUploaderValidator: async (req, res, next) => {
+     let updateData = {
+      uploader: req.body.uploader,
+      validator: req.body.validator,
+    }
+    const data = updateData
+    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    res.json({data: update})
+    
+  },
   update: async (req, res, next) => {
     let updateData = {
       level: req.body.level,
       reviewer: req.body.reviewer,
       learningStrand: req.body.learningStrand,
       uploader: req.body.uploader,
+      validator: req.body.validator,
       validation: req.body.validation,
        question:{
         details: req.body.questionDetails,
@@ -573,6 +584,13 @@ module.exports = {
         
       })
       res.json({data: 'Insert'})
-  }
+  },
+  getUploadCount: async (req, res, next) => {
+    // STATISTICS
+    // Display pie graph
+    const uploadsCount = await Model.find({uploader: req.body.id}).countDocuments().exec()
+    const validatedCount = await Model.find({uploader: req.body.id,validation: true}).countDocuments().exec()
+    res.json({uploadsCount, validatedCount})
+  },
 
 }
