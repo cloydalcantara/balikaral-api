@@ -75,19 +75,28 @@ const userSchema = new Schema({
     gender: String,
     about: String,
 
+    lastGradeLevelCompleted: String,
+    reasonDropOut: String,
+    attendedAlsLessonBefore: String,
+    completedProgram: String,
     // If Learner
-    // New to rex. Paadd
-    yearsInAls: Number,
+    yearsInAls: String, 
     registeredExaminee: String, //Yes or No
     occupation: String, //none, fulltime,parttime
 
     // If Teacher
     letPasser: String,
-    noOfYearsTeaching: Number,
-    noOfYearsAsAlsTeacher: Number,
-    subjectExpertise: [], //learningStrand
+    noOfYearsTeaching: String,
+    noOfYearsAsAlsTeacher: String,
+    subjectExpertise:[
+    {
+      learningStrand: {
+        type: Schema.Types.ObjectId,
+        ref: "learningStrand"
+      }
+    }
+  ],
     
-
   }
 });
 

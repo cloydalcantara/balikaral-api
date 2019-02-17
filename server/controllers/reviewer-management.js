@@ -139,7 +139,9 @@ module.exports = {
     const data = { 
       learningStrand: req.body.learningStrand,
       level: req.body.level,
-      description: req.body.description 
+      description: req.body.description,
+      uploader: req.body.uploader,
+      validator: req.body.validator 
     }
     const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
     if(update){

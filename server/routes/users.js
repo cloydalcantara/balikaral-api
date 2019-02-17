@@ -43,6 +43,11 @@ router.route('/secret')
 router.route('/user/all')
   .get( UsersController.fetchAll);
 
+router.route('/user/fetch-all')
+  .get( UsersController.fetchAllWithoutPagination);
+
+  
+
 
 router.route('/user/check-email')
   .get( UsersController.checkIfEmailExist);

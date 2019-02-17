@@ -206,12 +206,15 @@ module.exports = {
       if(query.type){
         findQuery = {...findQuery, "local.userType": query.type}
       }
+      if(query.notType){
+        findQuery = {...findQuery, "local.userType": { $ne: query.notType } }
+      }
     }
     
     const count = await await User.find(findQuery).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-    const find = await await User.find(findQuery).skip(skip).limit(10).exec()
+    const find = await await User.find(findQuery).populate([{path:"personalInformation.personalInformation.subjectExpertise.learningStrand"}]).skip(skip).limit(10).exec()
       res.json({
         data: find,
         currentPage: parseInt(req.query.page),
@@ -222,8 +225,25 @@ module.exports = {
         totalCount: count
     })
   },
-  fetchSingle: async (req, res, next) => {
-    const find = await User.findOne({_id:req.params.id}).exec()
+  fetchAllWithoutPagination: async (req, res, next) => {
+    let findQuery = {}
+    if(req.query){
+      let query = req.query
+      if(query.type){
+        findQuery = {...findQuery, "local.userType": query.type}
+      }
+      if(query.notType){
+        findQuery = {...findQuery, "local.userType": { $ne: query.notType } }
+      }
+    }
+    const find = await await User.find(findQuery).populate([{path:"personalInformation.subjectExpertise.learningStrand"}]).exec()
+      res.json({
+        data: find,
+    })
+  },
+
+  fetchSingle: async (req, res, next) => { 
+    const find = await User.findOne({_id:req.params.id}).populate([{path:"personalInformation.subjectExpertise.learningStrand"}]).exec()
     res.json({data: find})
   },
   fetchLearner: async (req, res, next) => {
@@ -268,7 +288,22 @@ module.exports = {
 
         gender: req.body.gender,
 
-        about: req.body.about
+        about: req.body.about,
+
+        lastGradeLevelCompleted: req.body.lastGradeLevelCompleted,
+        reasonDropOut: req.body.reasonDropOut,
+        attendedAlsLessonBefore: req.body.attendedAlsLessonBefore,
+        completedProgram: req.body.completedProgram,
+
+        yearsInAls: req.body.yearsInAls,
+        registeredExaminee: req.body.registeredExaminee,
+        occupation: req.body.occupation,
+        letPasser: req.body.letPasser,
+        noOfYearsTeaching: req.body.noOfYearsTeaching,
+        noOfYearsAsAlsTeacher: req.body.noOfYearsAsAlsTeacher,
+        subjectExpertise: req.body.subjectExpertise,
+
+
       }
     }
     
@@ -385,7 +420,21 @@ module.exports = {
 
         gender: req.body.gender,
 
-        about: req.body.about
+        about: req.body.about,
+
+        lastGradeLevelCompleted: req.body.lastGradeLevelCompleted,
+        reasonDropOut: req.body.reasonDropOut,
+        attendedAlsLessonBefore: req.body.attendedAlsLessonBefore,
+        completedProgram: req.body.completedProgram,
+
+        yearsInAls: req.body.yearsInAls,
+        registeredExaminee: req.body.registeredExaminee,
+        occupation: req.body.occupation,
+
+        letPasser: req.body.letPasser,
+        noOfYearsTeaching: req.body.noOfYearsTeaching,
+        noOfYearsAsAlsTeacher: req.body.noOfYearsAsAlsTeacher,
+        subjectExpertise: req.body.subjectExpertise,
 
       }
     }
@@ -394,7 +443,7 @@ module.exports = {
     res.json({data: find})
   },
   genderCount: async (req,res,next)=>{
-    // STATISTICS 
+    // STATISTICS  
     // Display in pie chart
     const gendertotal = await User.find({}).countDocuments().exec()
     const male = await User.find({"personalInformation.gender":"Female"}).countDocuments().exec()
@@ -429,9 +478,9 @@ module.exports = {
     // STATISTICS 
     // Display in bar chart
     const total = await User.find({}).exec()
-    const none = await User.find({"personalInformation.occupation":"none"}).exec()
-    const fulltime = await User.find({"personalInformation.occupation":"fulltime"}).exec()
-    const parttime = await User.find({"personalInformation.occupation":"parttime"}).exec()
+    const none = await User.find({"personalInformation.occupation":"none"}).count().exec()
+    const fulltime = await User.find({"personalInformation.occupation":"fulltime"}).count().exec()
+    const parttime = await User.find({"personalInformation.occupation":"parttime"}).count().exec()
     res.json({none,fulltime,parttime,total})
   },
   regionCount: async (req,res,next)=>{
@@ -527,14 +576,14 @@ module.exports = {
   subjectExpertiseCount: async (req,res,next)=>{
     // STATISTICS 
     // Display in bar chart
-    const userTotal = await User.find({}).exec()
+    const userTotal = await User.find({}).populate([{path:"personalInformation.subjectExpertise.learningStrand"}]).exec()
     
     let subjectExpertise = []
     let noYear = 0
     for(let i = 0; i < userTotal.length; i++){
       if(userTotal[i].personalInformation.subjectExpertise){
         for(let a = 0; a < userTotal[i].personalInformation.subjectExpertise.length; a++){
-          subjectExpertise.push(userTotal[i].personalInformation.subjectExpertise[a].name)
+          subjectExpertise.push(userTotal[i].personalInformation.subjectExpertise[a].learningStrand.name)
         }
       }else{
         noYear = noYear + 1

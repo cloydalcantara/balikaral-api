@@ -27,8 +27,14 @@ module.exports = {
     
   },
   fetchWithoutPagination: async (req, res, next) => {
-    
-    const find = await Model.find({level: req.query.level}).populate({path: "level"}).exec()
+     let findQuery = {}
+    if(req.query){
+      let query = req.query
+      if(query.level){
+        findQuery = {...findQuery, level: query.level }
+      }
+    }
+    const find = await Model.find(findQuery).populate({path: "level"}).exec()
       res.json({
         data: find       
     })

@@ -16,7 +16,7 @@ module.exports = {
       learningStrand: req.body.learningStrand,
       uploader: req.body.uploader,
       validation: req.body.validation,
-      validator: req.body.validator,
+     
        question:{
         details: req.body.questionDetails,
         images: req.files.questionImage ? req.files.questionImage[0].filename : null,
@@ -44,7 +44,7 @@ module.exports = {
       },
       
     }
-
+    
     if(req.body.learningStrandSub){
       addData = { ...addData, learningStrandSub: req.body.learningStrandSub }
     }
@@ -136,12 +136,23 @@ module.exports = {
     }
     
   },
+  updateUploaderValidator: async (req, res, next) => {
+     let updateData = {
+      uploader: req.body.uploader,
+      validator: req.body.validator,
+    }
+    const data = updateData
+    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    res.json({data: update})
+    
+  },
   update: async (req, res, next) => {
     let updateData = {
       level: req.body.level,
       reviewer: req.body.reviewer,
       learningStrand: req.body.learningStrand,
       uploader: req.body.uploader,
+      validator: req.body.validator,
       validation: req.body.validation,
        question:{
         details: req.body.questionDetails,
