@@ -89,6 +89,9 @@ router.route('/user/subject-expertise')
 router.route('/user/:id')
   .get( UsersController.fetchSingle);
 
+router.route('/user/:id')
+  .get( UsersController.fetchLearner);
+
 router.route('/user/update-personal-info/:id')
   .put( UsersController.updatePersonalInfo);
 
