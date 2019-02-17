@@ -211,10 +211,10 @@ module.exports = {
       }
     }
     
-    const count = await await User.find(findQuery).count().exec()
+    const count = await User.find(findQuery).count().exec()
     const pageCount = Math.ceil(count / 10)
     const skip = (parseInt(req.query.page) - 1) * 10
-    const find = await await User.find(findQuery).populate([{path:"personalInformation.personalInformation.subjectExpertise.learningStrand"}]).skip(skip).limit(10).exec()
+    const find = await User.find(findQuery).populate([{path:"personalInformation.personalInformation.subjectExpertise.learningStrand"}]).skip(skip).limit(10).exec()
       res.json({
         data: find,
         currentPage: parseInt(req.query.page),
@@ -236,7 +236,7 @@ module.exports = {
         findQuery = {...findQuery, "local.userType": { $ne: query.notType } }
       }
     }
-    const find = await await User.find(findQuery).populate([{path:"personalInformation.subjectExpertise.learningStrand"}]).exec()
+    const find = await User.find(findQuery).populate([{path:"personalInformation.subjectExpertise.learningStrand"}]).exec()
       res.json({
         data: find,
     })
@@ -247,7 +247,7 @@ module.exports = {
     res.json({data: find})
   },
   fetchLearner: async (req, res, next) => {
-    const find = await User.find({"local.userType":"Learner"}).exec()
+    const find = await User.find({"$or": [{"local.userType":"Learner"},{"facebook.userType":"Learner"},{"google.userType":"Learner"}]}).exec()
     res.json({data: find})
   },
   checkIfEmailExist: async (req, res, next) => {
