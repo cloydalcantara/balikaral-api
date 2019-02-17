@@ -32,7 +32,7 @@ router.route('/reviewer-management/:id')
   .get(  reviewerManagement.fetchSingle);
 
 router.route('/reviewer-management/uploaded-count/:id')
-  .get( examManagement.getUploadCount);
+  .get( reviewerManagement.getUploadCount);
 
 router.route('/reviewer-management/delete/:id')
   .delete(  reviewerManagement.delete);

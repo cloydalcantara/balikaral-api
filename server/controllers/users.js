@@ -226,6 +226,10 @@ module.exports = {
     const find = await User.findOne({_id:req.params.id}).exec()
     res.json({data: find})
   },
+  fetchLearner: async (req, res, next) => {
+    const find = await User.find({"local.userType":"Learner"}).exec()
+    res.json({data: find})
+  },
   checkIfEmailExist: async (req, res, next) => {
       const local = await User.find({ "local.email": req.query.email }).count().exec()
       const facebook = await User.find({ "facebook.email": req.query.email }).count().exec()
