@@ -16,7 +16,7 @@ module.exports = {
       learningStrand: req.body.learningStrand,
       uploader: req.body.uploader,
       validation: req.body.validation,
-      validator: req.body.validator,
+     
        question:{
         details: req.body.questionDetails,
         images: req.files.questionImage ? req.files.questionImage[0].filename : null,
@@ -44,7 +44,7 @@ module.exports = {
       },
       
     }
-
+    
     if(req.body.learningStrandSub){
       addData = { ...addData, learningStrandSub: req.body.learningStrandSub }
     }
