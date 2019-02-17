@@ -439,7 +439,7 @@ module.exports = {
     res.json({data: find})
   },
   genderCount: async (req,res,next)=>{
-    // STATISTICS 
+    // STATISTICS  
     // Display in pie chart
     const gendertotal = await User.find({}).countDocuments().exec()
     const male = await User.find({"personalInformation.gender":"Female"}).countDocuments().exec()
@@ -474,9 +474,9 @@ module.exports = {
     // STATISTICS 
     // Display in bar chart
     const total = await User.find({}).exec()
-    const none = await User.find({"personalInformation.occupation":"none"}).exec()
-    const fulltime = await User.find({"personalInformation.occupation":"fulltime"}).exec()
-    const parttime = await User.find({"personalInformation.occupation":"parttime"}).exec()
+    const none = await User.find({"personalInformation.occupation":"none"}).count().exec()
+    const fulltime = await User.find({"personalInformation.occupation":"fulltime"}).count().exec()
+    const parttime = await User.find({"personalInformation.occupation":"parttime"}).count().exec()
     res.json({none,fulltime,parttime,total})
   },
   regionCount: async (req,res,next)=>{
@@ -572,14 +572,14 @@ module.exports = {
   subjectExpertiseCount: async (req,res,next)=>{
     // STATISTICS 
     // Display in bar chart
-    const userTotal = await User.find({}).exec()
+    const userTotal = await User.find({}).populate([{path:"personalInformation.subjectExpertise.learningStrand"}]).exec()
     
     let subjectExpertise = []
     let noYear = 0
     for(let i = 0; i < userTotal.length; i++){
       if(userTotal[i].personalInformation.subjectExpertise){
         for(let a = 0; a < userTotal[i].personalInformation.subjectExpertise.length; a++){
-          subjectExpertise.push(userTotal[i].personalInformation.subjectExpertise[a].name)
+          subjectExpertise.push(userTotal[i].personalInformation.subjectExpertise[a].learningStrand.name)
         }
       }else{
         noYear = noYear + 1
