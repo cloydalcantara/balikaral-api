@@ -181,12 +181,6 @@ module.exports = {
       res.json({data: update})
     }
   },
-  statsPerExamType: async (req, res, next) => {
-    // STATISTICS
-    // Display Per Exam Type
-   const type = await Model.find({examiner:req.params.id,type:req.params.type}).exec()
-    res.json({data: type})
-  },
   statsPreAndPost: async (req, res, next) => {
     // STATISTICS
     // Display Pre and Post. Line graph

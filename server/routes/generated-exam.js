@@ -32,9 +32,6 @@ router.route('/generated-exam/performance-indicator/:id')
 
 router.route('/generated-exam/pre-post/:id')
   .get( generatedExam.statsPreAndPost);
-
-router.route('/generated-exam/stats-per-examtype/:id/:type')
-  .get( generatedExam.statsPerExamType);
   
 
   
