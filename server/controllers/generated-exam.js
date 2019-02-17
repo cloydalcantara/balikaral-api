@@ -192,7 +192,7 @@ module.exports = {
       preData.push({percentage: (pre[i].score / pre[i].exam.length) * 100, type: "Pre Test"})
     }
     for(let a = 0; a<post.length; a++){
-      postData.push({percentage: (post[i].score / post[i].exam.length) * 100, type: "Post Test"})
+      postData.push({percentage: (post[a].score / post[a].exam.length) * 100, type: "Post Test"})
     }
     res.json({pre: preData, post: postData})
   },
@@ -209,10 +209,10 @@ module.exports = {
       preData.push({percentage: (pre[i].score / pre[i].exam.length) * 100, type: "Pre Test"})
     }
     for(let a = 0; a<adaptiveData.length; a++){
-      adaptiveData.push({percentage: (adaptiveData[i].score / adaptiveData[i].exam.length) * 100, type: "Adaptive Test"})
+      adaptiveData.push({percentage: (adaptiveData[a].score / adaptiveData[a].exam.length) * 100, type: "Adaptive Test"})
     }
-    for(let a = 0; a<post.length; a++){
-      postData.push({percentage: (post[i].score / post[i].exam.length) * 100, type: "Post Test"})
+    for(let b = 0; b<post.length; b++){
+      postData.push({percentage: (post[b].score / post[b].exam.length) * 100, type: "Post Test"})
     }
     res.json({pre: preData, adaptiveTest: adaptiveData, post: postData})
   }
