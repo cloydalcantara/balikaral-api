@@ -181,18 +181,20 @@ module.exports = {
       res.json({data: update})
     }
   },
-  statsPerExamType: async (req, res, next) => {
-    // STATISTICS
-    // Display Per Exam Type
-   const type = await Model.find({examiner:req.params.id,type:req.params.type}).exec()
-    res.json({data: type})
-  },
   statsPreAndPost: async (req, res, next) => {
     // STATISTICS
     // Display Pre and Post. Line graph
     const pre = await Model.find({examiner:req.params.id,type:"Pre Test"}).exec()
     const post = await Model.find({examiner:req.params.id,type:"Post Test"}).exec()
-    res.json({pre: pre, post: post})
+    let preData = []
+    let postData = []
+    for(let i = 0; i<pre.length; i++){
+      preData.push({percentage: (pre[i].score / pre[i].exam.length) * 100, type: "Pre Test"})
+    }
+    for(let a = 0; a<post.length; a++){
+      postData.push({percentage: (post[i].score / post[i].exam.length) * 100, type: "Post Test"})
+    }
+    res.json({pre: preData, post: postData})
   },
   performanceIndicator: async (req, res, next) => {
     // STATISTICS
@@ -200,6 +202,18 @@ module.exports = {
     const pre = await Model.find({examiner:req.params.id,type:"Pre Test"}).exec()
     const adaptiveTest = await Model.find({examiner:req.params.id,type:"Adaptive Test"}).exec()
     const post = await Model.find({examiner:req.params.id,type:"Post Test"}).exec()
-    res.json({pre: pre, adaptiveTest: adaptiveTest, post: post})
+    let preData = []
+    let adaptiveData = []
+    let postData = []
+    for(let i = 0; i<pre.length; i++){
+      preData.push({percentage: (pre[i].score / pre[i].exam.length) * 100, type: "Pre Test"})
+    }
+    for(let a = 0; a<adaptiveData.length; a++){
+      adaptiveData.push({percentage: (adaptiveData[i].score / adaptiveData[i].exam.length) * 100, type: "Adaptive Test"})
+    }
+    for(let a = 0; a<post.length; a++){
+      postData.push({percentage: (post[i].score / post[i].exam.length) * 100, type: "Post Test"})
+    }
+    res.json({pre: preData, adaptiveTest: adaptiveData, post: postData})
   }
 }
