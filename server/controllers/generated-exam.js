@@ -209,7 +209,7 @@ module.exports = {
       preData.push({percentage: (pre[i].score / pre[i].exam.length) * 100, type: "Pre Test"})
     }
     for(let a = 0; a<adaptiveData.length; a++){
-      adaptiveData.push({percentage: (adaptiveData[a].score / adaptiveData[a].exam.length) * 100, type: "Adaptive Test"})
+      adaptiveData.push({percentage: (adaptiveTest[a].score / adaptiveTest[a].exam.length) * 100, type: "Adaptive Test"})
     }
     for(let b = 0; b<post.length; b++){
       postData.push({percentage: (post[b].score / post[b].exam.length) * 100, type: "Post Test"})
