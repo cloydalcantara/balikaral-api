@@ -229,7 +229,7 @@ module.exports = {
     }
     if(post.length > 0){
       for(let a = 0; a <post[0].percentagePerLearningStrand.length; a++){
-        datas.push({learningStrand:post[0].percentagePerLearningStrand[a].learningStrand.name,percentage:post[0].percentagePerLearningStrand[a].percentage,type:"Pre Test"})
+        datas.push({learningStrand:post[0].percentagePerLearningStrand[a].learningStrand.name,percentage:post[0].percentagePerLearningStrand[a].percentage,type:"Post Test"})
       }
     }
     
@@ -262,7 +262,7 @@ module.exports = {
     
     if(post.length > 0){
       for(let a = 0; a <post[0].percentagePerLearningStrand.length; a++){
-        datas.push({learningStrand:post[0].percentagePerLearningStrand[a].learningStrand.name,percentage:post[0].percentagePerLearningStrand[a].percentage,type:"Pre Test"})
+        datas.push({learningStrand:post[0].percentagePerLearningStrand[a].learningStrand.name,percentage:post[0].percentagePerLearningStrand[a].percentage,type:"Post Test"})
       }
     }
     
