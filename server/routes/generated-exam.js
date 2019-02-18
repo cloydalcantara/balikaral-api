@@ -32,8 +32,11 @@ router.route('/generated-exam/performance-indicator/:id')
 
 router.route('/generated-exam/pre-post/:id')
   .get( generatedExam.statsPreAndPost);
-  
 
+// Start
+router.route('/generated-exam/analytics/pre-post/:id')
+  .get( generatedExam.perAndPostFetchAnalytics);
+  
   
 router.route('/generated-exam/:id')
   .get( generatedExam.fetchSingle);
