@@ -235,5 +235,31 @@ module.exports = {
     const result = groupBy(datas, (c) => c.learningStrand);
 
     res.json({data: result})
+  },
+  allExamFetchAnalytics: async (req, res, next) => {
+    // STATISTICS
+    // Display from Pre, Adaptive then post. If post can be highlighted (much better) line graph
+    const pre = await Model.find({examiner:req.params.id,type:"Pre Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
+    const adaptive = await Model.find({examiner:req.params.id,type:"Adaptive Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
+    const post = await Model.find({examiner:req.params.id,type:"Post Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
+    let datas = []
+    console.log(pre[0].percentagePerLearningStrand[1].learningStrand.name)
+    for(let i = 0; i <pre[0].percentagePerLearningStrand.length; i++){
+      datas.push({learningStrand:pre[0].percentagePerLearningStrand[i].learningStrand.name,percentage:pre[0].percentagePerLearningStrand[i].percentage,type:"Pre Test"})
+    }
+    for(let z = 0; z < adaptive.length; z++) {
+      for(let c = 0; c <adaptive[z].percentagePerLearningStrand.length; c++){
+        datas.push({learningStrand:adaptive[z].percentagePerLearningStrand[c].learningStrand.name,percentage:adaptive[z].percentagePerLearningStrand[c].percentage,type:"Adaptive Test"})
+      }
+    }
+    for(let a = 0; a <post[0].percentagePerLearningStrand.length; a++){
+      datas.push({learningStrand:post[0].percentagePerLearningStrand[a].learningStrand.name,percentage:post[0].percentagePerLearningStrand[a].percentage,type:"Pre Test"})
+    }
+    function groupBy(xs, f) {
+      return xs.reduce((r, v, i, a, k = f(v)) => ((r[k] || (r[k] = [])).push(v), r), {});
+    }
+    const result = groupBy(datas, (c) => c.learningStrand);
+
+    res.json({data: result})
   }
 }
