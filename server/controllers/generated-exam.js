@@ -222,7 +222,6 @@ module.exports = {
     const pre = await Model.find({examiner:req.params.id,type:"Pre Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
     const post = await Model.find({examiner:req.params.id,type:"Post Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
     let datas = []
-    console.log(pre[0].percentagePerLearningStrand[1].learningStrand.name)
     for(let i = 0; i <pre[0].percentagePerLearningStrand.length; i++){
       datas.push({learningStrand:pre[0].percentagePerLearningStrand[i].learningStrand.name,percentage:pre[0].percentagePerLearningStrand[i].percentage,type:"Pre Test"})
     }
@@ -243,7 +242,6 @@ module.exports = {
     const adaptive = await Model.find({examiner:req.params.id,type:"Adaptive Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
     const post = await Model.find({examiner:req.params.id,type:"Post Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
     let datas = []
-    console.log(pre[0].percentagePerLearningStrand[1].learningStrand.name)
     for(let i = 0; i <pre[0].percentagePerLearningStrand.length; i++){
       datas.push({learningStrand:pre[0].percentagePerLearningStrand[i].learningStrand.name,percentage:pre[0].percentagePerLearningStrand[i].percentage,type:"Pre Test"})
     }
