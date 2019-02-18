@@ -222,12 +222,17 @@ module.exports = {
     const pre = await Model.find({examiner:req.params.id,type:"Pre Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
     const post = await Model.find({examiner:req.params.id,type:"Post Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
     let datas = []
-    for(let i = 0; i <pre[0].percentagePerLearningStrand.length; i++){
-      datas.push({learningStrand:pre[0].percentagePerLearningStrand[i].learningStrand.name,percentage:pre[0].percentagePerLearningStrand[i].percentage,type:"Pre Test"})
+    if(pre.length > 0){
+      for(let i = 0; i <pre[0].percentagePerLearningStrand.length; i++){
+        datas.push({learningStrand:pre[0].percentagePerLearningStrand[i].learningStrand.name,percentage:pre[0].percentagePerLearningStrand[i].percentage,type:"Pre Test"})
+      }
     }
-    for(let a = 0; a <post[0].percentagePerLearningStrand.length; a++){
-      datas.push({learningStrand:post[0].percentagePerLearningStrand[a].learningStrand.name,percentage:post[0].percentagePerLearningStrand[a].percentage,type:"Pre Test"})
+    if(post.length > 0){
+      for(let a = 0; a <post[0].percentagePerLearningStrand.length; a++){
+        datas.push({learningStrand:post[0].percentagePerLearningStrand[a].learningStrand.name,percentage:post[0].percentagePerLearningStrand[a].percentage,type:"Pre Test"})
+      }
     }
+    
     function groupBy(xs, f) {
       return xs.reduce((r, v, i, a, k = f(v)) => ((r[k] || (r[k] = [])).push(v), r), {});
     }
@@ -242,17 +247,25 @@ module.exports = {
     const adaptive = await Model.find({examiner:req.params.id,type:"Adaptive Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
     const post = await Model.find({examiner:req.params.id,type:"Post Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
     let datas = []
-    for(let i = 0; i <pre[0].percentagePerLearningStrand.length; i++){
-      datas.push({learningStrand:pre[0].percentagePerLearningStrand[i].learningStrand.name,percentage:pre[0].percentagePerLearningStrand[i].percentage,type:"Pre Test"})
-    }
-    for(let z = 0; z < adaptive.length; z++) {
-      for(let c = 0; c <adaptive[z].percentagePerLearningStrand.length; c++){
-        datas.push({learningStrand:adaptive[z].percentagePerLearningStrand[c].learningStrand.name,percentage:adaptive[z].percentagePerLearningStrand[c].percentage,type:"Adaptive Test"})
+    if(pre.length > 0){
+      for(let i = 0; i <pre[0].percentagePerLearningStrand.length; i++){
+        datas.push({learningStrand:pre[0].percentagePerLearningStrand[i].learningStrand.name,percentage:pre[0].percentagePerLearningStrand[i].percentage,type:"Pre Test"})
       }
     }
-    for(let a = 0; a <post[0].percentagePerLearningStrand.length; a++){
-      datas.push({learningStrand:post[0].percentagePerLearningStrand[a].learningStrand.name,percentage:post[0].percentagePerLearningStrand[a].percentage,type:"Pre Test"})
+    if(adaptive.length > 0){
+      for(let z = 0; z < adaptive.length; z++) {
+        for(let c = 0; c <adaptive[z].percentagePerLearningStrand.length; c++){
+          datas.push({learningStrand:adaptive[z].percentagePerLearningStrand[c].learningStrand.name,percentage:adaptive[z].percentagePerLearningStrand[c].percentage,type:"Adaptive Test"})
+        }
+      }
     }
+    
+    if(post.length > 0){
+      for(let a = 0; a <post[0].percentagePerLearningStrand.length; a++){
+        datas.push({learningStrand:post[0].percentagePerLearningStrand[a].learningStrand.name,percentage:post[0].percentagePerLearningStrand[a].percentage,type:"Pre Test"})
+      }
+    }
+    
     function groupBy(xs, f) {
       return xs.reduce((r, v, i, a, k = f(v)) => ((r[k] || (r[k] = [])).push(v), r), {});
     }
