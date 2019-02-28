@@ -92,7 +92,7 @@ module.exports = {
     }
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path: "exam.reviewer"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path: "exam.question.reviewer"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
     res.json({data: find})
   },
   fetchAnalyticsOfPassers: async( req, res, next ) => {
