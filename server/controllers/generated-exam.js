@@ -4,7 +4,7 @@ const User = require('../models/user')
 const SurveyUser = require('../models/survey-user')
 const { JWT_SECRET } = require('../configuration');
 const AuditTrail = require('../models/auditTrail')
-
+const mongoose = require('mongoose');
 
 module.exports = {
   add: async (req, res, next) => {
@@ -95,7 +95,7 @@ module.exports = {
     const lookup = await Model.aggregate([
       {
         "$match": {
-          "_id": req.params.id
+          "_id": mongoose.Types.ObjectId(req.params.id)
         }
       }
     ])
