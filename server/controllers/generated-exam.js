@@ -97,7 +97,8 @@ module.exports = {
         "$match": {
           "_id": mongoose.Types.ObjectId(req.params.id)
         }
-      }
+      },
+      { "$unwind": "$data" }
     ])
 
     const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path: "exam.question.reviewer"},{path: "exam.question.reviewer"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
