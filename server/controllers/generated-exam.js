@@ -93,8 +93,38 @@ module.exports = {
   },
   fetchSingle: async (req, res, next) => {
 
+    const look = await Model.aggregate([
+      { "$match": {_id: mongoose.Types.ObjectId(req.params.id)}},
+      {
+        $unwind: "$exam"
+      },
+      {
+        $lookup: {
+          from: "exams",
+          localField: "exam.question",
+          foreignField: "_id",
+          as: "examinationQuestions"
+        }
+      },
+      {
+        $unwind: "$examinationQuestions"
+      },
+      {
+        $lookup: {
+          from: "reviewermanagements",
+          localField: "examinationQuestions.reviewer",
+          foreignField: "_id",
+          as: "reviewerManagements"
+        }
+      },
+      { "$group": {
+        "_id": "$_id",
+        "finalReviewer": { "$push": "$reviewerManagements" }
+      }}
+    ])
+
     const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path: "exam.question.reviewer"},{path: "exam.question.reviewer"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
-    res.json({data: find})
+    res.json({data: find,look})
   },
   fetchAnalyticsOfPassers: async( req, res, next ) => {
     const count = await User.find({"local.userType":req.query.userType}).count().exec() // userType is yung sa Learner
