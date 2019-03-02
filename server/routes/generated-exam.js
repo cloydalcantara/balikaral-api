@@ -39,7 +39,8 @@ router.route('/generated-exam/analytics/pre-post/:id')
 
 router.route('/generated-exam/analytics/all/:id')
   .get( generatedExam.allExamFetchAnalytics);
-  
+router.route('/generated-exam/fetch-examination/:id')
+  .get( generatedExam.fetchExamination);
   
 router.route('/generated-exam/:id')
   .get( generatedExam.fetchSingle);

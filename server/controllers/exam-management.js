@@ -481,7 +481,7 @@ module.exports = {
       failedLearningStrand.map((attr)=>{
         learningStrandId = [...learningStrandId, attr.learningStrand]
       })
-      res.json({ failedLearningStrand: learningStrandId})
+      res.json({ failedLearningStrand: learningStrandId, checkIfPassed, checkIfFailed})
     }else{
       res.json({ status: 'Exam Available' })
     }
