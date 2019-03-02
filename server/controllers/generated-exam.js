@@ -126,6 +126,10 @@ module.exports = {
     const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path: "exam.question.reviewer"},{path: "exam.question.reviewer"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
     res.json({data: find,look})
   },
+  fetchExamination: async (req, res, next) => {
+    const find = await Model.find({examiner:req.params.id}).populate([{path:"level"},{path:"percentagePerLearningStrand.learningStrand"},{path: "exam.question.reviewer"},{path: "exam.question.reviewer"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
+    res.json({data: find})
+  },
   fetchAnalyticsOfPassers: async( req, res, next ) => {
     const count = await User.find({"local.userType":req.query.userType}).count().exec() // userType is yung sa Learner
     //fetch natin yung mga nakapasa na. Per examType. Siguro naka donut to. Para ex. 60% passed out of 40% ongoing
