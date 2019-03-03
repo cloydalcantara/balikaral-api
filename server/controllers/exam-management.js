@@ -443,6 +443,7 @@ module.exports = {
     });
   },
   generateExamination: async( req, res, next ) => {
+    console.log(req.query)
     Model.find({
       level: req.query.level,
       learningStrand: req.query.learningStrand,
@@ -469,19 +470,18 @@ module.exports = {
   fetchExamStatus: async(req,res,next) => {
     const checkIfPassed = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Completed', type: req.query.type, }).count().exec()
     const checkIfFailed = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Retake', type: req.query.type}).exec()
-    console.log(checkIfPassed)
-    console.log(checkIfFailed)
     if(checkIfPassed > 0){
       res.json({ status: 'Passed' })
     }else if(checkIfFailed.length > 0){
       let learningStrandId = []
       let failedLearningStrand = checkIfFailed[checkIfFailed.length - 1].percentagePerLearningStrand.filter((attr)=>{
-        return attr.percentage < 90
+        return attr.percentage > 0
       })
       failedLearningStrand.map((attr)=>{
-        learningStrandId = [...learningStrandId, attr.learningStrand]
+        learningStrandId.push(attr)
       })
-      res.json({ failedLearningStrand: learningStrandId, checkIfPassed, checkIfFailed})
+      console.log(learningStrandId)
+      res.json({ failedLearningStrand: learningStrandId})
     }else{
       res.json({ status: 'Exam Available' })
     }
