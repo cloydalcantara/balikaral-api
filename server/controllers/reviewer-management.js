@@ -6,6 +6,7 @@ const AuditTrail = require('../models/auditTrail')
 
 module.exports = {
   add: async (req, res, next) => {
+    console.log(req.body)
     let rmData = {
       learningStrand: req.body.learningStrand,
       level: req.body.level,
@@ -18,7 +19,7 @@ module.exports = {
     if(req.body.learningStrandSub){
       rmData = { ...rmData, learningStrandSub: req.body.learningStrandSub }
     }
-    if(req.body.reviewer){
+    if(req.body.reviewer !== "undefined" && req.body.reviewer){
       rmData = { ...rmData, reviewer: req.body.reviewer }
     }
     if(req.body.validator){
