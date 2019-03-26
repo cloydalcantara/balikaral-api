@@ -4,7 +4,7 @@ const User = require('../models/user')
 const SurveyUser = require('../models/survey-user')
 const { JWT_SECRET } = require('../configuration');
 const AuditTrail = require('../models/auditTrail')
-
+const mongoose = require('mongoose');
 
 module.exports = {
   add: async (req, res, next) => {
@@ -92,7 +92,42 @@ module.exports = {
     }
   },
   fetchSingle: async (req, res, next) => {
-    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
+
+    const look = await Model.aggregate([
+      { "$match": {_id: mongoose.Types.ObjectId(req.params.id)}},
+      {
+        $unwind: "$exam"
+      },
+      {
+        $lookup: {
+          from: "exams",
+          localField: "exam.question",
+          foreignField: "_id",
+          as: "examinationQuestions"
+        }
+      },
+      {
+        $unwind: "$examinationQuestions"
+      },
+      {
+        $lookup: {
+          from: "reviewermanagements",
+          localField: "examinationQuestions.reviewer",
+          foreignField: "_id",
+          as: "reviewerManagements"
+        }
+      },
+      { "$group": {
+        "_id": "$_id",
+        "finalReviewer": { "$push": "$reviewerManagements" }
+      }}
+    ])
+
+    const find = await Model.findOne({_id:req.params.id}).populate([{path:"level"},{path: "exam.question.reviewer"},{path: "exam.question.reviewer"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
+    res.json({data: find,look})
+  },
+  fetchExamination: async (req, res, next) => {
+    const find = await Model.find({examiner:req.params.id}).populate([{path:"level"},{path:"percentagePerLearningStrand.learningStrand"},{path: "exam.question.reviewer"},{path: "exam.question.reviewer"},{path:"examType"},{path:"examiner"},{path:"exam.question"}]).exec()
     res.json({data: find})
   },
   fetchAnalyticsOfPassers: async( req, res, next ) => {
@@ -180,5 +215,97 @@ module.exports = {
       await trailData.save()
       res.json({data: update})
     }
+  },
+  statsPreAndPost: async (req, res, next) => {
+    // STATISTICS
+    // Display Pre and Post. Line graph
+    const pre = await Model.find({examiner:req.params.id,type:"Pre Test"}).exec()
+    const post = await Model.find({examiner:req.params.id,type:"Post Test"}).exec()
+    let preData = []
+    let postData = []
+    for(let i = 0; i<pre.length; i++){
+      preData.push({percentage: (pre[i].score / pre[i].exam.length) * 100, type: "Pre Test"})
+    }
+    for(let a = 0; a<post.length; a++){
+      postData.push({percentage: (post[a].score / post[a].exam.length) * 100, type: "Post Test"})
+    }
+    res.json({pre: preData, post: postData})
+  },
+  performanceIndicator: async (req, res, next) => {
+    // STATISTICS
+    // Display from Pre, Adaptive then post. If post can be highlighted (much better) line graph
+    const pre = await Model.find({examiner:req.params.id,type:"Pre Test"}).exec()
+    const adaptiveTest = await Model.find({examiner:req.params.id,type:"Adaptive Test"}).exec()
+    const post = await Model.find({examiner:req.params.id,type:"Post Test"}).exec()
+    let preData = []
+    let adaptiveData = []
+    let postData = []
+    for(let i = 0; i<pre.length; i++){
+      preData.push({percentage: (pre[i].score / pre[i].exam.length) * 100, type: "Pre Test"})
+    }
+    for(let a = 0; a<adaptiveTest.length; a++){
+      adaptiveData.push({percentage: (adaptiveTest[a].score / adaptiveTest[a].exam.length) * 100, type: "Adaptive Test"})
+    }
+    for(let b = 0; b<post.length; b++){
+      postData.push({percentage: (post[b].score / post[b].exam.length) * 100, type: "Post Test"})
+    }
+    res.json({pre: preData, adaptiveTest: adaptiveData, post: postData})
+  },
+  perAndPostFetchAnalytics: async (req, res, next) => {
+    // STATISTICS
+    // Display from Pre, Adaptive then post. If post can be highlighted (much better) line graph
+    const pre = await Model.find({examiner:req.params.id,type:"Pre Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
+    const post = await Model.find({examiner:req.params.id,type:"Post Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
+    let datas = []
+    if(pre.length > 0){
+      for(let i = 0; i <pre[0].percentagePerLearningStrand.length; i++){
+        datas.push({learningStrand:pre[0].percentagePerLearningStrand[i].learningStrand.name,percentage:pre[0].percentagePerLearningStrand[i].percentage,type:"Pre Test"})
+      }
+    }
+    if(post.length > 0){
+      for(let a = 0; a <post[0].percentagePerLearningStrand.length; a++){
+        datas.push({learningStrand:post[0].percentagePerLearningStrand[a].learningStrand.name,percentage:post[0].percentagePerLearningStrand[a].percentage,type:"Post Test"})
+      }
+    }
+    
+    function groupBy(xs, f) {
+      return xs.reduce((r, v, i, a, k = f(v)) => ((r[k] || (r[k] = [])).push(v), r), {});
+    }
+    const result = groupBy(datas, (c) => c.learningStrand);
+
+    res.json({data: result})
+  },
+  allExamFetchAnalytics: async (req, res, next) => {
+    // STATISTICS
+    // Display from Pre, Adaptive then post. If post can be highlighted (much better) line graph
+    const pre = await Model.find({examiner:req.params.id,type:"Pre Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
+    const adaptive = await Model.find({examiner:req.params.id,type:"Adaptive Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
+    const post = await Model.find({examiner:req.params.id,type:"Post Test"}).populate("percentagePerLearningStrand.learningStrand").exec()
+    let datas = []
+    if(pre.length > 0){
+      for(let i = 0; i <pre[0].percentagePerLearningStrand.length; i++){
+        datas.push({learningStrand:pre[0].percentagePerLearningStrand[i].learningStrand.name,percentage:pre[0].percentagePerLearningStrand[i].percentage,type:"Pre Test"})
+      }
+    }
+    if(adaptive.length > 0){
+      for(let z = 0; z < adaptive.length; z++) {
+        for(let c = 0; c <adaptive[z].percentagePerLearningStrand.length; c++){
+          datas.push({learningStrand:adaptive[z].percentagePerLearningStrand[c].learningStrand.name,percentage:adaptive[z].percentagePerLearningStrand[c].percentage,type:"Adaptive Test"})
+        }
+      }
+    }
+    
+    if(post.length > 0){
+      for(let a = 0; a <post[0].percentagePerLearningStrand.length; a++){
+        datas.push({learningStrand:post[0].percentagePerLearningStrand[a].learningStrand.name,percentage:post[0].percentagePerLearningStrand[a].percentage,type:"Post Test"})
+      }
+    }
+    
+    function groupBy(xs, f) {
+      return xs.reduce((r, v, i, a, k = f(v)) => ((r[k] || (r[k] = [])).push(v), r), {});
+    }
+    const result = groupBy(datas, (c) => c.learningStrand);
+
+    res.json({data: result})
   }
 }

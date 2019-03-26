@@ -62,6 +62,9 @@ router.route('/exam-management/difficulty-count')
 router.route('/exam-management/:id')
   .get( examManagement.fetchSingle);
 
+router.route('/exam-management/uploaded-count/:id')
+  .get( examManagement.getUploadCount);
+  
 router.route('/exam-management/delete/:id')
   .delete( examManagement.delete);
 
@@ -75,6 +78,10 @@ router.route('/exam-management/csv')
 
 router.route('/exam-management/validate/:id')
   .put(  examManagement.validate);
+
+router.route('/exam-management/uploader-validator/:id')
+  .put(  examManagement.updateUploaderValidator);
+  
 
 router.route('/exam-management/validate-multiple')
   .put(  examManagement.validateMultiple);

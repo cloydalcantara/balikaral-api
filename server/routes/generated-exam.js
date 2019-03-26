@@ -26,7 +26,22 @@ router.route('/generated-exam/learner-adaptive-test')
 
 router.route('/generated-exam/learner-post-test-and-survey')
   .get( generatedExam.fetchIfHasPostTestAndSurvey);
+  
+router.route('/generated-exam/performance-indicator/:id')
+  .get( generatedExam.performanceIndicator);
 
+router.route('/generated-exam/pre-post/:id')
+  .get( generatedExam.statsPreAndPost);
+
+// Start
+router.route('/generated-exam/analytics/pre-post/:id')
+  .get( generatedExam.perAndPostFetchAnalytics);
+
+router.route('/generated-exam/analytics/all/:id')
+  .get( generatedExam.allExamFetchAnalytics);
+router.route('/generated-exam/fetch-examination/:id')
+  .get( generatedExam.fetchExamination);
+  
 router.route('/generated-exam/:id')
   .get( generatedExam.fetchSingle);
 

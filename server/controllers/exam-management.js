@@ -16,7 +16,7 @@ module.exports = {
       learningStrand: req.body.learningStrand,
       uploader: req.body.uploader,
       validation: req.body.validation,
-      validator: req.body.validator,
+     
        question:{
         details: req.body.questionDetails,
         images: req.files.questionImage ? req.files.questionImage[0].filename : null,
@@ -44,7 +44,7 @@ module.exports = {
       },
       
     }
-
+    
     if(req.body.learningStrandSub){
       addData = { ...addData, learningStrandSub: req.body.learningStrandSub }
     }
@@ -136,12 +136,23 @@ module.exports = {
     }
     
   },
+  updateUploaderValidator: async (req, res, next) => {
+     let updateData = {
+      uploader: req.body.uploader,
+      validator: req.body.validator,
+    }
+    const data = updateData
+    const update = await Model.findOneAndUpdate({_id:req.params.id},{$set:data}).exec()
+    res.json({data: update})
+    
+  },
   update: async (req, res, next) => {
     let updateData = {
       level: req.body.level,
       reviewer: req.body.reviewer,
       learningStrand: req.body.learningStrand,
       uploader: req.body.uploader,
+      validator: req.body.validator,
       validation: req.body.validation,
        question:{
         details: req.body.questionDetails,
@@ -432,6 +443,7 @@ module.exports = {
     });
   },
   generateExamination: async( req, res, next ) => {
+    console.log(req.query)
     Model.find({
       level: req.query.level,
       learningStrand: req.query.learningStrand,
@@ -458,18 +470,17 @@ module.exports = {
   fetchExamStatus: async(req,res,next) => {
     const checkIfPassed = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Completed', type: req.query.type, }).count().exec()
     const checkIfFailed = await GeneratedExam.find({ examiner:req.query.examinerId, status: 'Retake', type: req.query.type}).exec()
-    console.log(checkIfPassed)
-    console.log(checkIfFailed)
     if(checkIfPassed > 0){
       res.json({ status: 'Passed' })
     }else if(checkIfFailed.length > 0){
       let learningStrandId = []
       let failedLearningStrand = checkIfFailed[checkIfFailed.length - 1].percentagePerLearningStrand.filter((attr)=>{
-        return attr.percentage < 90
+        return attr.percentage > 0
       })
       failedLearningStrand.map((attr)=>{
-        learningStrandId = [...learningStrandId, attr.learningStrand]
+        learningStrandId.push(attr)
       })
+      console.log(learningStrandId)
       res.json({ failedLearningStrand: learningStrandId})
     }else{
       res.json({ status: 'Exam Available' })
@@ -573,6 +584,13 @@ module.exports = {
         
       })
       res.json({data: 'Insert'})
-  }
+  },
+  getUploadCount: async (req, res, next) => {
+    // STATISTICS
+    // Display pie graph
+    const uploadsCount = await Model.find({uploader: req.body.id}).countDocuments().exec()
+    const validatedCount = await Model.find({uploader: req.body.id,validation: true}).countDocuments().exec()
+    res.json({uploadsCount, validatedCount})
+  },
 
 }
