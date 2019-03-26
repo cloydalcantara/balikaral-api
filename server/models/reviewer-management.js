@@ -43,7 +43,8 @@ const reviewerManagementSchema = new Schema({
       user: {
         type: Schema.Types.ObjectId,
         ref: "user"
-      }
+      },
+      reason: String
     }
   ],
   validation: Boolean,
