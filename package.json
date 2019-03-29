@@ -25,6 +25,7 @@
     "express": "^4.15.3",
     "express-fileupload": "^1.0.0",
     "express-promise-router": "^2.0.0",
+    "group-array": "^0.3.3",
     "joi": "^10.6.0",
     "jsonwebtoken": "^8.4.0",
     "mongoose": "^5.2.13",
