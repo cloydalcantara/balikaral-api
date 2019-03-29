@@ -43,5 +43,7 @@ app.use('/api/balikaral', require('./routes/auditTrail'));
 app.use('/api/balikaral', require('./routes/site-instruction'));
 app.use('/api/balikaral', require('./routes/teacher-learner'));
 app.use('/api/balikaral', require('./routes/validation'));
+app.use('/api/balikaral', require('./routes/practice-examination'));
+
 
 module.exports = app;
