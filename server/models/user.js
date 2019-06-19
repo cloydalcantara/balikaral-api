@@ -4,113 +4,79 @@ const Schema = mongoose.Schema;
 
 // Create a schema
 const userSchema = new Schema({
-  method: {
+  employeeid: Number,
+  firstName: {
     type: String,
-    enum: ['local', 'google', 'facebook'],
     required: true
   },
-  local: {
-    email: {
-      type: String,
-      lowercase: true
-    },
-    password: { 
-      type: String
-    },
-    userType:{
-      type: String
-    },
-    disabled: Boolean
+  middleName: {
+    type: String
   },
-  google: {
-    id: {
-      type: String
-    },
-    email: {
-      type: String,
-      lowercase: true
-    },
-    disabled: Boolean,
-    userType: String,
-    
+  lastName: {
+    type: String,
+    required: true
   },
-  facebook: {
-    id: {
-      type: String
-    },
-    email: {
-      type: String,
-      lowercase: true
-    },
-    disabled: Boolean,
-    userType: String,
-    
+  suffix: {
+    type: String
   },
-  userSettings: {
-    level: {
-      type: Schema.Types.ObjectId,
-      ref: "level"
-    }
+  password: String,
+  houseno: String,
+  barangay: String,
+  city: String,
+  province: String,
+  gender: String,
+  birthday: String,
+  civilStatus: String,
+  role: String,
+  administrator: Boolean,
+  focal: Boolean,
+  plantilla: {
+    type: Schema.Types.ObjectId,
+    ref:"plantilla"
   },
-  personalInformation:{
-    firstName: { type: String },
-    lastName: { type: String },
-    middleName: String,
-    
-    houseNoStreet: String,
-    barangay: String,
-    city: String,
-    province: String,
-
-    image: String,
-
-    civilStatus: String,
-    birthday: String,
-
-    learningCenter: String,
-    gradeLevel: String,
-    reasongForStopping: String,
-    lifeStatus: String,
-
-    gender: String,
-    about: String,
-
-    lastGradeLevelCompleted: String,
-    reasonDropOut: String,
-    attendedAlsLessonBefore: String,
-    completedProgram: String,
-    // If Learner
-    yearsInAls: String, 
-    registeredExaminee: String, //Yes or No
-    occupation: String, //none, fulltime,parttime
-
-    // If Teacher
-    letPasser: String,
-    noOfYearsTeaching: String,
-    noOfYearsAsAlsTeacher: String,
-    subjectExpertise:[
+  office: {
+    type: Schema.Types.ObjectId,
+    ref:"office"
+  },
+  division: {
+    type: Schema.Types.ObjectId,
+    ref:"division"
+  },
+  assessment:[
     {
-      learningStrand: {
+      schedule: {
         type: Schema.Types.ObjectId,
-        ref: "learningStrand"
+        ref: "schedule"
+      },
+      competency:[
+        {
+          competency: {
+            type: Schema.Types.ObjectId,
+            ref: "competencyframework"
+          },
+          indicators: String,
+          level: String,
+          grade: Number
+        }
+      ],
+      status: String,
+      assessor: {
+        type: Schema.Types.ObjectId,
+        ref: "user  "
       }
-    }]
-    
-  }
+    }
+  ]
 });
 
 userSchema.pre('save', async function(next) {
   try {
-    if (this.method !== 'local') {
-      next();
-    }
     // Generate a salt
     const salt = await bcrypt.genSalt(10);
     // Generate a password hash (salt + hash)
-    const passwordHash = await bcrypt.hash(this.local.password, salt);
+    const passwordHash = await bcrypt.hash(this.password, salt);
+    console.log(passwordHash)
     // Re-assign hashed version over original, plain text password
-    this.local.password = passwordHash;
-    console.log('exited');
+    this.password = passwordHash;
     next();
   } catch(error) {
     next(error);
@@ -119,7 +85,7 @@ userSchema.pre('save', async function(next) {
 
 userSchema.methods.isValidPassword = async function(newPassword) {
   try {
-    return await bcrypt.compare(newPassword, this.local.password);
+    return await bcrypt.compare(newPassword, this.password);
   } catch(error) {
     throw new Error(error);
   }

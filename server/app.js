@@ -7,9 +7,9 @@ const path = require('path');
 
 mongoose.Promise = global.Promise;
 if (process.env.NODE_ENV === 'test') {
-  mongoose.connect('mongodb://localhost/balikaral', { useNewUrlParser: true, useCreateIndex: true });
+  mongoose.connect('mongodb://localhost/oca', { useNewUrlParser: true, useCreateIndex: true });
 } else {
-  mongoose.connect('mongodb://localhost/balikaral', { useNewUrlParser: true, useCreateIndex: true });
+  mongoose.connect('mongodb://localhost/oca', { useNewUrlParser: true, useCreateIndex: true });
 }
 
 const app = express();
@@ -18,32 +18,23 @@ app.use(cors());
 if (!process.env.NODE_ENV === 'test') {
   app.use(morgan('dev'));
 }
-
+app.use(express.json({limit: '50mb'}));
 //app.use(express.static('uploads'))
 app.use('/api', express.static('uploads'));
 app.use(bodyParser.json());
 // Routes
-app.use('/api/balikaral', require('./routes/users'));
-app.use('/api/balikaral', require('./routes/learningStrand'));
-app.use('/api/balikaral', require('./routes/level'));
-app.use('/api/balikaral', require('./routes/exam-management'));
-app.use('/api/balikaral', require('./routes/exam-type-management'));
-app.use('/api/balikaral', require('./routes/reviewer-management'));
-app.use('/api/balikaral', require('./routes/generated-exam'));
-app.use('/api/balikaral', require('./routes/learningStrandSub'));
-app.use('/api/balikaral', require('./routes/forum'));
-app.use('/api/balikaral', require('./routes/comment'));
-app.use('/api/balikaral', require('./routes/management-forum'));
-app.use('/api/balikaral', require('./routes/examination-result'));
-app.use('/api/balikaral', require('./routes/session-guide-management'));
-app.use('/api/balikaral', require('./routes/survey-management'));
-app.use('/api/balikaral', require('./routes/survey-user'));
-app.use('/api/balikaral', require('./routes/landing-page'));
-app.use('/api/balikaral', require('./routes/auditTrail'));
-app.use('/api/balikaral', require('./routes/site-instruction'));
-app.use('/api/balikaral', require('./routes/teacher-learner'));
-app.use('/api/balikaral', require('./routes/validation'));
-app.use('/api/balikaral', require('./routes/practice-examination'));
-
+app.use('/api/oca', require('./routes/users'));
+app.use('/api/oca', require('./routes/office'));
+app.use('/api/oca', require('./routes/division'));
+app.use('/api/oca', require('./routes/position'));
+app.use('/api/oca', require('./routes/salary-grade'));
+app.use('/api/oca', require('./routes/plantilla'));
+app.use('/api/oca', require('./routes/competency-framework'));
+app.use('/api/oca', require('./routes/position-profile'));
+app.use('/api/oca', require('./routes/assessment-schedule'));
+app.use('/api/oca', require('./routes/competency-assignment'));
+app.use('/api/oca', require('./routes/assessment'));
+app.use('/api/oca', require('./routes/announcements'));
+app.use('/api/oca', require('./routes/idp'));
 
 module.exports = app;

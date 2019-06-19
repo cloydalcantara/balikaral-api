@@ -1,1 +1,0 @@
-{"options":{},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"balikaral.managementforums"},{"v":2,"unique":true,"key":{"name":1},"name":"name_1","ns":"balikaral.managementforums","background":true}],"uuid":"39483a1af6f94b319ca0a33fd7ad631b"}

@@ -28,66 +28,23 @@ passport.use(new JwtStrategy({
   }
 }));
 
-// Google OAuth Strategy
-passport.use('googleToken', new GooglePlusTokenStrategy({
-  clientID: config.oauth.google.clientID,
-  clientSecret: config.oauth.google.clientSecret
-}, async (accessToken, refreshToken, profile, done) => {
-  try {
-    // Should have full user profile over here
-    console.log('profile', profile);
-    console.log('accessToken', accessToken);
-    console.log('refreshToken', refreshToken);
-
-    const existingUser = await User.findOne({ "google.id": profile.id });
-    console.log('ex', existingUser)
-    if (existingUser) {
-      return done(null, existingUser);
-    }else{
-      return done(null, {})
-    }
-
-  } catch(error) {
-    done(error, false, error.message);
-  }
-}));
-
-passport.use('facebookToken', new FacebookTokenStrategy({
-  clientID: config.oauth.facebook.clientID,
-  clientSecret: config.oauth.facebook.clientSecret
-}, async (accessToken, refreshToken, profile, done) => {
-  try {
-    console.log('profile', profile);
-    console.log('accessToken', accessToken);
-    console.log('refreshToken', refreshToken);
-    
-    const existingUser = await User.findOne({ "facebook.id": profile.id });
-    if (existingUser) {
-      return done(null, existingUser);
-    }
-
-  } catch(error) {
-    done(error, false, error.message);
-  }
-}));
-
 // LOCAL STRATEGY
 passport.use(new LocalStrategy({
-  usernameField: 'email'
-}, async (email, password, done) => {
+  usernameField: 'employeeid'
+}, async (employeeid, password, done) => {
   try {
     // Find the user given the email
-    const user = await User.findOne({ "local.email": email });
-    console.log(user)
+    const user = await User.findOne({ "employeeid": employeeid });
     
     // If not, handle it
     if (!user) {
       return done(null, false);
     }
-    if(!user.local.disabled){
+    console.log(user)
+    if(user){
       // Check if the password is correct
       const isMatch = await user.isValidPassword(password);
-    
+      console.log("isMatch",isMatch)
       // If not, handle it
       if (!isMatch) {
         return done(null, false);
